@@ -9,6 +9,7 @@ import java.util.Map;
 @Component
 public class TrainerDAO {
     private final Map<Long, Trainer> trainerStorage;
+    private Long index = 1L;
 
     @Autowired
     public TrainerDAO(Map<Long, Trainer> trainerStorage) {
@@ -16,7 +17,7 @@ public class TrainerDAO {
     }
 
     public Trainer save(Trainer trainer) {
-        return trainerStorage.put(trainer.getId(), trainer);
+        return trainerStorage.put(index++, trainer);
     }
 
     public void update(long trainerId, Trainer updatedTrainer) {

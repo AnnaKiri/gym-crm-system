@@ -9,6 +9,7 @@ import java.util.Map;
 @Component
 public class UserDAO {
     private final Map<Long, User> userStorage;
+    private Long index = 1L;
 
     @Autowired
     public UserDAO(Map<Long, User> userStorage) {
@@ -16,7 +17,7 @@ public class UserDAO {
     }
 
     public User save(User user) {
-        return userStorage.put(user.getId(), user);
+        return userStorage.put(index++, user);
     }
 
     public void update(long userId, User updatedUser) {

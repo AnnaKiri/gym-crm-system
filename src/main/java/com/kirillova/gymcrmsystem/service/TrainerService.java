@@ -1,28 +1,36 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.config.AppConfig;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Set;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-public class TrainerService {
+public class TrainerService implements InitializingBean {
     private static final Logger log = getLogger(TrainerService.class);
+
+    private final AppConfig appConfig;
 
     private final TrainerDAO trainerDAO;
     private final UserDAO userDAO;
     private Set<String> allUsernames;
 
     @Autowired
-    public TrainerService(TrainerDAO trainerDAO, UserDAO userDAO) {
+    public TrainerService(AppConfig appConfig, TrainerDAO trainerDAO, UserDAO userDAO) {
+        this.appConfig = appConfig;
         this.trainerDAO = trainerDAO;
         this.userDAO = userDAO;
     }
@@ -66,5 +74,18 @@ public class TrainerService {
         trainer.setSpecialization(specializationId);
         trainer.setUserId(newUser.getId());
         return trainerDAO.save(trainer);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(appConfig.getTrainerDataPath()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(","); //firstName, lastName, specializationId
+                create(parts[0], parts[1], Long.parseLong(parts[2]));
+            }
+        } catch (IOException e) {
+            log.debug("Error reading trainer init data file");
+        }
     }
 }

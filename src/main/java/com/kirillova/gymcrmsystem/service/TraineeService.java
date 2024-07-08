@@ -1,29 +1,37 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.config.AppConfig;
 import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Set;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-public class TraineeService {
+public class TraineeService implements InitializingBean {
     private static final Logger log = getLogger(TraineeService.class);
+
+    private final AppConfig appConfig;
 
     private final TraineeDAO traineeDAO;
     private final UserDAO userDAO;
     private Set<String> allUsernames;
 
     @Autowired
-    public TraineeService(TraineeDAO traineeDAO, UserDAO userDAO) {
+    public TraineeService(AppConfig appConfig, TraineeDAO traineeDAO, UserDAO userDAO) {
+        this.appConfig = appConfig;
         this.traineeDAO = traineeDAO;
         this.userDAO = userDAO;
     }
@@ -76,5 +84,18 @@ public class TraineeService {
         trainee.setDateOfBirth(birthday);
         trainee.setUserId(newUser.getId());
         return traineeDAO.save(trainee);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(appConfig.getTraineeDataPath()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(","); //firstName, lastName, Date of Birth, Address
+                create(parts[0], parts[1], LocalDate.parse(parts[2]), parts[3]);
+            }
+        } catch (IOException e) {
+            log.debug("Error reading trainee init data file");
+        }
     }
 }
