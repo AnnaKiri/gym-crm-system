@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
@@ -24,7 +27,7 @@ public class SpringConfig {
     User user5 = new User(5, "Tom", "Cruise", "Tom.Cruise", "password5", true);
     User user6 = new User(6, "Brad", "Pitt", "Brad.Pitt", "password6", true);
     User user7 = new User(7, "Jennifer", "Aniston", "Jennifer.Aniston", "password7", true);
-    User user8 = new User(8, "Sandra", "Bullock", "Sandra.Bullock", "password7", true);
+    User user8 = new User(8, "Sandra", "Bullock", "Sandra.Bullock", "password8", true);
 
     TrainingType trainingType1 = new TrainingType(1, "Strength");
     TrainingType trainingType2 = new TrainingType(2, "Aerobic");
@@ -50,6 +53,24 @@ public class SpringConfig {
     Training training7 = new Training(7, trainee4.getId(), trainer1.getId(), "Strength", trainingType1.getId(), LocalDate.of(2024, 1, 6), 60);
     Training training8 = new Training(8, trainee2.getId(), trainer3.getId(), "Yoga", trainingType3.getId(), LocalDate.of(2024, 1, 5), 60);
 
+    @Bean
+    public Map<Long, User> userStorage() {
+        Map<Long, User> userStorage = new HashMap<>();
+        userStorage.put(user1.getId(), user1);
+        userStorage.put(user2.getId(), user2);
+        userStorage.put(user3.getId(), user3);
+        userStorage.put(user4.getId(), user4);
+        userStorage.put(user5.getId(), user5);
+        userStorage.put(user6.getId(), user5);
+        userStorage.put(user7.getId(), user7);
+        userStorage.put(user8.getId(), user8);
+        return userStorage;
+    }
+
+    @Bean
+    public Set<String> getAllUsernames(Map<Long, User> userStorage) {
+        return userStorage.values().stream().map(User::getUsername).collect(Collectors.toSet());
+    }
 
     @Bean
     public Map<Long, Trainee> traineeStorage() {
@@ -67,6 +88,7 @@ public class SpringConfig {
         trainerStorage.put(trainer1.getId(), trainer1);
         trainerStorage.put(trainer2.getId(), trainer2);
         trainerStorage.put(trainer3.getId(), trainer3);
+        trainerStorage.put(trainer4.getId(), trainer4);
         return trainerStorage;
     }
 
