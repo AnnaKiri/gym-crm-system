@@ -15,8 +15,8 @@ public class TrainingDAO {
         this.trainingStorage = trainingStorage;
     }
 
-    public void save(Training training) {
-        trainingStorage.put(training.getId(), training);
+    public Training save(Training training) {
+        return trainingStorage.put(training.getId(), training);
     }
 
     public Training getTraining(long trainingId) {

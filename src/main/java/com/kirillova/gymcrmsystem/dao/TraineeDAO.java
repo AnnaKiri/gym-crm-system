@@ -15,8 +15,8 @@ public class TraineeDAO {
         this.traineeStorage = traineeStorage;
     }
 
-    public void save(Trainee trainee) {
-        traineeStorage.put(trainee.getId(), trainee);
+    public Trainee save(Trainee trainee) {
+        return traineeStorage.put(trainee.getId(), trainee);
     }
 
     public void update(long traineeId, Trainee updatedTrainee) {

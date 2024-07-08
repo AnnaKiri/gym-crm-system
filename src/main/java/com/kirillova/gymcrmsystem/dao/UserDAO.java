@@ -15,8 +15,8 @@ public class UserDAO {
         this.userStorage = userStorage;
     }
 
-    public void save(User user) {
-        userStorage.put(user.getId(), user);
+    public User save(User user) {
+        return userStorage.put(user.getId(), user);
     }
 
     public void update(long userId, User updatedUser) {

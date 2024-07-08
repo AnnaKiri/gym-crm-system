@@ -15,16 +15,12 @@ public class TrainerDAO {
         this.trainerStorage = trainerStorage;
     }
 
-    public void save(Trainer trainer) {
-        trainerStorage.put(trainer.getId(), trainer);
+    public Trainer save(Trainer trainer) {
+        return trainerStorage.put(trainer.getId(), trainer);
     }
 
     public void update(long trainerId, Trainer updatedTrainer) {
         trainerStorage.put(trainerId, updatedTrainer);
-    }
-
-    public void delete(long trainerId) {
-        trainerStorage.remove(trainerId);
     }
 
     public Trainer getTrainer(long trainerId) {

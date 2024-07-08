@@ -67,7 +67,7 @@ public class SpringConfig {
     }
 
     @Bean
-    public Set<String> getAllUsernames(Map<Long, User> userStorage) {
+    public Set<String> allUsernames(Map<Long, User> userStorage) {
         return userStorage.values().stream().map(User::getUsername).collect(Collectors.toSet());
     }
 

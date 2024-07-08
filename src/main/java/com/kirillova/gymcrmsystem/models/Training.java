@@ -71,7 +71,7 @@ public class Training {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setLocalDate(LocalDate date) {
         this.date = date;
     }
 
