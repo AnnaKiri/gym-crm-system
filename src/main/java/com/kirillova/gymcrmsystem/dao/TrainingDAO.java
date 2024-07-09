@@ -17,7 +17,10 @@ public class TrainingDAO {
     }
 
     public Training save(Training training) {
-        return trainingStorage.put(index++, training);
+        index++;
+        training.setId(index);
+        trainingStorage.put(index, training);
+        return training;
     }
 
     public Training getTraining(long trainingId) {

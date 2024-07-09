@@ -29,7 +29,10 @@ public class TrainingTypeDAO implements InitializingBean {
     }
 
     public TrainingType save(TrainingType trainingType) {
-        return trainingTypeStorage.put(index++, trainingType);
+        index++;
+        trainingType.setId(index);
+        trainingTypeStorage.put(index, trainingType);
+        return trainingType;
     }
 
     @Override

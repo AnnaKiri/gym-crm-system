@@ -17,7 +17,10 @@ public class TrainerDAO {
     }
 
     public Trainer save(Trainer trainer) {
-        return trainerStorage.put(index++, trainer);
+        index++;
+        trainer.setId(index);
+        trainerStorage.put(index, trainer);
+        return trainer;
     }
 
     public void update(long trainerId, Trainer updatedTrainer) {

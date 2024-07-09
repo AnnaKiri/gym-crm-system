@@ -17,7 +17,10 @@ public class TraineeDAO {
     }
 
     public Trainee save(Trainee trainee) {
-        return traineeStorage.put(index++, trainee);
+        index++;
+        trainee.setId(index);
+        traineeStorage.put(index, trainee);
+        return trainee;
     }
 
     public void update(long traineeId, Trainee updatedTrainee) {

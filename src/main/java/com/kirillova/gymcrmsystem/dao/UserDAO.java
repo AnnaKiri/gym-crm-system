@@ -17,7 +17,10 @@ public class UserDAO {
     }
 
     public User save(User user) {
-        return userStorage.put(index++, user);
+        index++;
+        user.setId(index);
+        userStorage.put(index, user);
+        return user;
     }
 
     public void update(long userId, User updatedUser) {
