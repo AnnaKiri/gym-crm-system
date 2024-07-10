@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.config.AppConfig;
+import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainee;
@@ -21,15 +21,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class TraineeService implements InitializingBean {
     private static final Logger log = getLogger(TraineeService.class);
 
-    private final AppConfig appConfig;
+    private final ConfigurationProperties configurationProperties;
 
     private final TraineeDAO traineeDAO;
     private final UserDAO userDAO;
     private final Set<String> allUsernames;
 
     @Autowired
-    public TraineeService(AppConfig appConfig, TraineeDAO traineeDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.appConfig = appConfig;
+    public TraineeService(ConfigurationProperties configurationProperties, TraineeDAO traineeDAO, UserDAO userDAO, Set<String> allUsernames) {
+        this.configurationProperties = configurationProperties;
         this.traineeDAO = traineeDAO;
         this.userDAO = userDAO;
         this.allUsernames = allUsernames;
@@ -82,7 +82,7 @@ public class TraineeService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        DataLoaderUtil.loadData(appConfig.getTraineeDataPath(), parts -> {
+        DataLoaderUtil.loadData(configurationProperties.getTraineeDataPath(), parts -> {
             // firstName, lastName, Date of Birth, Address
             create(parts[0], parts[1], LocalDate.parse(parts[2]), parts[3]);
         });

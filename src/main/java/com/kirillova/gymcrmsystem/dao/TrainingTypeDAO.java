@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
-import com.kirillova.gymcrmsystem.config.AppConfig;
+import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,12 +21,12 @@ public class TrainingTypeDAO implements InitializingBean {
     private final Map<Long, TrainingType> trainingTypeStorage;
     private final AtomicLong index = new AtomicLong(0L);
 
-    private final AppConfig appConfig;
+    private final ConfigurationProperties configurationProperties;
 
     @Autowired
-    public TrainingTypeDAO(Map<Long, TrainingType> trainingTypeStorage, AppConfig appConfig) {
+    public TrainingTypeDAO(Map<Long, TrainingType> trainingTypeStorage, ConfigurationProperties configurationProperties) {
         this.trainingTypeStorage = trainingTypeStorage;
-        this.appConfig = appConfig;
+        this.configurationProperties = configurationProperties;
     }
 
     public TrainingType save(TrainingType trainingType) {
@@ -39,7 +39,7 @@ public class TrainingTypeDAO implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(appConfig.getTrainingTypeDataPath()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(configurationProperties.getTrainingTypeDataPath()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 TrainingType trainingType = new TrainingType();

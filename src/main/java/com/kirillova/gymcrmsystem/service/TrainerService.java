@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.config.AppConfig;
+import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
@@ -20,15 +20,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class TrainerService implements InitializingBean {
     private static final Logger log = getLogger(TrainerService.class);
 
-    private final AppConfig appConfig;
+    private final ConfigurationProperties configurationProperties;
 
     private final TrainerDAO trainerDAO;
     private final UserDAO userDAO;
     private final Set<String> allUsernames;
 
     @Autowired
-    public TrainerService(AppConfig appConfig, TrainerDAO trainerDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.appConfig = appConfig;
+    public TrainerService(ConfigurationProperties configurationProperties, TrainerDAO trainerDAO, UserDAO userDAO, Set<String> allUsernames) {
+        this.configurationProperties = configurationProperties;
         this.trainerDAO = trainerDAO;
         this.userDAO = userDAO;
         this.allUsernames = allUsernames;
@@ -72,7 +72,7 @@ public class TrainerService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        DataLoaderUtil.loadData(appConfig.getTrainerDataPath(), parts -> {
+        DataLoaderUtil.loadData(configurationProperties.getTrainerDataPath(), parts -> {
             // firstName, lastName, specializationId
             create(parts[0], parts[1], Long.parseLong(parts[2]));
         });
