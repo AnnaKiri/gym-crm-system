@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class TraineeDAO {
     private final Map<Long, Trainee> traineeStorage;
-    private final AtomicLong index = new AtomicLong(1L);
+    private final AtomicLong index = new AtomicLong(0L);
 
     @Autowired
     public TraineeDAO(Map<Long, Trainee> traineeStorage) {

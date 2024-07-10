@@ -19,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class TrainingTypeDAO implements InitializingBean {
     private static final Logger log = getLogger(TrainingTypeDAO.class);
     private final Map<Long, TrainingType> trainingTypeStorage;
-    private final AtomicLong index = new AtomicLong(1L);
+    private final AtomicLong index = new AtomicLong(0L);
 
     private final AppConfig appConfig;
 

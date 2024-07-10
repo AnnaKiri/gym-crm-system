@@ -27,17 +27,13 @@ public class TraineeService implements InitializingBean {
 
     private final TraineeDAO traineeDAO;
     private final UserDAO userDAO;
-    private Set<String> allUsernames;
+    private final Set<String> allUsernames;
 
     @Autowired
-    public TraineeService(AppConfig appConfig, TraineeDAO traineeDAO, UserDAO userDAO) {
+    public TraineeService(AppConfig appConfig, TraineeDAO traineeDAO, UserDAO userDAO, Set<String> allUsernames) {
         this.appConfig = appConfig;
         this.traineeDAO = traineeDAO;
         this.userDAO = userDAO;
-    }
-
-    @Autowired
-    public void setAllUsernames(Set<String> allUsernames) {
         this.allUsernames = allUsernames;
     }
 

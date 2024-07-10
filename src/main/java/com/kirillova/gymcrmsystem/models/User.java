@@ -24,6 +24,10 @@ public class User {
         this.isActive = isActive;
     }
 
+    public User(User user) {
+        this(user.id, user.firstName, user.lastName, user.username, user.password, user.isActive);
+    }
+
     public long getId() {
         return id;
     }
@@ -81,13 +85,12 @@ public class User {
                 && isActive == user.isActive
                 && Objects.equals(firstName, user.firstName)
                 && Objects.equals(lastName, user.lastName)
-                && Objects.equals(username, user.username)
-                && Objects.equals(password, user.password);
+                && Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, username, password, isActive);
+        return Objects.hash(id, firstName, lastName, username, isActive);
     }
 
     @Override
