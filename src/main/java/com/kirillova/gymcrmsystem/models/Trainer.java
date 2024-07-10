@@ -45,16 +45,15 @@ public class Trainer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         Trainer trainer = (Trainer) o;
-        return userId == trainer.userId
-                && id == trainer.id
-                && Objects.equals(specializationId, trainer.specializationId);
+        return id == trainer.id
+                && specializationId == trainer.specializationId
+                && userId == trainer.userId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), specializationId, userId, id);
+        return Objects.hash(id, specializationId, userId);
     }
 
     @Override

@@ -20,10 +20,6 @@ public class Trainee {
         this.userId = userId;
     }
 
-    public Trainee(Trainee trainee) {
-        this(trainee.id, trainee.dateOfBirth, trainee.address, trainee.userId);
-    }
-
     public long getId() {
         return id;
     }

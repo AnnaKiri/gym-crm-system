@@ -24,17 +24,13 @@ public class TrainerService implements InitializingBean {
 
     private final TrainerDAO trainerDAO;
     private final UserDAO userDAO;
-    private Set<String> allUsernames;
+    private final Set<String> allUsernames;
 
     @Autowired
-    public TrainerService(AppConfig appConfig, TrainerDAO trainerDAO, UserDAO userDAO) {
+    public TrainerService(AppConfig appConfig, TrainerDAO trainerDAO, UserDAO userDAO, Set<String> allUsernames) {
         this.appConfig = appConfig;
         this.trainerDAO = trainerDAO;
         this.userDAO = userDAO;
-    }
-
-    @Autowired
-    public void setAllUsernames(Set<String> allUsernames) {
         this.allUsernames = allUsernames;
     }
 
