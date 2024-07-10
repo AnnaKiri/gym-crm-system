@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.config.SpringConfig;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.models.Training;
 import org.junit.jupiter.api.Assertions;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 
@@ -24,8 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({SpringExtension.class, MockitoExtension.class})
-@ContextConfiguration(classes = {SpringConfig.class})
+@ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
 
     @Mock
