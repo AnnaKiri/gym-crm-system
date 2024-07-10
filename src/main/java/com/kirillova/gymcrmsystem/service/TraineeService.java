@@ -5,15 +5,13 @@ import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -84,14 +82,9 @@ public class TraineeService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(appConfig.getTraineeDataPath()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(","); //firstName, lastName, Date of Birth, Address
-                create(parts[0], parts[1], LocalDate.parse(parts[2]), parts[3]);
-            }
-        } catch (IOException e) {
-            log.debug("Error reading trainee init data file");
-        }
+        DataLoaderUtil.loadData(appConfig.getTraineeDataPath(), parts -> {
+            // firstName, lastName, Date of Birth, Address
+            create(parts[0], parts[1], LocalDate.parse(parts[2]), parts[3]);
+        });
     }
 }

@@ -5,15 +5,13 @@ import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Set;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -78,14 +76,9 @@ public class TrainerService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(appConfig.getTrainerDataPath()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(","); //firstName, lastName, specializationId
-                create(parts[0], parts[1], Long.parseLong(parts[2]));
-            }
-        } catch (IOException e) {
-            log.debug("Error reading trainer init data file");
-        }
+        DataLoaderUtil.loadData(appConfig.getTrainerDataPath(), parts -> {
+            // firstName, lastName, specializationId
+            create(parts[0], parts[1], Long.parseLong(parts[2]));
+        });
     }
 }
