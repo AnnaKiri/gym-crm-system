@@ -33,6 +33,7 @@ public class TrainingTypeDAO implements InitializingBean {
         long newId = index.incrementAndGet();
         trainingType.setId(newId);
         trainingTypeStorage.put(newId, trainingType);
+        log.debug("New training tyre with id = " + newId + " saved");
         return trainingType;
     }
 
