@@ -41,12 +41,12 @@ public class TraineeService implements InitializingBean {
         this.allUsernames = allUsernames;
     }
 
-    public Trainee get(int traineeId) {
+    public Trainee get(long traineeId) {
         log.debug("Get trainee with id = " + traineeId);
         return traineeDAO.getTrainee(traineeId);
     }
 
-    public void delete(int traineeId) {
+    public void delete(long traineeId) {
         log.debug("Delete trainee with userId = " + traineeId);
         Trainee trainee = get(traineeId);
         traineeDAO.delete(traineeId);

@@ -29,7 +29,7 @@ public class TrainingService implements InitializingBean {
         this.trainingDAO = trainingDAO;
     }
 
-    public Training get(int trainingId) {
+    public Training get(long trainingId) {
         log.debug("Get training with id = " + trainingId);
         return trainingDAO.getTraining(trainingId);
     }

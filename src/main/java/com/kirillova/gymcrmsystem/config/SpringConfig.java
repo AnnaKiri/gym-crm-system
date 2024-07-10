@@ -9,41 +9,41 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
 public class SpringConfig {
     @Bean
     public Map<Long, User> userStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Set<String> allUsernames() {
-        return new HashSet<>();
+        return Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
     @Bean
     public Map<Long, Trainee> traineeStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Map<Long, Trainer> trainerStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Map<Long, Training> trainingStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     @Bean
     public Map<Long, TrainingType> trainingTypeStorage() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 }

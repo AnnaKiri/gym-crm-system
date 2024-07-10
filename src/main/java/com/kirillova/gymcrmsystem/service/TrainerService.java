@@ -40,7 +40,7 @@ public class TrainerService implements InitializingBean {
         this.allUsernames = allUsernames;
     }
 
-    public Trainer get(int trainerId) {
+    public Trainer get(long trainerId) {
         log.debug("Get trainer with id = " + trainerId);
         return trainerDAO.getTrainer(trainerId);
     }

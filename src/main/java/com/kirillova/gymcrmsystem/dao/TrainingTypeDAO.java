@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -18,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class TrainingTypeDAO implements InitializingBean {
     private static final Logger log = getLogger(TrainingTypeDAO.class);
     private final Map<Long, TrainingType> trainingTypeStorage;
-    private Long index = 1L;
+    private final AtomicLong index = new AtomicLong(1L);
 
     private final AppConfig appConfig;
 
@@ -29,9 +30,9 @@ public class TrainingTypeDAO implements InitializingBean {
     }
 
     public TrainingType save(TrainingType trainingType) {
-        index++;
-        trainingType.setId(index);
-        trainingTypeStorage.put(index, trainingType);
+        long newId = index.incrementAndGet();
+        trainingType.setId(newId);
+        trainingTypeStorage.put(newId, trainingType);
         return trainingType;
     }
 

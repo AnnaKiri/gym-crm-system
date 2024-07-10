@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class TrainingDAO {
     private final Map<Long, Training> trainingStorage;
-    private Long index = 1L;
+    private final AtomicLong index = new AtomicLong(1L);
 
     @Autowired
     public TrainingDAO(Map<Long, Training> trainingStorage) {
@@ -17,9 +18,9 @@ public class TrainingDAO {
     }
 
     public Training save(Training training) {
-        index++;
-        training.setId(index);
-        trainingStorage.put(index, training);
+        long newId = index.incrementAndGet();
+        training.setId(newId);
+        trainingStorage.put(newId, training);
         return training;
     }
 
