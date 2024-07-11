@@ -27,6 +27,10 @@ public class Training {
         this.duration = duration;
     }
 
+    public Training(Training training) {
+        this(training.id, training.traineeId, training.trainerId, training.name, training.typeId, training.date, training.duration);
+    }
+
     public long getId() {
         return id;
     }

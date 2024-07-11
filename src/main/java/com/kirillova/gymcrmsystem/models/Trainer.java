@@ -17,6 +17,10 @@ public class Trainer {
         this.userId = userId;
     }
 
+    public Trainer(Trainer trainer) {
+        this(trainer.id, trainer.specializationId, trainer.userId);
+    }
+
     public long getSpecializationId() {
         return specializationId;
     }

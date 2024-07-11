@@ -2,14 +2,12 @@ package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.models.TrainingType;
+import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -39,16 +37,10 @@ public class TrainingTypeDAO implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(configurationProperties.getTrainingTypeDataPath()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                TrainingType trainingType = new TrainingType();
-                trainingType.setName(line);
-                save(trainingType);
-            }
-        } catch (IOException e) {
-            log.debug("Error reading training type init data file");
-        }
+        DataLoaderUtil.loadData(configurationProperties.getTrainingTypeDataPath(), parts -> {
+            // name
+            save(new TrainingType(0, parts[0]));
+        });
     }
 }
 

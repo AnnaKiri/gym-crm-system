@@ -14,6 +14,10 @@ public class TrainingType {
         this.name = name;
     }
 
+    public TrainingType(TrainingType trainingType) {
+        this(trainingType.id, trainingType.name);
+    }
+
     public long getId() {
         return id;
     }
