@@ -4,28 +4,20 @@ import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
-import org.slf4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TrainingService implements InitializingBean {
-    private static final Logger log = getLogger(TrainingService.class);
 
     private final ConfigurationProperties configurationProperties;
-
     private final TrainingDAO trainingDAO;
-
-    @Autowired
-    public TrainingService(ConfigurationProperties configurationProperties, TrainingDAO trainingDAO) {
-        this.configurationProperties = configurationProperties;
-        this.trainingDAO = trainingDAO;
-    }
 
     public Training get(long trainingId) {
         log.debug("Get training with id = " + trainingId);
@@ -39,7 +31,7 @@ public class TrainingService implements InitializingBean {
         training.setTrainerId(trainerId);
         training.setName(name);
         training.setTypeId(typeId);
-        training.setLocalDate(date);
+        training.setDate(date);
         training.setDuration(duration);
         return trainingDAO.save(training);
     }

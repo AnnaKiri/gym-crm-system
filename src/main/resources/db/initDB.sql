@@ -7,8 +7,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
     id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name             VARCHAR                           NOT NULL,
-    lastName         VARCHAR                           NOT NULL,
+    first_name             VARCHAR                           NOT NULL,
+    last_name         VARCHAR                           NOT NULL,
     username         VARCHAR                           NOT NULL,
     password         VARCHAR                           NOT NULL,
     is_active        BOOL                DEFAULT TRUE  NOT NULL

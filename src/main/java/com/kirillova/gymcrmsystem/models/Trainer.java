@@ -1,71 +1,36 @@
 package com.kirillova.gymcrmsystem.models;
 
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "trainer")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Trainer {
 
+    @Id
+    @Column(name = "id")
     private long id;
+
+    @Column(name = "specialization_id")
     private long specializationId;
+
+    @Column(name = "user_id")
     private long userId;
-
-    public Trainer() {
-    }
-
-    public Trainer(long id, long specializationId, long userId) {
-        this.id = id;
-        this.specializationId = specializationId;
-        this.userId = userId;
-    }
 
     public Trainer(Trainer trainer) {
         this(trainer.id, trainer.specializationId, trainer.userId);
-    }
-
-    public long getSpecializationId() {
-        return specializationId;
-    }
-
-    public void setSpecialization(long specializationId) {
-        this.specializationId = specializationId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Trainer trainer = (Trainer) o;
-        return id == trainer.id
-                && specializationId == trainer.specializationId
-                && userId == trainer.userId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, specializationId, userId);
-    }
-
-    @Override
-    public String toString() {
-        return "Trainer{" +
-                "specializationId=" + specializationId +
-                ", userId=" + userId +
-                ", id=" + id +
-                '}';
     }
 }

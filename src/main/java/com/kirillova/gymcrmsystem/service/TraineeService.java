@@ -7,33 +7,23 @@ import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
-import org.slf4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TraineeService implements InitializingBean {
-    private static final Logger log = getLogger(TraineeService.class);
-
     private final ConfigurationProperties configurationProperties;
 
     private final TraineeDAO traineeDAO;
     private final UserDAO userDAO;
     private final Set<String> allUsernames;
-
-    @Autowired
-    public TraineeService(ConfigurationProperties configurationProperties, TraineeDAO traineeDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.configurationProperties = configurationProperties;
-        this.traineeDAO = traineeDAO;
-        this.userDAO = userDAO;
-        this.allUsernames = allUsernames;
-    }
 
     public Trainee get(long traineeId) {
         log.debug("Get trainee with id = " + traineeId);

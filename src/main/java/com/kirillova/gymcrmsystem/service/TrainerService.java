@@ -7,32 +7,23 @@ import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
-import org.slf4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class TrainerService implements InitializingBean {
-    private static final Logger log = getLogger(TrainerService.class);
 
     private final ConfigurationProperties configurationProperties;
 
     private final TrainerDAO trainerDAO;
     private final UserDAO userDAO;
     private final Set<String> allUsernames;
-
-    @Autowired
-    public TrainerService(ConfigurationProperties configurationProperties, TrainerDAO trainerDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.configurationProperties = configurationProperties;
-        this.trainerDAO = trainerDAO;
-        this.userDAO = userDAO;
-        this.allUsernames = allUsernames;
-    }
 
     public Trainer get(long trainerId) {
         log.debug("Get trainer with id = " + trainerId);
@@ -49,7 +40,7 @@ public class TrainerService implements InitializingBean {
         updatedUser.setActive(isActive);
         userDAO.update(updatedUser.getId(), updatedUser);
 
-        updatedTrainer.setSpecialization(specializationId);
+        updatedTrainer.setSpecializationId(specializationId);
         trainerDAO.update(trainerId, updatedTrainer);
     }
 
@@ -65,7 +56,7 @@ public class TrainerService implements InitializingBean {
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
-        trainer.setSpecialization(specializationId);
+        trainer.setSpecializationId(specializationId);
         trainer.setUserId(newUser.getId());
         return trainerDAO.save(trainer);
     }

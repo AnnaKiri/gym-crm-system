@@ -1,9 +1,11 @@
 package com.kirillova.gymcrmsystem.config;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+@Getter
 @Configuration
 @PropertySource("classpath:application.properties")
 public class ConfigurationProperties {
@@ -44,51 +46,4 @@ public class ConfigurationProperties {
     @Value("${jdbc.initLocation}")
     private String jdbcInitLocation;
 
-    public String getTraineeDataPath() {
-        return traineeDataPath;
-    }
-
-    public String getTrainerDataPath() {
-        return trainerDataPath;
-    }
-
-    public String getTrainingDataPath() {
-        return trainingDataPath;
-    }
-
-    public String getTrainingTypeDataPath() {
-        return trainingTypeDataPath;
-    }
-
-    public String getHibernateDriverClass() {
-        return hibernateDriverClass;
-    }
-
-    public String getHibernateConnectionUrl() {
-        return hibernateConnectionUrl;
-    }
-
-    public String getHibernateConnectionUsername() {
-        return hibernateConnectionUsername;
-    }
-
-    public String getHibernateDialect() {
-        return hibernateDialect;
-    }
-
-    public String getHibernateShowSql() {
-        return hibernateShowSql;
-    }
-
-    public String getHibernateCurrentSessionContextClass() {
-        return hibernateCurrentSessionContextClass;
-    }
-
-    public boolean isDatabaseInit() {
-        return databaseInit;
-    }
-
-    public String getJdbcInitLocation() {
-        return jdbcInitLocation;
-    }
 }

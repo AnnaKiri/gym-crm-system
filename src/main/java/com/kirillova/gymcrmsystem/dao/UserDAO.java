@@ -1,27 +1,20 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.service.TraineeService;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class UserDAO {
-    private static final Logger log = getLogger(TraineeService.class);
 
     private final Map<Long, User> userStorage;
     private final AtomicLong index = new AtomicLong(0L);
-
-    @Autowired
-    public UserDAO(Map<Long, User> userStorage) {
-        this.userStorage = userStorage;
-    }
 
     public User save(User user) {
         long newId = index.incrementAndGet();
