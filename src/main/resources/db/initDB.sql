@@ -1,14 +1,14 @@
-DROP TABLE IF EXISTS training_type;
+DROP TABLE IF EXISTS training;
 DROP TABLE IF EXISTS trainee;
 DROP TABLE IF EXISTS trainer;
-DROP TABLE IF EXISTS training;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS training_type;
 
 CREATE TABLE users
 (
     id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    first_name             VARCHAR                           NOT NULL,
-    last_name         VARCHAR                           NOT NULL,
+    first_name       VARCHAR                           NOT NULL,
+    last_name        VARCHAR                           NOT NULL,
     username         VARCHAR                           NOT NULL,
     password         VARCHAR                           NOT NULL,
     is_active        BOOL                DEFAULT TRUE  NOT NULL

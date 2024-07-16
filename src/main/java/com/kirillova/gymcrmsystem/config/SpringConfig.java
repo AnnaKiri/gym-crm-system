@@ -1,10 +1,5 @@
 package com.kirillova.gymcrmsystem.config;
 
-import com.kirillova.gymcrmsystem.models.Trainee;
-import com.kirillova.gymcrmsystem.models.Trainer;
-import com.kirillova.gymcrmsystem.models.Training;
-import com.kirillova.gymcrmsystem.models.TrainingType;
-import com.kirillova.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -19,11 +14,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
@@ -34,36 +25,6 @@ public class SpringConfig {
 
     @Autowired
     private ConfidentialProperties confidentialProperties;
-
-    @Bean
-    public Map<Long, User> userStorage() {
-        return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    public Set<String> allUsernames() {
-        return Collections.newSetFromMap(new ConcurrentHashMap<>());
-    }
-
-    @Bean
-    public Map<Long, Trainee> traineeStorage() {
-        return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    public Map<Long, Trainer> trainerStorage() {
-        return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    public Map<Long, Training> trainingStorage() {
-        return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    public Map<Long, TrainingType> trainingTypeStorage() {
-        return new ConcurrentHashMap<>();
-    }
 
     @Bean
     public DataSource dataSource() {
@@ -81,12 +42,17 @@ public class SpringConfig {
     }
 
     private void initializeDatabase(DataSource dataSource) {
+        executeSqlFile(dataSource, configProperties.getJdbcInitLocation());
+        executeSqlFile(dataSource, configProperties.getJdbcPopulateLocation());
+    }
+
+    private void executeSqlFile(DataSource dataSource, String filePath) {
         try {
-            String sql = new String(Files.readAllBytes(Paths.get(configProperties.getJdbcInitLocation())));
+            String sql = new String(Files.readAllBytes(Paths.get(filePath)));
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.execute(sql);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize database", e);
+            throw new RuntimeException("Failed to execute SQL file: " + filePath, e);
         }
     }
 

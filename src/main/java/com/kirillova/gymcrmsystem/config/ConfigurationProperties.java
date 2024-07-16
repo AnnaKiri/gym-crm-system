@@ -10,18 +10,6 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:application.properties")
 public class ConfigurationProperties {
 
-    @Value("${storage.init.data.trainee}")
-    private String traineeDataPath;
-
-    @Value("${storage.init.data.trainer}")
-    private String trainerDataPath;
-
-    @Value("${storage.init.data.training}")
-    private String trainingDataPath;
-
-    @Value("${storage.init.data.trainingtype}")
-    private String trainingTypeDataPath;
-
     @Value("${hibernate.driver_class}")
     private String hibernateDriverClass;
 
@@ -46,4 +34,6 @@ public class ConfigurationProperties {
     @Value("${jdbc.initLocation}")
     private String jdbcInitLocation;
 
+    @Value("classpath:db/populateDB.sql")
+    private String jdbcPopulateLocation;
 }
