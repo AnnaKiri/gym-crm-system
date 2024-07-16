@@ -3,40 +3,42 @@ package com.kirillova.gymcrmsystem.dao;
 import com.kirillova.gymcrmsystem.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class UserDAO {
 
-    private final Map<Long, User> userStorage;
-    private final AtomicLong index = new AtomicLong(0L);
+    private final SessionFactory sessionFactory;
 
     public User save(User user) {
-        long newId = index.incrementAndGet();
-        user.setId(newId);
-        userStorage.put(newId, user);
-        log.debug("New user with id = " + newId + " saved");
+        Session session = sessionFactory.getCurrentSession();
+        session.save(user);
+        session.flush();
+        session.refresh(user);
+        log.debug("New user with id = " + user.getId() + " saved");
         return user;
     }
 
-    public void update(long userId, User updatedUser) {
-        userStorage.put(userId, updatedUser);
-        log.debug("User with id = " + userId + " updated");
+    public void update(User updatedUser) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(updatedUser);
+        log.debug("User with id = " + updatedUser.getId() + " updated");
     }
 
-    public void delete(long userId) {
-        userStorage.remove(userId);
+    public void delete(int userId) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(User.class, userId));
         log.debug("User with id = " + userId + " deleted");
     }
 
-    public User getUser(long userId) {
+    public User getUser(int userId) {
+        Session session = sessionFactory.getCurrentSession();
         log.debug("Get user with id = " + userId);
-        return userStorage.get(userId);
+        return session.get(User.class, userId);
     }
 }
 

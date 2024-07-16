@@ -3,39 +3,42 @@ package com.kirillova.gymcrmsystem.dao;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class TraineeDAO {
-    private final Map<Long, Trainee> traineeStorage;
-    private final AtomicLong index = new AtomicLong(0L);
+
+    private final SessionFactory sessionFactory;
 
     public Trainee save(Trainee trainee) {
-        long newId = index.incrementAndGet();
-        trainee.setId(newId);
-        traineeStorage.put(newId, trainee);
-        log.debug("New trainee with id = " + newId + " saved");
+        Session session = sessionFactory.getCurrentSession();
+        session.save(trainee);
+        session.flush();
+        session.refresh(trainee);
+        log.debug("New trainee with id = " + trainee.getId() + " saved");
         return trainee;
     }
 
-    public void update(long traineeId, Trainee updatedTrainee) {
-        traineeStorage.put(traineeId, updatedTrainee);
-        log.debug("Trainee with id = " + traineeId + " updated");
+    public void update(Trainee updatedTrainee) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(updatedTrainee);
+        log.debug("Trainee with id = " + updatedTrainee.getId() + " updated");
     }
 
-    public void delete(long traineeId) {
-        traineeStorage.remove(traineeId);
+    public void delete(int traineeId) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(Trainee.class, traineeId));
         log.debug("Trainee with id = " + traineeId + " deleted");
     }
 
-    public Trainee getTrainee(long traineeId) {
+    public Trainee getTrainee(int traineeId) {
+        Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainee with id = " + traineeId);
-        return traineeStorage.get(traineeId);
+        return session.get(Trainee.class, traineeId);
     }
 }
 
