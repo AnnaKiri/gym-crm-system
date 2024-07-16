@@ -1,7 +1,9 @@
 package com.kirillova.gymcrmsystem.util;
 
 import java.security.SecureRandom;
-import java.util.Set;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserUtil {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -16,16 +18,21 @@ public class UserUtil {
         return sb.toString();
     }
 
-    public static String generateUsername(String firstName, String lastName, Set<String> usernames) {
+    public static String generateUsername(String firstName, String lastName, List<String> usernames) {
+
         String username = firstName + "." + lastName;
-        if (usernames.contains(username)) {
-            int i = 1;
-            while (usernames.contains(username + i)) {
-                i++;
+
+        if (usernames.isEmpty()) {
+            return username;
+        } else {
+            String lastUsername = usernames.get(usernames.size() - 1);
+            Pattern pattern = Pattern.compile(Pattern.quote(username) + "(\\d+)$");
+            Matcher matcher = pattern.matcher(lastUsername);
+            int lastNumber = 0;
+            if (matcher.find()) {
+                lastNumber = Integer.parseInt(matcher.group(1));
             }
-            username = username + i;
+            return username + (lastNumber + 1);
         }
-        usernames.add(username);
-        return username;
     }
 }

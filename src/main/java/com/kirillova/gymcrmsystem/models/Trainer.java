@@ -38,9 +38,9 @@ public class Trainer extends AbstractBaseEntity {
         this(trainer.id, trainer.specialization, trainer.user);
     }
 
-    public Trainer(Integer id, TrainingType specializationId, User user) {
+    public Trainer(Integer id, TrainingType specialization, User user) {
         super(id);
-        this.specialization = specializationId;
+        this.specialization = specialization;
         this.user = user;
     }
 }

@@ -34,6 +34,6 @@ public class ConfigurationProperties {
     @Value("${jdbc.initLocation}")
     private String jdbcInitLocation;
 
-    @Value("classpath:db/populateDB.sql")
+    @Value("${jdbc.populateLocation}")
     private String jdbcPopulateLocation;
 }
