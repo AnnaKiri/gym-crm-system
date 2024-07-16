@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,8 +7,9 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -17,18 +17,20 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-public class TrainingType {
+public class TrainingType extends AbstractBaseEntity {
 
-    @Id
-    @Column(name = "id")
-    private long id;
-
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Size(min = 1, max = 128)
     private String name;
 
     public TrainingType(TrainingType trainingType) {
         this(trainingType.id, trainingType.name);
+    }
+
+    public TrainingType(Integer id, String name) {
+        super(id);
+        this.name = name;
     }
 }

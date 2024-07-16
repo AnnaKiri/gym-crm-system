@@ -1,36 +1,46 @@
 package com.kirillova.gymcrmsystem.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "trainer")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-public class Trainer {
+public class Trainer extends AbstractBaseEntity {
 
-    @Id
-    @Column(name = "id")
-    private long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "specialization_id", nullable = false)
+    @NotNull
+    private TrainingType specialization;
 
-    @Column(name = "specialization_id")
-    private long specializationId;
-
-    @Column(name = "user_id")
-    private long userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private User user;
 
     public Trainer(Trainer trainer) {
-        this(trainer.id, trainer.specializationId, trainer.userId);
+        this(trainer.id, trainer.specialization, trainer.user);
+    }
+
+    public Trainer(Integer id, TrainingType specializationId, User user) {
+        super(id);
+        this.specialization = specializationId;
+        this.user = user;
     }
 }
