@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +37,34 @@ public class GymFacade {
         traineeService.delete(traineeId);
     }
 
+    public Trainee getTraineeByUserName(String username) {
+        return traineeService.getByUserName(username);
+    }
+
+    public boolean changeTraineePassword(int traineeId, String newPassword) {
+        return traineeService.changePassword(traineeId, newPassword);
+    }
+
+    public boolean activeTrainee(int traineeId, boolean isActive) {
+        return traineeService.active(traineeId, isActive);
+    }
+
+    public void deleteTraineeByUsername(String username) {
+        traineeService.deleteByUsername(username);
+    }
+
+    public List<Trainer> getFreeTrainersForTrainee(String traineeUsername) {
+        return traineeService.getFreeTrainersForTrainee(traineeUsername);
+    }
+
+    public Trainee getTraineeWithTrainers(int traineeId) {
+        return traineeService.getWithTrainers(traineeId);
+    }
+
+    private List<Training> getTraineeTrainings(String username, Date fromDate, Date toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+        return traineeService.getTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+    }
+
     // Methods for Trainer
     public void createTrainer(String firstName, String lastName, TrainingType specialization) {
         trainerService.create(firstName, lastName, specialization);
@@ -47,6 +76,22 @@ public class GymFacade {
 
     public Trainer getTrainer(int trainerId) {
         return trainerService.get(trainerId);
+    }
+
+    public void getTrainerByUserName(String username) {
+        trainerService.getByUserName(username);
+    }
+
+    public boolean changeTrainerPassword(int trainerId, String newPassword) {
+        return trainerService.changePassword(trainerId, newPassword);
+    }
+
+    public boolean activeTrainer(int trainerId, boolean isActive) {
+        return trainerService.active(trainerId, isActive);
+    }
+
+    public List<Training> getTrainerTrainings(String username, Date fromDate, Date toDate, String traineeFirstName, String traineeLastName) {
+        return trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
     }
 
     // Methods for Training

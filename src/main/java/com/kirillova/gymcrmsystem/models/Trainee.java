@@ -45,7 +45,7 @@ public class Trainee extends AbstractBaseEntity {
 
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Trainer> trainerIdList;
+    private List<Trainer> trainerList;
 
     public Trainee(Trainee trainee) {
         this(trainee.id, trainee.dateOfBirth, trainee.address, trainee.user);
@@ -58,25 +58,3 @@ public class Trainee extends AbstractBaseEntity {
         this.user = user;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

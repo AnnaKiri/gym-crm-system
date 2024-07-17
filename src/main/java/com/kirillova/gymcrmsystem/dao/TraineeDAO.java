@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -44,6 +45,14 @@ public class TraineeDAO {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainee with id = " + traineeId);
         return session.get(Trainee.class, traineeId);
+    }
+
+    public Trainee getByUserId(int userId) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainee with userid = " + userId);
+        return session.createQuery("FROM Trainee t WHERE t.user.id = :userId", Trainee.class)
+                .setParameter("userId", userId)
+                .uniqueResult();
     }
 }
 
