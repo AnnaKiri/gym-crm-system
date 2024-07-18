@@ -3,7 +3,6 @@ package com.kirillova.gymcrmsystem.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -20,7 +19,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class Trainer extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,5 +40,14 @@ public class Trainer extends AbstractBaseEntity {
         super(id);
         this.specialization = specialization;
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Trainer{" +
+                "specialization=" + specialization.getId() +
+                ", user=" + user.getId() +
+                ", id=" + id +
+                '}';
     }
 }

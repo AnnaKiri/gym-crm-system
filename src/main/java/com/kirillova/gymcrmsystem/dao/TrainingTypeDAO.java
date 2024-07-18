@@ -16,7 +16,7 @@ public class TrainingTypeDAO {
 
     private final SessionFactory sessionFactory;
 
-    public TrainingType get(long trainingTypeId) {
+    public TrainingType get(int trainingTypeId) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training with id = " + trainingTypeId);
         return session.get(TrainingType.class, trainingTypeId);

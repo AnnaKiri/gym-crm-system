@@ -25,9 +25,6 @@ public class ConfigurationProperties {
     @Value("${hibernate.show_sql}")
     private String hibernateShowSql;
 
-    @Value("${hibernate.current_session_context_class}")
-    private String hibernateCurrentSessionContextClass;
-
     @Value("${database.init}")
     private boolean databaseInit;
 

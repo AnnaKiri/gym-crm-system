@@ -12,9 +12,9 @@ public class Application {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class, ConfigurationProperties.class, ConfidentialProperties.class);
 
-        TraineeService traineeService = context.getBean("TraineeService", TraineeService.class);
-        TrainerService trainerService = context.getBean("TrainerService", TrainerService.class);
-        TrainingService trainingService = context.getBean("TrainingService", TrainingService.class);
+        TraineeService traineeService = context.getBean(TraineeService.class);
+        TrainerService trainerService = context.getBean(TrainerService.class);
+        TrainingService trainingService = context.getBean(TrainingService.class);
 
         System.out.println("First trainee: " + traineeService.get(1));
         System.out.println("First trainer: " + trainerService.get(1));

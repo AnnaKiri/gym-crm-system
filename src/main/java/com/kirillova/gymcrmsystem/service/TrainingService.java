@@ -19,7 +19,7 @@ public class TrainingService {
 
     private final TrainingDAO trainingDAO;
 
-    public Training get(long trainingId) {
+    public Training get(int trainingId) {
         log.debug("Get training with trainingId = " + trainingId);
         return trainingDAO.get(trainingId);
     }

@@ -3,7 +3,6 @@ package com.kirillova.gymcrmsystem.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -23,7 +22,6 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class Training extends AbstractBaseEntity {
 
     @JoinColumn(name = "trainee_id", nullable = false)
@@ -67,5 +65,18 @@ public class Training extends AbstractBaseEntity {
         this.type = type;
         this.date = date;
         this.duration = duration;
+    }
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "trainee=" + trainee.getId() +
+                ", trainer=" + trainer.getId() +
+                ", name='" + name + '\'' +
+                ", type=" + type.getId() +
+                ", date=" + date +
+                ", duration=" + duration +
+                ", id=" + id +
+                '}';
     }
 }

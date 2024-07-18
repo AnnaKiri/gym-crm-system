@@ -9,15 +9,19 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
+@EnableTransactionManagement
 public class SpringConfig {
 
     @Autowired
@@ -47,8 +51,12 @@ public class SpringConfig {
     }
 
     private void executeSqlFile(DataSource dataSource, String filePath) {
-        try {
-            String sql = new String(Files.readAllBytes(Paths.get(filePath)));
+        ClassLoader classLoader = SpringConfig.class.getClassLoader();
+        try (InputStream inputStream = classLoader.getResourceAsStream(filePath);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            String sql = reader.lines().collect(Collectors.joining("\n"));
+
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.execute(sql);
         } catch (IOException e) {
@@ -60,7 +68,6 @@ public class SpringConfig {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", configProperties.getHibernateDialect());
         properties.put("hibernate.show_sql", configProperties.getHibernateShowSql());
-        properties.put("hibernate.current_session_context_class", configProperties.getHibernateCurrentSessionContextClass());
 
         return properties;
     }

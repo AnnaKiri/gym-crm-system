@@ -35,7 +35,7 @@ public class TrainingDAO {
         return training;
     }
 
-    public Training get(long trainingId) {
+    public Training get(int trainingId) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training with id = " + trainingId);
         return session.get(Training.class, trainingId);

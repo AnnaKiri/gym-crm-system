@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(callSuper = true)
 public class TrainingType extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false)
