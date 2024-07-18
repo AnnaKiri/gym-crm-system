@@ -5,6 +5,7 @@ import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.TrainingType;
+import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class TrainingService {
         training.setType(type);
         training.setDate(date);
         training.setDuration(duration);
+        ValidationUtil.validate(training);
         return trainingDAO.save(training);
     }
 }

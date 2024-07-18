@@ -8,6 +8,7 @@ import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.UserUtil;
+import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,11 @@ public class TrainerService {
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
         updatedUser.setActive(isActive);
+        ValidationUtil.validate(updatedUser);
         userDAO.update(updatedUser);
 
         updatedTrainer.setSpecialization(specialization);
+        ValidationUtil.validate(updatedTrainer);
         trainerDAO.update(updatedTrainer);
     }
 
@@ -54,12 +57,14 @@ public class TrainerService {
         newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userDAO.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
+        ValidationUtil.validate(newUser);
         newUser = userDAO.save(newUser);
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
         trainer.setSpecialization(specialization);
         trainer.setUser(newUser);
+        ValidationUtil.validate(trainer);
         return trainerDAO.save(trainer);
     }
 
@@ -72,6 +77,7 @@ public class TrainerService {
     @Transactional
     public boolean changePassword(int trainerId, String newPassword) {
         log.debug("Change password for trainer with id = " + trainerId);
+        ValidationUtil.validatePassword(newPassword);
         Trainer trainer = trainerDAO.get(trainerId);
         return userDAO.changePassword(trainer.getUser().getId(), newPassword);
     }

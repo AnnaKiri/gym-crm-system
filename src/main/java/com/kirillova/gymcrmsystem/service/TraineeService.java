@@ -9,6 +9,7 @@ import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.UserUtil;
+import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,10 +49,12 @@ public class TraineeService {
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
         updatedUser.setActive(isActive);
+        ValidationUtil.validate(updatedUser);
         userDAO.update(updatedUser);
 
         updatedTrainee.setDateOfBirth(birthday);
         updatedTrainee.setAddress(address);
+        ValidationUtil.validate(updatedTrainee);
         traineeDAO.update(updatedTrainee);
     }
 
@@ -64,6 +67,7 @@ public class TraineeService {
         newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userDAO.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
+        ValidationUtil.validate(newUser);
         newUser = userDAO.save(newUser);
 
         log.debug("Create new trainee");
@@ -71,6 +75,7 @@ public class TraineeService {
         trainee.setAddress(address);
         trainee.setDateOfBirth(birthday);
         trainee.setUser(newUser);
+        ValidationUtil.validate(trainee);
         return traineeDAO.save(trainee);
     }
 
@@ -83,6 +88,7 @@ public class TraineeService {
     @Transactional
     public boolean changePassword(int traineeId, String newPassword) {
         log.debug("Change password for trainee with id = " + traineeId);
+        ValidationUtil.validatePassword(newPassword);
         Trainee trainee = traineeDAO.get(traineeId);
         return userDAO.changePassword(trainee.getUser().getId(), newPassword);
     }
