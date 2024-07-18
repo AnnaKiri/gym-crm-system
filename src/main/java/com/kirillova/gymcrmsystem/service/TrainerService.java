@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -89,7 +89,7 @@ public class TrainerService {
         return userDAO.active(trainer.getUser().getId(), isActive);
     }
 
-    public List<Training> getTrainings(String username, Date fromDate, Date toDate, String traineeFirstName, String traineeLastName) {
+    public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = " + username);
         return trainingDAO.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
     }

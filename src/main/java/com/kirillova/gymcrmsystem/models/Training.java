@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "training")
@@ -47,7 +47,7 @@ public class Training extends AbstractBaseEntity {
 
     @Column(name = "date", nullable = false)
     @NotNull
-    private Date date;
+    private LocalDate date;
 
     @Column(name = "duration", nullable = false)
     @NotNull
@@ -57,7 +57,7 @@ public class Training extends AbstractBaseEntity {
         this(training.id, training.trainee, training.trainer, training.name, training.type, training.date, training.duration);
     }
 
-    public Training(Integer id, Trainee trainee, Trainer trainer, String name, TrainingType type, Date date, int duration) {
+    public Training(Integer id, Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {
         super(id);
         this.trainee = trainee;
         this.trainer = trainer;

@@ -14,7 +14,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -42,16 +42,16 @@ public class TrainingDAO {
     }
 
     @Transactional
-    public List<Training> getTraineeTrainings(String traineeUsername, Date fromDate, Date toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+    public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         return getTrainings(traineeUsername, null, fromDate, toDate, trainingType, trainerFirstName, trainerLastName, null, null);
     }
 
     @Transactional
-    public List<Training> getTrainerTrainings(String trainerUsername, Date fromDate, Date toDate, String traineeFirstName, String traineeLastName) {
+    public List<Training> getTrainerTrainings(String trainerUsername, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         return getTrainings(null, trainerUsername, fromDate, toDate, null, null, null, traineeFirstName, traineeLastName);
     }
 
-    private List<Training> getTrainings(String traineeUsername, String trainerUsername, Date fromDate, Date toDate,
+    private List<Training> getTrainings(String traineeUsername, String trainerUsername, LocalDate fromDate, LocalDate toDate,
                                         String trainingType, String trainerFirstName, String trainerLastName,
                                         String traineeFirstName, String traineeLastName) {
         Session session = sessionFactory.getCurrentSession();

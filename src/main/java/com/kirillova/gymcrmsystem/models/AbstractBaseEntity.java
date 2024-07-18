@@ -11,6 +11,8 @@ import org.hibernate.Hibernate;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -24,6 +26,7 @@ public abstract class AbstractBaseEntity implements HasId {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
     @Override

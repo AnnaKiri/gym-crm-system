@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Service
 @Slf4j
@@ -24,7 +24,7 @@ public class TrainingService {
         return trainingDAO.get(trainingId);
     }
 
-    public Training create(Trainee trainee, Trainer trainer, String name, TrainingType type, Date date, int duration) {
+    public Training create(Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {
         log.debug("Create new training");
         Training training = new Training();
         training.setTrainee(trainee);

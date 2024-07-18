@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -41,7 +41,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public void update(int traineeId, String firstName, String lastName, Date birthday, String address, boolean isActive) {
+    public void update(int traineeId, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
         log.debug("Update trainee with traineeId = " + traineeId);
         Trainee updatedTrainee = traineeDAO.get(traineeId);
         User updatedUser = userDAO.get(updatedTrainee.getUser().getId());
@@ -59,7 +59,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public Trainee create(String firstName, String lastName, Date birthday, String address) {
+    public Trainee create(String firstName, String lastName, LocalDate birthday, String address) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
@@ -118,7 +118,7 @@ public class TraineeService {
         return trainee;
     }
 
-    public List<Training> getTrainings(String username, Date fromDate, Date toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+    public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = " + username);
         return trainingDAO.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
     }
