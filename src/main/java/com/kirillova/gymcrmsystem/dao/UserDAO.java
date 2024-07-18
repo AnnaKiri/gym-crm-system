@@ -101,5 +101,14 @@ public class UserDAO {
             log.debug("No user found with username = " + username);
         }
     }
+
+    public User getByUsernameAndPassword(String username, String password) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get user with username = " + username + " for authentication");
+        return session.createQuery("FROM User u WHERE u.username = :username AND u.password = :password", User.class)
+                .setParameter("username", username)
+                .setParameter("password", password)
+                .uniqueResult();
+    }
 }
 
