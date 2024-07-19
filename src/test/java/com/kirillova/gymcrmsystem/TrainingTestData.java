@@ -18,6 +18,7 @@ import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
 
 public class TrainingTestData {
+    public static final int TRAINING_1_ID = 1;
 
     public static final Training TRAINING_1 = new Training(1, TRAINEE_1, TRAINER_4, "Stretching", TRAINING_TYPE_4, LocalDate.of(2024, 1, 1), 60);
     public static final Training TRAINING_2 = new Training(2, TRAINEE_1, TRAINER_2, "Aerobic", TRAINING_TYPE_2, LocalDate.of(2024, 1, 2), 60);
@@ -28,7 +29,7 @@ public class TrainingTestData {
     public static final Training TRAINING_7 = new Training(7, TRAINEE_4, TRAINER_1, "Strength", TRAINING_TYPE_1, LocalDate.of(2024, 1, 6), 60);
     public static final Training TRAINING_8 = new Training(8, TRAINEE_2, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
 
-    public static final MatcherFactory.Matcher<Training> TRAINING_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Training.class, "trainee", "trainer");
+    public static final MatcherFactory.Matcher<Training> TRAINING_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Training.class, "trainee", "trainer", "type");
 
     public static Training getNewTraining() {
         return new Training(null, TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);

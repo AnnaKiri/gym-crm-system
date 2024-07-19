@@ -36,13 +36,13 @@ public class Training extends AbstractBaseEntity {
     private Trainer trainer;
 
     @Column(name = "name", nullable = false)
-    @Size(min = 5, max = 128)
+    @Size(min = 2, max = 128)
     @NotBlank
     private String name;
 
     @JoinColumn(name = "type_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank
+    @NotNull
     private TrainingType type;
 
     @Column(name = "date", nullable = false)

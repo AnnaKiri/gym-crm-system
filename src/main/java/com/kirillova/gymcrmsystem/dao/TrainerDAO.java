@@ -69,6 +69,27 @@ public class TrainerDAO {
                         ")", Trainer.class)
                 .setParameter("username", traineeUsername)
                 .list();
+
+//
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<Trainer> query = builder.createQuery(Trainer.class);
+//        Root<Trainer> trainerRoot = query.from(Trainer.class);
+//
+//        // Subquery to find trainers already assigned to the trainee
+//        CriteriaQuery<Trainer> subquery = builder.createQuery(Trainer.class);
+//        Root<Trainer> subTrainerRoot = subquery.from(Trainer.class);
+//        Join<Trainer, Training> subTrainingJoin = subTrainerRoot.join("trainings");
+//        Join<Training, Trainee> subTraineeJoin = subTrainingJoin.join("trainee");
+//        Join<Trainee, User> subUserJoin = subTraineeJoin.join("user");
+//
+//        subquery.select(subTrainerRoot)
+//                .where(builder.equal(subUserJoin.get("username"), traineeUsername));
+//
+//        // Main query to find trainers not assigned to the trainee
+//        query.select(trainerRoot).distinct(true)
+//                .where(builder.not(trainerRoot.in(subquery)));
+//
+//        return session.createQuery(query).getResultList();
     }
 
     public List<Trainer> getTrainersForTrainee(int traineeId) {

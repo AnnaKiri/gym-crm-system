@@ -36,7 +36,7 @@ public class TraineeService {
     @Transactional
     public void delete(int traineeId) {
         log.debug("Delete trainee with traineeId = " + traineeId);
-        Trainee trainee = get(traineeId);
+        Trainee trainee = traineeDAO.get(traineeId);
         userDAO.delete(trainee.getUser().getId());
     }
 
@@ -79,7 +79,7 @@ public class TraineeService {
         return traineeDAO.save(trainee);
     }
 
-    public Trainee getByUserName(String username) {
+    public Trainee getByUsername(String username) {
         log.debug("Get user with username = " + username);
         User user = userDAO.getByUsername(username);
         return traineeDAO.getByUserId(user.getId());

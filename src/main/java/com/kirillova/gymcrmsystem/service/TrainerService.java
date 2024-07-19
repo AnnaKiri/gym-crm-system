@@ -68,7 +68,7 @@ public class TrainerService {
         return trainerDAO.save(trainer);
     }
 
-    public Trainer getByUserName(String username) {
+    public Trainer getByUsername(String username) {
         log.debug("Get user with username = " + username);
         User user = userDAO.getByUsername(username);
         return trainerDAO.getByUserId(user.getId());

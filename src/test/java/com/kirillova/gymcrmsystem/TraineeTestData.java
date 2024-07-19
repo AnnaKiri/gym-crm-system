@@ -10,6 +10,8 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_3;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_4;
 
 public class TraineeTestData {
+    public static final int TRAINEE_1_ID = 1;
+
     public static final Trainee TRAINEE_1 = new Trainee(1, LocalDate.of(1975, 6, 4), "some address", USER_1);
     public static final Trainee TRAINEE_2 = new Trainee(2, LocalDate.of(1976, 10, 23), "some address", USER_2);
     public static final Trainee TRAINEE_3 = new Trainee(3, LocalDate.of(1976, 9, 15), "some address", USER_3);

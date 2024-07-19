@@ -3,6 +3,8 @@ package com.kirillova.gymcrmsystem;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 
 public class TrainingTypeTestData {
+    public static final int TRAINING_TYPE_1_ID = 1;
+
     public static final TrainingType TRAINING_TYPE_1 = new TrainingType(1, "Strength");
     public static final TrainingType TRAINING_TYPE_2 = new TrainingType(2, "Aerobic");
     public static final TrainingType TRAINING_TYPE_3 = new TrainingType(3, "Yoga");

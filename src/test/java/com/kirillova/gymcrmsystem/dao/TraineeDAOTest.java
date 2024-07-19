@@ -1,12 +1,16 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getNewTrainee;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
 
 class TraineeDAOTest extends AbstractDAOTest {
 
@@ -27,18 +31,24 @@ class TraineeDAOTest extends AbstractDAOTest {
     @Test
     void update() {
         traineeDAO.update(getUpdatedTrainee());
-        TRAINEE_MATCHER.assertMatch(traineeDAO.get(1), getUpdatedTrainee());
+        TRAINEE_MATCHER.assertMatch(traineeDAO.get(TRAINEE_1_ID), getUpdatedTrainee());
     }
 
-//    @Test
-//    void delete() {
-//        traineeDAO.delete(traineeId);
-//        assertFalse(traineeStorage.containsKey(traineeId));
-//    }
-//
-//    @Test
-//    void getTrainee() {
-//        Trainee retrievedTrainee = traineeDAO.getTrainee(traineeId);
-//        assertEquals(savedTrainee, retrievedTrainee);
-//    }
+    @Test
+    void delete() {
+        traineeDAO.delete(TRAINEE_1_ID);
+        Assertions.assertNull(traineeDAO.get(TRAINEE_1_ID));
+    }
+
+    @Test
+    void get() {
+        Trainee retrievedTrainee = traineeDAO.get(TRAINEE_1_ID);
+        TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+    }
+
+    @Test
+    void getByUserId() {
+        Trainee retrievedTrainee = traineeDAO.getByUserId(USER_1_ID);
+        TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+    }
 }

@@ -44,7 +44,7 @@ public class GymFacade {
 
     public Trainee getTraineeByUserName(String username, String password) {
         authService.userAuthentication(username, password);
-        return traineeService.getByUserName(username);
+        return traineeService.getByUsername(username);
     }
 
     public boolean changeTraineePassword(String username, String password, int traineeId, String newPassword) {
@@ -94,7 +94,7 @@ public class GymFacade {
 
     public void getTrainerByUserName(String username, String password) {
         authService.userAuthentication(username, password);
-        trainerService.getByUserName(username);
+        trainerService.getByUsername(username);
     }
 
     public boolean changeTrainerPassword(String username, String password, int trainerId, String newPassword) {
