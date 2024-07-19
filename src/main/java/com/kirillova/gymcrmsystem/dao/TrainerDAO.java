@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -51,45 +52,28 @@ public class TrainerDAO {
 
     public List<Trainer> getFreeTrainersForUsername(String traineeUsername) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainers list that not assigned on trainee by trainee's username = " + traineeUsername);
-        return session.createQuery("SELECT DISTINCT Trainer " +
-                        "FROM Trainer " +
-                        "JOIN Trainer.user userTrainer " +
-                        "JOIN Training ON Training.trainer = Trainer " +
-                        "JOIN Training.trainee " +
-                        "JOIN Trainee.user " +
-                        "WHERE Trainer NOT IN (" +
-                        "    SELECT Trainer " +
-                        "    FROM Trainer " +
-                        "    JOIN Trainer.user userTrainer " +
-                        "    JOIN Training ON Training.trainer = Trainer " +
-                        "    JOIN Training.trainee " +
-                        "    JOIN Trainee.user " +
-                        "    WHERE User.username = :username" +
-                        ")", Trainer.class)
+        log.debug("Get trainers list that not assigned to trainee with username = " + traineeUsername);
+
+        String hql = "SELECT DISTINCT trainer " +
+                "FROM Trainer trainer " +
+                "JOIN Training training ON training.trainer.id = trainer.id " +
+                "JOIN training.trainee trainee " +
+                "JOIN trainee.user user " +
+                "WHERE trainer.id NOT IN (" +
+                "    SELECT trainer.id " +
+                "    FROM Trainer trainer " +
+                "    JOIN Training training ON training.trainer.id = trainer.id " +
+                "    JOIN training.trainee trainee " +
+                "    JOIN trainee.user user " +
+                "    WHERE user.username = :username" +
+                ")";
+
+        List<Trainer> freeTrainers = session.createQuery(hql, Trainer.class)
                 .setParameter("username", traineeUsername)
                 .list();
 
-//
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<Trainer> query = builder.createQuery(Trainer.class);
-//        Root<Trainer> trainerRoot = query.from(Trainer.class);
-//
-//        // Subquery to find trainers already assigned to the trainee
-//        CriteriaQuery<Trainer> subquery = builder.createQuery(Trainer.class);
-//        Root<Trainer> subTrainerRoot = subquery.from(Trainer.class);
-//        Join<Trainer, Training> subTrainingJoin = subTrainerRoot.join("trainings");
-//        Join<Training, Trainee> subTraineeJoin = subTrainingJoin.join("trainee");
-//        Join<Trainee, User> subUserJoin = subTraineeJoin.join("user");
-//
-//        subquery.select(subTrainerRoot)
-//                .where(builder.equal(subUserJoin.get("username"), traineeUsername));
-//
-//        // Main query to find trainers not assigned to the trainee
-//        query.select(trainerRoot).distinct(true)
-//                .where(builder.not(trainerRoot.in(subquery)));
-//
-//        return session.createQuery(query).getResultList();
+        freeTrainers.sort(Comparator.comparingLong(Trainer::getId));
+        return freeTrainers;
     }
 
     public List<Trainer> getTrainersForTrainee(int traineeId) {

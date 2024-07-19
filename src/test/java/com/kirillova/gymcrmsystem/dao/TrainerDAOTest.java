@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_2;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_3;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1_ID;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
@@ -53,9 +57,30 @@ class TrainerDAOTest extends AbstractDAOTest {
     }
 
     @Test
-    void getFreeTrainersForUsername() {
-        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername("Angelina.Jolie");
+    void getFreeTrainersByUsernameForTrainee1() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_1.getUser().getUsername());
         List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
+        TRAINER_MATCHER.assertMatch(actual, expected);
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee2() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_2.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_4);
+        TRAINER_MATCHER.assertMatch(actual, expected);
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee3() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_3.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3, TRAINER_4);
+        TRAINER_MATCHER.assertMatch(actual, expected);
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee4() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_4.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_3);
         TRAINER_MATCHER.assertMatch(actual, expected);
     }
 
