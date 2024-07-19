@@ -11,6 +11,7 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1_ID;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainerTestData.getNewTrainer;
@@ -51,12 +52,12 @@ class TrainerDAOTest extends AbstractDAOTest {
         TRAINER_MATCHER.assertMatch(retrievedTrainer, TRAINER_1);
     }
 
-//    @Test
-//    void getFreeTrainersForTrainee() {
-//        List<Trainer> expected = trainerDAO.getFreeTrainersForTrainee("Angelina.Jolie");
-//        List<Trainer> actual = Arrays.asList(TRAINER_1, TRAINER_3);
-//        Assertions.assertEquals(expected, actual);
-//    }
+    @Test
+    void getFreeTrainersForUsername() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername("Angelina.Jolie");
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
+        TRAINER_MATCHER.assertMatch(actual, expected);
+    }
 
     @Test
     void getTrainersForTrainee() {

@@ -108,7 +108,7 @@ public class TraineeService {
 
     public List<Trainer> getFreeTrainersForTrainee(String traineeUsername) {
         log.debug("Get trainers list that not assigned on trainee by trainee's username = " + traineeUsername);
-        return trainerDAO.getFreeTrainersForTrainee(traineeUsername);
+        return trainerDAO.getFreeTrainersForUsername(traineeUsername);
     }
 
     public Trainee getWithTrainers(int traineeId) {

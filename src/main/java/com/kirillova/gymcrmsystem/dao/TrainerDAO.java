@@ -49,7 +49,7 @@ public class TrainerDAO {
                 .uniqueResult();
     }
 
-    public List<Trainer> getFreeTrainersForTrainee(String traineeUsername) {
+    public List<Trainer> getFreeTrainersForUsername(String traineeUsername) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list that not assigned on trainee by trainee's username = " + traineeUsername);
         return session.createQuery("SELECT DISTINCT Trainer " +

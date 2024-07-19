@@ -172,7 +172,7 @@ public class TraineeServiceTest {
     @Test
     void getFreeTrainersForTrainee() {
         List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
-        when(trainerDAO.getFreeTrainersForTrainee(USER_1.getUsername())).thenReturn(expected);
+        when(trainerDAO.getFreeTrainersForUsername(USER_1.getUsername())).thenReturn(expected);
         List<Trainer> actual = traineeService.getFreeTrainersForTrainee(USER_1.getUsername());
         TRAINER_MATCHER.assertMatch(actual, expected);
     }
