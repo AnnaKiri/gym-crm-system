@@ -115,7 +115,6 @@ public class TraineeServiceTest {
         Assertions.assertNull(traineeService.get(TRAINEE_1_ID));
     }
 
-
     @Test
     void update() {
         Trainee trainee = getUpdatedTrainee();

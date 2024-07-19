@@ -59,7 +59,6 @@ class UserDAOTest extends AbstractDAOTest {
     void getByUsername() {
         User retrievedUser = userDAO.getByUsername(USER_1.getUsername());
         USER_MATCHER.assertMatch(retrievedUser, USER_1);
-
     }
 
     @Test

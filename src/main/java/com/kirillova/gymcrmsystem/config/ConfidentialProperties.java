@@ -11,5 +11,4 @@ import org.springframework.context.annotation.PropertySource;
 public class ConfidentialProperties {
     @Value("${hibernate.connection.password}")
     private String hibernateConnectionPassword;
-
 }
