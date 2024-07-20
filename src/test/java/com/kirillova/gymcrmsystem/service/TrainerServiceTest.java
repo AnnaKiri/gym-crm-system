@@ -21,10 +21,15 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_3;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1_ID;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerSpecializationId;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerUserId;
 import static com.kirillova.gymcrmsystem.TrainerTestData.getNewTrainer;
 import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainer;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_5;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
@@ -55,9 +60,8 @@ class TrainerServiceTest {
         Trainer trainer = trainerService.get(TRAINEE_1_ID);
 
         TRAINER_MATCHER.assertMatch(trainer, TRAINER_1);
-
-        Assertions.assertEquals(TRAINER_1.getUser().getId(), trainer.getUser().getId());
-        Assertions.assertEquals(TRAINER_1.getSpecialization().getId(), trainer.getSpecialization().getId());
+        checkTrainerUserId(TRAINER_1, trainer);
+        checkTrainerSpecializationId(TRAINER_1, trainer);
     }
 
     @Test
@@ -76,9 +80,8 @@ class TrainerServiceTest {
         Trainer trainerGet = trainerService.get(TRAINEE_1_ID);
 
         TRAINER_MATCHER.assertMatch(trainerGet, trainer);
-
-        Assertions.assertEquals(trainer.getUser().getId(), trainerGet.getUser().getId());
-        Assertions.assertEquals(trainer.getSpecialization().getId(), trainerGet.getSpecialization().getId());
+        checkTrainerUserId(trainer, trainerGet);
+        checkTrainerSpecializationId(trainer, trainerGet);
     }
 
     @Test
@@ -116,9 +119,8 @@ class TrainerServiceTest {
         newTrainer.setId(trainerId);
 
         TRAINER_MATCHER.assertMatch(savedTrainer, newTrainer);
-
-        Assertions.assertEquals(newTrainer.getUser().getId(), savedTrainer.getUser().getId());
-        Assertions.assertEquals(newTrainer.getSpecialization().getId(), savedTrainer.getSpecialization().getId());
+        checkTrainerUserId(newTrainer, savedTrainer);
+        checkTrainerSpecializationId(newTrainer, savedTrainer);
     }
 
     @Test
@@ -131,8 +133,8 @@ class TrainerServiceTest {
         Trainer trainer = trainerService.getByUsername(user.getUsername());
 
         TRAINER_MATCHER.assertMatch(trainer, TRAINER_1);
-        Assertions.assertEquals(TRAINER_1.getUser().getId(), trainer.getUser().getId());
-        Assertions.assertEquals(TRAINER_1.getSpecialization().getId(), trainer.getSpecialization().getId());
+        checkTrainerUserId(TRAINER_1, trainer);
+        checkTrainerSpecializationId(TRAINER_1, trainer);
     }
 
     @Test
@@ -173,11 +175,10 @@ class TrainerServiceTest {
                 TRAINEE_3.getUser().getLastName());
 
         TRAINING_MATCHER.assertMatch(expected, actual);
-
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
-            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
-            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+            checkTrainingTraineeId(expected.get(i), actual.get(i));
+            checkTrainingTrainerId(expected.get(i), actual.get(i));
+            checkTrainingTypeId(expected.get(i), actual.get(i));
         }
     }
 }

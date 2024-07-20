@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Trainer;
+import org.junit.jupiter.api.Assertions;
 
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
@@ -27,5 +28,13 @@ public class TrainerTestData {
 
     public static Trainer getUpdatedTrainer() {
         return new Trainer(1, TRAINING_TYPE_4, USER_5);
+    }
+
+    public static void checkTrainerUserId(Trainer expected, Trainer actual) {
+        Assertions.assertEquals(expected.getUser().getId(), actual.getUser().getId());
+    }
+
+    public static void checkTrainerSpecializationId(Trainer expected, Trainer actual) {
+        Assertions.assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
     }
 }

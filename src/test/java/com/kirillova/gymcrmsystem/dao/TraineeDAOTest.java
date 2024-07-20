@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.checkTraineeUserId;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getNewTrainee;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
@@ -26,21 +27,23 @@ class TraineeDAOTest extends AbstractDAOTest {
 
         TRAINEE_MATCHER.assertMatch(savedTrainee, newTrainee);
         TRAINEE_MATCHER.assertMatch(traineeDAO.get(traineeId), newTrainee);
-        Assertions.assertEquals(newTrainee.getUser().getId(), savedTrainee.getUser().getId());
+        checkTraineeUserId(newTrainee, savedTrainee);
     }
 
     @Test
     void update() {
-        traineeDAO.update(getUpdatedTrainee());
+        Trainee updatedTraineeRef = getUpdatedTrainee();
+        traineeDAO.update(updatedTraineeRef);
         Trainee updatedTrainee = traineeDAO.get(TRAINEE_1_ID);
 
-        TRAINEE_MATCHER.assertMatch(updatedTrainee, getUpdatedTrainee());
-        Assertions.assertEquals(getUpdatedTrainee().getUser().getId(), updatedTrainee.getUser().getId());
+        TRAINEE_MATCHER.assertMatch(updatedTrainee, updatedTraineeRef);
+        checkTraineeUserId(updatedTraineeRef, updatedTrainee);
     }
 
     @Test
     void delete() {
         traineeDAO.delete(TRAINEE_1_ID);
+
         Assertions.assertNull(traineeDAO.get(TRAINEE_1_ID));
     }
 
@@ -49,7 +52,7 @@ class TraineeDAOTest extends AbstractDAOTest {
         Trainee retrievedTrainee = traineeDAO.get(TRAINEE_1_ID);
 
         TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
-        Assertions.assertEquals(TRAINEE_1.getUser().getId(), retrievedTrainee.getUser().getId());
+        checkTraineeUserId(TRAINEE_1, retrievedTrainee);
     }
 
     @Test
@@ -57,6 +60,6 @@ class TraineeDAOTest extends AbstractDAOTest {
         Trainee retrievedTrainee = traineeDAO.getByUserId(USER_1_ID);
 
         TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
-        Assertions.assertEquals(TRAINEE_1.getUser().getId(), retrievedTrainee.getUser().getId());
+        checkTraineeUserId(TRAINEE_1, retrievedTrainee);
     }
 }

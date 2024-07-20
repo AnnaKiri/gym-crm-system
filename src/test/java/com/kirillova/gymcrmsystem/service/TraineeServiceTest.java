@@ -22,6 +22,7 @@ import java.util.List;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.checkTraineeUserId;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getNewTrainee;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
@@ -94,15 +95,17 @@ public class TraineeServiceTest {
         newTrainee.setId(traineeId);
 
         TRAINEE_MATCHER.assertMatch(savedTrainee, newTrainee);
-        Assertions.assertEquals(newTrainee.getUser().getId(), savedTrainee.getUser().getId());
+        checkTraineeUserId(newTrainee, savedTrainee);
     }
 
     @Test
     void get() {
         when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
+
         Trainee trainee = traineeService.get(TRAINEE_1_ID);
+
         TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
-        Assertions.assertEquals(trainee.getUser().getId(), TRAINEE_1.getUser().getId());
+        checkTraineeUserId(TRAINEE_1, trainee);
     }
 
     @Test
@@ -136,17 +139,20 @@ public class TraineeServiceTest {
         Trainee traineeGet = traineeService.get(TRAINEE_1_ID);
 
         TRAINEE_MATCHER.assertMatch(traineeGet, trainee);
-        Assertions.assertEquals(traineeGet.getUser().getId(), trainee.getUser().getId());
+        checkTraineeUserId(trainee, traineeGet);
     }
 
     @Test
     void getByUsername() {
         User user = TRAINEE_1.getUser();
+
         when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
         when(traineeDAO.getByUserId(user.getId())).thenReturn(TRAINEE_1);
+
         Trainee trainee = traineeService.getByUsername(user.getUsername());
+
         TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
-        Assertions.assertEquals(TRAINEE_1.getUser().getId(), trainee.getUser().getId());
+        checkTraineeUserId(TRAINEE_1, trainee);
     }
 
     @Test

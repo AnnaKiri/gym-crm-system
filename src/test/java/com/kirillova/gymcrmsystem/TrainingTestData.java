@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Training;
+import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 
@@ -33,5 +34,17 @@ public class TrainingTestData {
 
     public static Training getNewTraining() {
         return new Training(null, TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+    }
+
+    public static void checkTrainingTraineeId(Training expected, Training actual) {
+        Assertions.assertEquals(expected.getTrainee().getId(), actual.getTrainee().getId());
+    }
+
+    public static void checkTrainingTrainerId(Training expected, Training actual) {
+        Assertions.assertEquals(expected.getTrainer().getId(), actual.getTrainer().getId());
+    }
+
+    public static void checkTrainingTypeId(Training expected, Training actual) {
+        Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
     }
 }

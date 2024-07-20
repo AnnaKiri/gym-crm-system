@@ -1,7 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Training;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +15,9 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_6;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.getNewTraining;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 
@@ -32,26 +34,26 @@ class TrainingDAOTest extends AbstractDAOTest {
         newTraining.setId(trainingId);
 
         TRAINING_MATCHER.assertMatch(savedTraining, newTraining);
-
-        Assertions.assertEquals(newTraining.getTrainee().getId(), savedTraining.getTrainee().getId());
-        Assertions.assertEquals(newTraining.getTrainer().getId(), savedTraining.getTrainer().getId());
-        Assertions.assertEquals(newTraining.getType().getId(), savedTraining.getType().getId());
+        checkTrainingTraineeId(newTraining, savedTraining);
+        checkTrainingTrainerId(newTraining, savedTraining);
+        checkTrainingTypeId(newTraining, savedTraining);
 
         Training training = trainingDAO.get(trainingId);
-        TRAINING_MATCHER.assertMatch(training, newTraining);
 
-        Assertions.assertEquals(newTraining.getTrainee().getId(), training.getTrainee().getId());
-        Assertions.assertEquals(newTraining.getTrainer().getId(), training.getTrainer().getId());
-        Assertions.assertEquals(newTraining.getType().getId(), training.getType().getId());
+        TRAINING_MATCHER.assertMatch(training, newTraining);
+        checkTrainingTraineeId(newTraining, training);
+        checkTrainingTrainerId(newTraining, training);
+        checkTrainingTypeId(newTraining, training);
     }
 
     @Test
     void get() {
         Training retrievedTraining = trainingDAO.get(TRAINING_1_ID);
+
         TRAINING_MATCHER.assertMatch(retrievedTraining, TRAINING_1);
-        Assertions.assertEquals(TRAINING_1.getTrainee().getId(), retrievedTraining.getTrainee().getId());
-        Assertions.assertEquals(TRAINING_1.getTrainer().getId(), retrievedTraining.getTrainer().getId());
-        Assertions.assertEquals(TRAINING_1.getType().getId(), retrievedTraining.getType().getId());
+        checkTrainingTraineeId(TRAINING_1, retrievedTraining);
+        checkTrainingTrainerId(TRAINING_1, retrievedTraining);
+        checkTrainingTypeId(TRAINING_1, retrievedTraining);
     }
 
     @Test
@@ -68,9 +70,9 @@ class TrainingDAOTest extends AbstractDAOTest {
         TRAINING_MATCHER.assertMatch(actual, expected);
 
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
-            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
-            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+            checkTrainingTraineeId(expected.get(i), actual.get(i));
+            checkTrainingTrainerId(expected.get(i), actual.get(i));
+            checkTrainingTypeId(expected.get(i), actual.get(i));
         }
     }
 
@@ -88,9 +90,9 @@ class TrainingDAOTest extends AbstractDAOTest {
         TRAINING_MATCHER.assertMatch(actual, expected);
 
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
-            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
-            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+            checkTrainingTraineeId(expected.get(i), actual.get(i));
+            checkTrainingTrainerId(expected.get(i), actual.get(i));
+            checkTrainingTypeId(expected.get(i), actual.get(i));
         }
     }
 
@@ -107,9 +109,9 @@ class TrainingDAOTest extends AbstractDAOTest {
         TRAINING_MATCHER.assertMatch(actual, expected);
 
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
-            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
-            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+            checkTrainingTraineeId(expected.get(i), actual.get(i));
+            checkTrainingTrainerId(expected.get(i), actual.get(i));
+            checkTrainingTypeId(expected.get(i), actual.get(i));
         }
     }
 
@@ -126,9 +128,9 @@ class TrainingDAOTest extends AbstractDAOTest {
         TRAINING_MATCHER.assertMatch(actual, expected);
 
         for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
-            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
-            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+            checkTrainingTraineeId(expected.get(i), actual.get(i));
+            checkTrainingTrainerId(expected.get(i), actual.get(i));
+            checkTrainingTypeId(expected.get(i), actual.get(i));
         }
     }
 }

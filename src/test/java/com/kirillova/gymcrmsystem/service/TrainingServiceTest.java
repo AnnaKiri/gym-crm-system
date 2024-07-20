@@ -2,7 +2,6 @@ package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.models.Training;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,9 @@ import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.getNewTraining;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,10 +41,9 @@ class TrainingServiceTest {
         Training training = trainingService.get(TRAINING_1_ID);
 
         TRAINING_MATCHER.assertMatch(training, TRAINING_1);
-
-        Assertions.assertEquals(TRAINING_1.getTrainee().getId(), training.getTrainee().getId());
-        Assertions.assertEquals(TRAINING_1.getTrainer().getId(), training.getTrainer().getId());
-        Assertions.assertEquals(TRAINING_1.getType().getId(), training.getType().getId());
+        checkTrainingTraineeId(TRAINING_1, training);
+        checkTrainingTrainerId(TRAINING_1, training);
+        checkTrainingTypeId(TRAINING_1, training);
     }
 
     @Test
@@ -62,9 +63,8 @@ class TrainingServiceTest {
         newTraining.setId(trainingId);
 
         TRAINING_MATCHER.assertMatch(savedTraining, newTraining);
-
-        Assertions.assertEquals(newTraining.getTrainee().getId(), savedTraining.getTrainee().getId());
-        Assertions.assertEquals(newTraining.getTrainer().getId(), savedTraining.getTrainer().getId());
-        Assertions.assertEquals(newTraining.getType().getId(), savedTraining.getType().getId());
+        checkTrainingTraineeId(newTraining, savedTraining);
+        checkTrainingTrainerId(newTraining, savedTraining);
+        checkTrainingTypeId(newTraining, savedTraining);
     }
 }

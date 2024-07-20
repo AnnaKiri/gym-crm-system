@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,10 @@ public class TraineeTestData {
 
     public static Trainee getUpdatedTrainee() {
         return new Trainee(1, LocalDate.of(1970, 12, 1), "updated address", USER_1);
+    }
+
+    public static void checkTraineeUserId(Trainee expected, Trainee actual) {
+        Assertions.assertEquals(expected.getUser().getId(), actual.getUser().getId());
     }
 
 }

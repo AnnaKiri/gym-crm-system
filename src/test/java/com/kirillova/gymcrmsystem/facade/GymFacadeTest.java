@@ -7,7 +7,6 @@ import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.service.TrainingService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,13 +19,19 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_3;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.checkTraineeUserId;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1_ID;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerSpecializationId;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerUserId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
@@ -80,8 +85,7 @@ class GymFacadeTest {
 
         verify(traineeService, times(1)).get(TRAINEE_1_ID);
         TRAINEE_MATCHER.assertMatch(actual, TRAINEE_1);
-        Assertions.assertEquals(TRAINEE_1.getUser().getId(), actual.getUser().getId());
-
+        checkTraineeUserId(TRAINEE_1, actual);
     }
 
     @Test
@@ -118,8 +122,8 @@ class GymFacadeTest {
 
         verify(trainerService, times(1)).get(TRAINER_1_ID);
         TRAINER_MATCHER.assertMatch(actual, TRAINER_1);
-        Assertions.assertEquals(TRAINER_1.getUser().getId(), actual.getUser().getId());
-        Assertions.assertEquals(TRAINER_1.getSpecialization().getId(), actual.getSpecialization().getId());
+        checkTrainerUserId(TRAINER_1, actual);
+        checkTrainerSpecializationId(TRAINER_1, actual);
     }
 
     @Test
@@ -140,9 +144,8 @@ class GymFacadeTest {
 
         verify(trainingService, times(1)).get(TRAINING_1_ID);
         TRAINING_MATCHER.assertMatch(actual, TRAINING_1);
-
-        Assertions.assertEquals(TRAINING_1.getTrainee().getId(), actual.getTrainee().getId());
-        Assertions.assertEquals(TRAINING_1.getTrainer().getId(), actual.getTrainer().getId());
-        Assertions.assertEquals(TRAINING_1.getType().getId(), actual.getType().getId());
+        checkTrainingTraineeId(TRAINING_1, actual);
+        checkTrainingTrainerId(TRAINING_1, actual);
+        checkTrainingTypeId(TRAINING_1, actual);
     }
 }
