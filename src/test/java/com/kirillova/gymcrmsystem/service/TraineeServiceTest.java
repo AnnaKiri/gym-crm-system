@@ -63,7 +63,7 @@ public class TraineeServiceTest {
     void create() {
         when(userDAO.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
-            user.setId(USER_1_ID + 8);
+            user.setId(USER_1_ID);
             return user;
         });
 
@@ -94,12 +94,15 @@ public class TraineeServiceTest {
         newTrainee.setId(traineeId);
 
         TRAINEE_MATCHER.assertMatch(savedTrainee, newTrainee);
+        Assertions.assertEquals(newTrainee.getUser().getId(), savedTrainee.getUser().getId());
     }
 
     @Test
     void get() {
         when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
-        TRAINEE_MATCHER.assertMatch(traineeService.get(TRAINEE_1_ID), TRAINEE_1);
+        Trainee trainee = traineeService.get(TRAINEE_1_ID);
+        TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
+        Assertions.assertEquals(trainee.getUser().getId(), TRAINEE_1.getUser().getId());
     }
 
     @Test
@@ -130,7 +133,10 @@ public class TraineeServiceTest {
 
         when(traineeDAO.get(trainee.getId())).thenReturn(trainee);
 
-        TRAINEE_MATCHER.assertMatch(traineeService.get(TRAINEE_1_ID), trainee);
+        Trainee traineeGet = traineeService.get(TRAINEE_1_ID);
+
+        TRAINEE_MATCHER.assertMatch(traineeGet, trainee);
+        Assertions.assertEquals(traineeGet.getUser().getId(), trainee.getUser().getId());
     }
 
     @Test
@@ -138,7 +144,9 @@ public class TraineeServiceTest {
         User user = TRAINEE_1.getUser();
         when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
         when(traineeDAO.getByUserId(user.getId())).thenReturn(TRAINEE_1);
-        TRAINEE_MATCHER.assertMatch(traineeService.getByUsername(user.getUsername()), TRAINEE_1);
+        Trainee trainee = traineeService.getByUsername(user.getUsername());
+        TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
+        Assertions.assertEquals(TRAINEE_1.getUser().getId(), trainee.getUser().getId());
     }
 
     @Test
@@ -174,6 +182,10 @@ public class TraineeServiceTest {
         when(trainerDAO.getFreeTrainersForUsername(USER_1.getUsername())).thenReturn(expected);
         List<Trainer> actual = traineeService.getFreeTrainersForTrainee(USER_1.getUsername());
         TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
+            Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
+        }
     }
 
     @Test
@@ -183,6 +195,10 @@ public class TraineeServiceTest {
         when(trainerDAO.getTrainersForTrainee(TRAINEE_1_ID)).thenReturn(expected);
         List<Trainer> actual = traineeService.getWithTrainers(TRAINEE_1_ID).getTrainerList();
         TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
+            Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
+        }
     }
 
     @Test
@@ -206,5 +222,10 @@ public class TraineeServiceTest {
                 TRAINER_2.getUser().getLastName());
 
         TRAINING_MATCHER.assertMatch(expected, actual);
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
+            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
+            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+        }
     }
 }

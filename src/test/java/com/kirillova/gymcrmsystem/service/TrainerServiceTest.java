@@ -51,7 +51,13 @@ class TrainerServiceTest {
     @Test
     void get() {
         when(trainerDAO.get(TRAINEE_1_ID)).thenReturn(TRAINER_1);
-        TRAINER_MATCHER.assertMatch(trainerService.get(TRAINER_1_ID), TRAINER_1);
+
+        Trainer trainer = trainerService.get(TRAINEE_1_ID);
+
+        TRAINER_MATCHER.assertMatch(trainer, TRAINER_1);
+
+        Assertions.assertEquals(TRAINER_1.getUser().getId(), trainer.getUser().getId());
+        Assertions.assertEquals(TRAINER_1.getSpecialization().getId(), trainer.getSpecialization().getId());
     }
 
     @Test
@@ -67,16 +73,19 @@ class TrainerServiceTest {
         verify(userDAO, times(1)).update(user);
         verify(trainerDAO, times(1)).update(trainer);
 
-        when(trainerDAO.get(trainer.getId())).thenReturn(trainer);
+        Trainer trainerGet = trainerService.get(TRAINEE_1_ID);
 
-        TRAINER_MATCHER.assertMatch(trainerService.get(TRAINER_1_ID), trainer);
+        TRAINER_MATCHER.assertMatch(trainerGet, trainer);
+
+        Assertions.assertEquals(trainer.getUser().getId(), trainerGet.getUser().getId());
+        Assertions.assertEquals(trainer.getSpecialization().getId(), trainerGet.getSpecialization().getId());
     }
 
     @Test
     void create() {
         when(userDAO.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
-            user.setId(USER_1_ID + 8);
+            user.setId(USER_1_ID + 5);
             return user;
         });
 
@@ -107,21 +116,32 @@ class TrainerServiceTest {
         newTrainer.setId(trainerId);
 
         TRAINER_MATCHER.assertMatch(savedTrainer, newTrainer);
+
+        Assertions.assertEquals(newTrainer.getUser().getId(), savedTrainer.getUser().getId());
+        Assertions.assertEquals(newTrainer.getSpecialization().getId(), savedTrainer.getSpecialization().getId());
     }
 
     @Test
     void getByUsername() {
         User user = TRAINER_1.getUser();
+
         when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
         when(trainerDAO.getByUserId(user.getId())).thenReturn(TRAINER_1);
-        TRAINER_MATCHER.assertMatch(trainerService.getByUsername(user.getUsername()), TRAINER_1);
+
+        Trainer trainer = trainerService.getByUsername(user.getUsername());
+
+        TRAINER_MATCHER.assertMatch(trainer, TRAINER_1);
+        Assertions.assertEquals(TRAINER_1.getUser().getId(), trainer.getUser().getId());
+        Assertions.assertEquals(TRAINER_1.getSpecialization().getId(), trainer.getSpecialization().getId());
     }
 
     @Test
     void changePassword() {
         User user = TRAINER_1.getUser();
+
         when(trainerDAO.get(TRAINER_1_ID)).thenReturn(TRAINER_1);
         when(userDAO.changePassword(user.getId(), "newPassword")).thenReturn(true);
+
         Assertions.assertTrue(trainerService.changePassword(TRAINER_1_ID, "newPassword"));
     }
 
@@ -129,12 +149,14 @@ class TrainerServiceTest {
     void active() {
         when(trainerDAO.get(TRAINER_1_ID)).thenReturn(TRAINER_1);
         when(userDAO.active(TRAINER_1.getUser().getId(), false)).thenReturn(true);
+
         Assertions.assertTrue(trainerService.active(TRAINER_1_ID, false));
     }
 
     @Test
     void getTrainings() {
         List<Training> expected = List.of(TRAINING_5);
+
         when(trainingDAO.getTrainerTrainings(
                 TRAINER_1.getUser().getUsername(),
                 LocalDate.of(2023, 1, 1),
@@ -151,5 +173,11 @@ class TrainerServiceTest {
                 TRAINEE_3.getUser().getLastName());
 
         TRAINING_MATCHER.assertMatch(expected, actual);
+
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
+            Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
+            Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+        }
     }
 }

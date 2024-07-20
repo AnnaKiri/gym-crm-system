@@ -26,12 +26,16 @@ class TraineeDAOTest extends AbstractDAOTest {
 
         TRAINEE_MATCHER.assertMatch(savedTrainee, newTrainee);
         TRAINEE_MATCHER.assertMatch(traineeDAO.get(traineeId), newTrainee);
+        Assertions.assertEquals(newTrainee.getUser().getId(), savedTrainee.getUser().getId());
     }
 
     @Test
     void update() {
         traineeDAO.update(getUpdatedTrainee());
-        TRAINEE_MATCHER.assertMatch(traineeDAO.get(TRAINEE_1_ID), getUpdatedTrainee());
+        Trainee updatedTrainee = traineeDAO.get(TRAINEE_1_ID);
+
+        TRAINEE_MATCHER.assertMatch(updatedTrainee, getUpdatedTrainee());
+        Assertions.assertEquals(getUpdatedTrainee().getUser().getId(), updatedTrainee.getUser().getId());
     }
 
     @Test
@@ -43,12 +47,16 @@ class TraineeDAOTest extends AbstractDAOTest {
     @Test
     void get() {
         Trainee retrievedTrainee = traineeDAO.get(TRAINEE_1_ID);
+
         TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+        Assertions.assertEquals(TRAINEE_1.getUser().getId(), retrievedTrainee.getUser().getId());
     }
 
     @Test
     void getByUserId() {
         Trainee retrievedTrainee = traineeDAO.getByUserId(USER_1_ID);
+
         TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+        Assertions.assertEquals(TRAINEE_1.getUser().getId(), retrievedTrainee.getUser().getId());
     }
 }

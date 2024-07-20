@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.models.Training;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +35,14 @@ class TrainingServiceTest {
     @Test
     void get() {
         when(trainingDAO.get(TRAINING_1_ID)).thenReturn(TRAINING_1);
-        TRAINING_MATCHER.assertMatch(trainingService.get(TRAINING_1_ID), TRAINING_1);
+
+        Training training = trainingService.get(TRAINING_1_ID);
+
+        TRAINING_MATCHER.assertMatch(training, TRAINING_1);
+
+        Assertions.assertEquals(TRAINING_1.getTrainee().getId(), training.getTrainee().getId());
+        Assertions.assertEquals(TRAINING_1.getTrainer().getId(), training.getTrainer().getId());
+        Assertions.assertEquals(TRAINING_1.getType().getId(), training.getType().getId());
     }
 
     @Test
@@ -54,5 +62,9 @@ class TrainingServiceTest {
         newTraining.setId(trainingId);
 
         TRAINING_MATCHER.assertMatch(savedTraining, newTraining);
+
+        Assertions.assertEquals(newTraining.getTrainee().getId(), savedTraining.getTrainee().getId());
+        Assertions.assertEquals(newTraining.getTrainer().getId(), savedTraining.getTrainer().getId());
+        Assertions.assertEquals(newTraining.getType().getId(), savedTraining.getType().getId());
     }
 }
