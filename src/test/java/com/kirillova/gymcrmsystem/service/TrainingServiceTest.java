@@ -2,7 +2,6 @@ package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.models.Training;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,11 +10,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
-import static com.kirillova.gymcrmsystem.TestData.newTraining;
-import static com.kirillova.gymcrmsystem.TestData.trainee3;
-import static com.kirillova.gymcrmsystem.TestData.trainer3;
-import static com.kirillova.gymcrmsystem.TestData.training1;
-import static com.kirillova.gymcrmsystem.TestData.trainingType3;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_3;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
+import static com.kirillova.gymcrmsystem.TrainingTestData.getNewTraining;
+import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,22 +36,35 @@ class TrainingServiceTest {
 
     @Test
     void get() {
-        when(trainingDAO.getTraining(training1.getId())).thenReturn(training1);
-        Assertions.assertEquals(training1, trainingService.get(training1.getId()));
+        when(trainingDAO.get(TRAINING_1_ID)).thenReturn(TRAINING_1);
+
+        Training training = trainingService.get(TRAINING_1_ID);
+
+        TRAINING_MATCHER.assertMatch(training, TRAINING_1);
+        checkTrainingTraineeId(TRAINING_1, training);
+        checkTrainingTrainerId(TRAINING_1, training);
+        checkTrainingTypeId(TRAINING_1, training);
     }
 
     @Test
     void create() {
         when(trainingDAO.save(any(Training.class))).thenAnswer(invocation -> {
             Training training = invocation.getArgument(0);
-            training.setId(9L);
+            training.setId(TRAINING_1_ID + 8);
             return training;
         });
-        Training result = trainingService.create(trainee3.getId(), trainer3.getId(), "Yoga", trainingType3.getId(), LocalDate.of(2024, 1, 5), 60);
+
+        Training newTraining = getNewTraining();
+        Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingDAO, times(1)).save(any(Training.class));
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(newTraining, result);
+        int trainingId = savedTraining.getId();
+        newTraining.setId(trainingId);
+
+        TRAINING_MATCHER.assertMatch(savedTraining, newTraining);
+        checkTrainingTraineeId(newTraining, savedTraining);
+        checkTrainingTrainerId(newTraining, savedTraining);
+        checkTrainingTypeId(newTraining, savedTraining);
     }
 }

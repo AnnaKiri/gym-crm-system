@@ -1,57 +1,36 @@
 package com.kirillova.gymcrmsystem.models;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-public class TrainingType {
-    private long id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+
+@Entity
+@Table(name = "training_type")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
+public class TrainingType extends AbstractBaseEntity {
+
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Size(min = 1, max = 128)
     private String name;
-
-    public TrainingType() {
-    }
-
-    public TrainingType(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public TrainingType(TrainingType trainingType) {
         this(trainingType.id, trainingType.name);
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public TrainingType(Integer id, String name) {
+        super(id);
         this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrainingType that = (TrainingType) o;
-        return id == that.id && Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
-
-    @Override
-    public String toString() {
-        return "TrainingType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

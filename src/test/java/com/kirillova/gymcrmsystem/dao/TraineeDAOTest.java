@@ -1,58 +1,65 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.checkTraineeUserId;
+import static com.kirillova.gymcrmsystem.TraineeTestData.getNewTrainee;
+import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
 
-import static com.kirillova.gymcrmsystem.TestData.trainee1;
-import static com.kirillova.gymcrmsystem.TestData.updatedTrainee;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+class TraineeDAOTest extends AbstractDAOTest {
 
-class TraineeDAOTest {
-
-    private Map<Long, Trainee> traineeStorage;
+    @Autowired
     private TraineeDAO traineeDAO;
-    Trainee testTrainee;
-    Trainee savedTrainee;
-    long traineeId;
-
-    @BeforeEach
-    public void setUp() {
-        traineeStorage = new HashMap<>();
-        traineeDAO = new TraineeDAO(traineeStorage);
-        testTrainee = new Trainee(trainee1);
-        savedTrainee = traineeDAO.save(testTrainee);
-        traineeId = savedTrainee.getId();
-    }
 
     @Test
     void save() {
-        assertNotNull(savedTrainee);
-        assertEquals(savedTrainee, trainee1);
-        assertTrue(traineeStorage.containsKey(savedTrainee.getId()));
+        Trainee savedTrainee = traineeDAO.save(getNewTrainee());
+        int traineeId = savedTrainee.getId();
+        Trainee newTrainee = getNewTrainee();
+        newTrainee.setId(traineeId);
+
+        TRAINEE_MATCHER.assertMatch(savedTrainee, newTrainee);
+        TRAINEE_MATCHER.assertMatch(traineeDAO.get(traineeId), newTrainee);
+        checkTraineeUserId(newTrainee, savedTrainee);
     }
 
     @Test
     void update() {
-        traineeDAO.update(traineeId, updatedTrainee);
-        assertEquals(updatedTrainee, traineeStorage.get(traineeId));
+        Trainee updatedTraineeRef = getUpdatedTrainee();
+        traineeDAO.update(updatedTraineeRef);
+        Trainee updatedTrainee = traineeDAO.get(TRAINEE_1_ID);
+
+        TRAINEE_MATCHER.assertMatch(updatedTrainee, updatedTraineeRef);
+        checkTraineeUserId(updatedTraineeRef, updatedTrainee);
     }
 
     @Test
     void delete() {
-        traineeDAO.delete(traineeId);
-        assertFalse(traineeStorage.containsKey(traineeId));
+        traineeDAO.delete(TRAINEE_1_ID);
+
+        Assertions.assertNull(traineeDAO.get(TRAINEE_1_ID));
     }
 
     @Test
-    void getTrainee() {
-        Trainee retrievedTrainee = traineeDAO.getTrainee(traineeId);
-        assertEquals(savedTrainee, retrievedTrainee);
+    void get() {
+        Trainee retrievedTrainee = traineeDAO.get(TRAINEE_1_ID);
+
+        TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+        checkTraineeUserId(TRAINEE_1, retrievedTrainee);
+    }
+
+    @Test
+    void getByUserId() {
+        Trainee retrievedTrainee = traineeDAO.getByUserId(USER_1_ID);
+
+        TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
+        checkTraineeUserId(TRAINEE_1, retrievedTrainee);
     }
 }

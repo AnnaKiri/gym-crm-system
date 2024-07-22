@@ -1,90 +1,125 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.dao.TraineeDAO;
+import com.kirillova.gymcrmsystem.dao.TrainerDAO;
+import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.models.Trainer;
+import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kirillova.gymcrmsystem.util.ValidationUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Set;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import java.util.List;
 
 @Service
-public class TraineeService implements InitializingBean {
-    private static final Logger log = getLogger(TraineeService.class);
-
-    private final ConfigurationProperties configurationProperties;
+@Slf4j
+@RequiredArgsConstructor
+public class TraineeService {
 
     private final TraineeDAO traineeDAO;
+    private final TrainerDAO trainerDAO;
+    private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
-    private final Set<String> allUsernames;
 
-    @Autowired
-    public TraineeService(ConfigurationProperties configurationProperties, TraineeDAO traineeDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.configurationProperties = configurationProperties;
-        this.traineeDAO = traineeDAO;
-        this.userDAO = userDAO;
-        this.allUsernames = allUsernames;
+    public Trainee get(int traineeId) {
+        log.debug("Get trainee with trainerId = " + traineeId);
+        return traineeDAO.get(traineeId);
     }
 
-    public Trainee get(long traineeId) {
-        log.debug("Get trainee with id = " + traineeId);
-        return traineeDAO.getTrainee(traineeId);
+    @Transactional
+    public void delete(int traineeId) {
+        log.debug("Delete trainee with traineeId = " + traineeId);
+        Trainee trainee = traineeDAO.get(traineeId);
+        userDAO.delete(trainee.getUser().getId());
     }
 
-    public void delete(long traineeId) {
-        log.debug("Delete trainee with userId = " + traineeId);
-        Trainee trainee = get(traineeId);
-        traineeDAO.delete(traineeId);
-        userDAO.delete(trainee.getUserId());
-    }
-
-    public void update(long traineeId, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
-        log.debug("Update trainee with userId = " + traineeId);
-        Trainee updatedTrainee = traineeDAO.getTrainee(traineeId);
-        User updatedUser = userDAO.getUser(updatedTrainee.getUserId());
+    @Transactional
+    public void update(int traineeId, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
+        log.debug("Update trainee with traineeId = " + traineeId);
+        Trainee updatedTrainee = traineeDAO.get(traineeId);
+        User updatedUser = userDAO.get(updatedTrainee.getUser().getId());
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
         updatedUser.setActive(isActive);
-        userDAO.update(updatedUser.getId(), updatedUser);
+        ValidationUtil.validate(updatedUser);
+        userDAO.update(updatedUser);
 
         updatedTrainee.setDateOfBirth(birthday);
         updatedTrainee.setAddress(address);
-        traineeDAO.update(traineeId, updatedTrainee);
+        ValidationUtil.validate(updatedTrainee);
+        traineeDAO.update(updatedTrainee);
     }
 
+    @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, allUsernames));
+        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userDAO.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
+        ValidationUtil.validate(newUser);
         newUser = userDAO.save(newUser);
 
         log.debug("Create new trainee");
         Trainee trainee = new Trainee();
         trainee.setAddress(address);
         trainee.setDateOfBirth(birthday);
-        trainee.setUserId(newUser.getId());
+        trainee.setUser(newUser);
+        ValidationUtil.validate(trainee);
         return traineeDAO.save(trainee);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        DataLoaderUtil.loadData(configurationProperties.getTraineeDataPath(), parts -> {
-            // firstName, lastName, Date of Birth, Address
-            create(parts[0], parts[1], LocalDate.parse(parts[2]), parts[3]);
-        });
+    public Trainee getByUsername(String username) {
+        log.debug("Get user with username = " + username);
+        User user = userDAO.getByUsername(username);
+        return traineeDAO.getByUserId(user.getId());
+    }
+
+    @Transactional
+    public boolean changePassword(int traineeId, String newPassword) {
+        log.debug("Change password for trainee with id = " + traineeId);
+        ValidationUtil.validatePassword(newPassword);
+        Trainee trainee = traineeDAO.get(traineeId);
+        return userDAO.changePassword(trainee.getUser().getId(), newPassword);
+    }
+
+    @Transactional
+    public boolean active(int traineeId, boolean isActive) {
+        log.debug("Change active status for trainee with id = " + traineeId);
+        Trainee trainee = traineeDAO.get(traineeId);
+        return userDAO.active(trainee.getUser().getId(), isActive);
+    }
+
+    @Transactional
+    public void deleteByUsername(String username) {
+        log.debug("Delete trainee with username = " + username);
+        userDAO.deleteByUsername(username);
+    }
+
+    public List<Trainer> getFreeTrainersForTrainee(String traineeUsername) {
+        log.debug("Get trainers list that not assigned on trainee by trainee's username = " + traineeUsername);
+        return trainerDAO.getFreeTrainersForUsername(traineeUsername);
+    }
+
+    public Trainee getWithTrainers(int traineeId) {
+        log.debug("Get trainers list for trainee with id = " + traineeId);
+        Trainee trainee = traineeDAO.get(traineeId);
+        trainee.setTrainerList(trainerDAO.getTrainersForTrainee(traineeId));
+        return trainee;
+    }
+
+    public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+        log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = " + username);
+        return trainingDAO.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
     }
 }

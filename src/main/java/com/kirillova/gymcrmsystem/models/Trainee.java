@@ -1,84 +1,67 @@
 package com.kirillova.gymcrmsystem.models;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.List;
 
-public class Trainee {
+@Entity
+@Table(name = "trainee")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Trainee extends AbstractBaseEntity {
 
-    private long id;
+    @Column(name = "date_of_birth", nullable = false)
+    @NotNull
     private LocalDate dateOfBirth;
+
+    @Column(name = "address", nullable = false)
+    @NotBlank
+    @Size(min = 5, max = 128)
     private String address;
-    private long userId;
 
-    public Trainee() {
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private User user;
 
-    public Trainee(long id, LocalDate dateOfBirth, String address, long userId) {
-        this.id = id;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
-        this.userId = userId;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Trainer> trainerList;
 
     public Trainee(Trainee trainee) {
-        this(trainee.id, trainee.dateOfBirth, trainee.address, trainee.userId);
+        this(trainee.id, trainee.dateOfBirth, trainee.address, trainee.user);
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public Trainee(Integer id, LocalDate dateOfBirth, String address, User user) {
+        super(id);
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
         this.address = address;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Trainee trainee = (Trainee) o;
-        return id == trainee.id
-                && userId == trainee.userId
-                && Objects.equals(dateOfBirth, trainee.dateOfBirth)
-                && Objects.equals(address, trainee.address);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dateOfBirth, address, userId);
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "Trainee{" +
-                "id=" + id +
-                ", dateOfBirth=" + dateOfBirth +
+                "dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
-                ", userId=" + userId +
+                ", user=" + user.getId() +
+                ", id=" + id +
                 '}';
     }
 }

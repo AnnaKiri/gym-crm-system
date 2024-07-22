@@ -1,49 +1,114 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.service.TraineeService;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import java.util.List;
 
 @Component
+@Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserDAO {
-    private static final Logger log = getLogger(TraineeService.class);
 
-    private final Map<Long, User> userStorage;
-    private final AtomicLong index = new AtomicLong(0L);
+    private final SessionFactory sessionFactory;
 
-    @Autowired
-    public UserDAO(Map<Long, User> userStorage) {
-        this.userStorage = userStorage;
-    }
-
+    @Transactional
     public User save(User user) {
-        long newId = index.incrementAndGet();
-        user.setId(newId);
-        userStorage.put(newId, user);
-        log.debug("New user with id = " + newId + " saved");
+        Session session = sessionFactory.getCurrentSession();
+        session.save(user);
+        session.flush();
+        session.refresh(user);
+        log.debug("New user with id = " + user.getId() + " saved");
         return user;
     }
 
-    public void update(long userId, User updatedUser) {
-        userStorage.put(userId, updatedUser);
-        log.debug("User with id = " + userId + " updated");
+    @Transactional
+    public void update(User updatedUser) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(updatedUser);
+        log.debug("User with id = " + updatedUser.getId() + " updated");
     }
 
-    public void delete(long userId) {
-        userStorage.remove(userId);
-        log.debug("User with id = " + userId + " deleted");
+    @Transactional
+    public void delete(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(User.class, id));
+        log.debug("User with id = " + id + " deleted");
     }
 
-    public User getUser(long userId) {
-        log.debug("Get user with id = " + userId);
-        return userStorage.get(userId);
+    public User get(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get user with id = " + id);
+        return session.get(User.class, id);
+    }
+
+    public List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get all usernames by firstname = " + firstName + " and lastname = " + lastName);
+        return session.createQuery("SELECT u.username FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName ORDER BY u.username", String.class)
+                .setParameter("firstName", firstName)
+                .setParameter("lastName", lastName)
+                .list();
+    }
+
+    public User getByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get user with username = " + username);
+        return session.createQuery("FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .uniqueResult();
+    }
+
+    @Transactional
+    public boolean changePassword(int id, String newPassword) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Change password for user with id = " + id);
+        int updatedEntities = session.createQuery("UPDATE User u SET u.password = :password WHERE u.id = :id")
+                .setParameter("id", id)
+                .setParameter("password", newPassword)
+                .executeUpdate();
+
+        return updatedEntities > 0;
+    }
+
+    @Transactional
+    public boolean active(int id, boolean isActive) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Change active status for user with id = " + id);
+        int updatedEntities = session.createQuery("UPDATE User u SET u.isActive = :isActive WHERE u.id = :id")
+                .setParameter("id", id)
+                .setParameter("isActive", isActive)
+                .executeUpdate();
+
+        return updatedEntities > 0;
+    }
+
+    @Transactional
+    public void deleteByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        int deletedEntities = session.createQuery("DELETE FROM User u WHERE u.username = :username")
+                .setParameter("username", username)
+                .executeUpdate();
+        if (deletedEntities > 0) {
+            log.debug("User and related entities with username = " + username + " deleted");
+        } else {
+            log.debug("No user found with username = " + username);
+        }
+    }
+
+    public User getByUsernameAndPassword(String username, String password) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get user with username = " + username + " for authentication");
+        return session.createQuery("FROM User u WHERE u.username = :username AND u.password = :password", User.class)
+                .setParameter("username", username)
+                .setParameter("password", password)
+                .uniqueResult();
     }
 }
 

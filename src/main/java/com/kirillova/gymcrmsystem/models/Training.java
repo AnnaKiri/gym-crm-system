@@ -1,121 +1,82 @@
 package com.kirillova.gymcrmsystem.models;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Objects;
 
-public class Training {
+@Entity
+@Table(name = "training")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Training extends AbstractBaseEntity {
 
-    private long id;
-    private long traineeId;
-    private long trainerId;
+    @JoinColumn(name = "trainee_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private Trainee trainee;
+
+    @JoinColumn(name = "trainer_id ", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private Trainer trainer;
+
+    @Column(name = "name", nullable = false)
+    @Size(min = 2, max = 128)
+    @NotBlank
     private String name;
-    private long typeId;
+
+    @JoinColumn(name = "type_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private TrainingType type;
+
+    @Column(name = "date", nullable = false)
+    @NotNull
     private LocalDate date;
+
+    @Column(name = "duration", nullable = false)
+    @NotNull
     private int duration;
 
-    public Training() {
-    }
-
-    public Training(long id, long traineeId, long trainerId, String name,
-                    long typeId, LocalDate date, int duration) {
-        this.id = id;
-        this.traineeId = traineeId;
-        this.trainerId = trainerId;
-        this.name = name;
-        this.typeId = typeId;
-        this.date = date;
-        this.duration = duration;
-    }
-
     public Training(Training training) {
-        this(training.id, training.traineeId, training.trainerId, training.name, training.typeId, training.date, training.duration);
+        this(training.id, training.trainee, training.trainer, training.name, training.type, training.date, training.duration);
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getTraineeId() {
-        return traineeId;
-    }
-
-    public void setTraineeId(long traineeId) {
-        this.traineeId = traineeId;
-    }
-
-    public long getTrainerId() {
-        return trainerId;
-    }
-
-    public void setTrainerId(long trainerId) {
-        this.trainerId = trainerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Training(Integer id, Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {
+        super(id);
+        this.trainee = trainee;
+        this.trainer = trainer;
         this.name = name;
-    }
-
-    public long getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setLocalDate(LocalDate date) {
+        this.type = type;
         this.date = date;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Training training = (Training) o;
-        return id == training.id
-                && traineeId == training.traineeId
-                && trainerId == training.trainerId
-                && duration == training.duration
-                && Objects.equals(name, training.name)
-                && typeId == training.typeId
-                && Objects.equals(date, training.date);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, traineeId, trainerId, name, typeId, date, duration);
     }
 
     @Override
     public String toString() {
         return "Training{" +
-                "id=" + id +
-                "traineeId=" + traineeId +
-                ", trainerId=" + trainerId +
+                "trainee=" + trainee.getId() +
+                ", trainer=" + trainer.getId() +
                 ", name='" + name + '\'' +
-                ", typeId=" + typeId +
+                ", type=" + type.getId() +
                 ", date=" + date +
                 ", duration=" + duration +
+                ", id=" + id +
                 '}';
     }
 }

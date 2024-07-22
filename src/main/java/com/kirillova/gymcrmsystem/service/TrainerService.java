@@ -1,80 +1,96 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
+import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
+import com.kirillova.gymcrmsystem.models.Training;
+import com.kirillova.gymcrmsystem.models.TrainingType;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.util.DataLoaderUtil;
 import com.kirillova.gymcrmsystem.util.UserUtil;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kirillova.gymcrmsystem.util.ValidationUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
-public class TrainerService implements InitializingBean {
-    private static final Logger log = getLogger(TrainerService.class);
-
-    private final ConfigurationProperties configurationProperties;
+@Slf4j
+@RequiredArgsConstructor
+public class TrainerService {
 
     private final TrainerDAO trainerDAO;
+    private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
-    private final Set<String> allUsernames;
 
-    @Autowired
-    public TrainerService(ConfigurationProperties configurationProperties, TrainerDAO trainerDAO, UserDAO userDAO, Set<String> allUsernames) {
-        this.configurationProperties = configurationProperties;
-        this.trainerDAO = trainerDAO;
-        this.userDAO = userDAO;
-        this.allUsernames = allUsernames;
+    public Trainer get(int trainerId) {
+        log.debug("Get trainer with trainerId = " + trainerId);
+        return trainerDAO.get(trainerId);
     }
 
-    public Trainer get(long trainerId) {
-        log.debug("Get trainer with id = " + trainerId);
-        return trainerDAO.getTrainer(trainerId);
-    }
-
-    public void update(long trainerId, String firstName, String lastName, long specializationId, boolean isActive) {
-        log.debug("Update trainer with userId = " + trainerId);
-        Trainer updatedTrainer = trainerDAO.getTrainer(trainerId);
-        User updatedUser = userDAO.getUser(updatedTrainer.getUserId());
+    @Transactional
+    public void update(int trainerId, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+        log.debug("Update trainer with trainerId = " + trainerId);
+        Trainer updatedTrainer = trainerDAO.get(trainerId);
+        User updatedUser = userDAO.get(updatedTrainer.getUser().getId());
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
         updatedUser.setActive(isActive);
-        userDAO.update(updatedUser.getId(), updatedUser);
+        ValidationUtil.validate(updatedUser);
+        userDAO.update(updatedUser);
 
-        updatedTrainer.setSpecialization(specializationId);
-        trainerDAO.update(trainerId, updatedTrainer);
+        updatedTrainer.setSpecialization(specialization);
+        ValidationUtil.validate(updatedTrainer);
+        trainerDAO.update(updatedTrainer);
     }
 
-    public Trainer create(String firstName, String lastName, long specializationId) {
+    @Transactional
+    public Trainer create(String firstName, String lastName, TrainingType specialization) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, allUsernames));
+        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userDAO.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
+        ValidationUtil.validate(newUser);
         newUser = userDAO.save(newUser);
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
-        trainer.setSpecialization(specializationId);
-        trainer.setUserId(newUser.getId());
+        trainer.setSpecialization(specialization);
+        trainer.setUser(newUser);
+        ValidationUtil.validate(trainer);
         return trainerDAO.save(trainer);
     }
 
-    @Override
-    public void afterPropertiesSet() {
-        DataLoaderUtil.loadData(configurationProperties.getTrainerDataPath(), parts -> {
-            // firstName, lastName, specializationId
-            create(parts[0], parts[1], Long.parseLong(parts[2]));
-        });
+    public Trainer getByUsername(String username) {
+        log.debug("Get user with username = " + username);
+        User user = userDAO.getByUsername(username);
+        return trainerDAO.getByUserId(user.getId());
+    }
+
+    @Transactional
+    public boolean changePassword(int trainerId, String newPassword) {
+        log.debug("Change password for trainer with id = " + trainerId);
+        ValidationUtil.validatePassword(newPassword);
+        Trainer trainer = trainerDAO.get(trainerId);
+        return userDAO.changePassword(trainer.getUser().getId(), newPassword);
+    }
+
+    @Transactional
+    public boolean active(int trainerId, boolean isActive) {
+        log.debug("Change active status for trainer with id = " + trainerId);
+        Trainer trainer = trainerDAO.get(trainerId);
+        return userDAO.active(trainer.getUser().getId(), isActive);
+    }
+
+    public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
+        log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = " + username);
+        return trainingDAO.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
     }
 }

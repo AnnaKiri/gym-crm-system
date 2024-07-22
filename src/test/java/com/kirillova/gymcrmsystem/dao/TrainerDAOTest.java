@@ -1,51 +1,134 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.kirillova.gymcrmsystem.TestData.trainer1;
-import static com.kirillova.gymcrmsystem.TestData.updatedTrainer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_2;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_3;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_4;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1_ID;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerSpecializationId;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerUserId;
+import static com.kirillova.gymcrmsystem.TrainerTestData.getNewTrainer;
+import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainer;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 
-class TrainerDAOTest {
+class TrainerDAOTest extends AbstractDAOTest {
 
-    private Map<Long, Trainer> trainerStorage;
+    @Autowired
     private TrainerDAO trainerDAO;
-    Trainer testTrainer;
-    Trainer savedTrainer;
-    long trainerId;
-
-    @BeforeEach
-    public void setUp() {
-        trainerStorage = new HashMap<>();
-        trainerDAO = new TrainerDAO(trainerStorage);
-        testTrainer = new Trainer(trainer1);
-        savedTrainer = trainerDAO.save(testTrainer);
-        trainerId = savedTrainer.getId();
-    }
 
     @Test
     void save() {
-        assertNotNull(savedTrainer);
-        assertEquals(savedTrainer, trainer1);
-        assertTrue(trainerStorage.containsKey(savedTrainer.getId()));
+        Trainer savedTrainer = trainerDAO.save(getNewTrainer());
+        int trainerId = savedTrainer.getId();
+        Trainer newTrainer = getNewTrainer();
+        newTrainer.setId(trainerId);
+        Trainer trainer = trainerDAO.get(trainerId);
+
+        TRAINER_MATCHER.assertMatch(savedTrainer, newTrainer);
+        TRAINER_MATCHER.assertMatch(trainer, newTrainer);
+        checkTrainerUserId(newTrainer, trainer);
+        checkTrainerSpecializationId(newTrainer, trainer);
     }
 
     @Test
     void update() {
-        trainerDAO.update(trainerId, updatedTrainer);
-        assertEquals(updatedTrainer, trainerStorage.get(trainerId));
+        Trainer updatedTrainer = getUpdatedTrainer();
+        trainerDAO.update(updatedTrainer);
+        Trainer trainer = trainerDAO.get(TRAINER_1_ID);
+
+        TRAINER_MATCHER.assertMatch(trainer, updatedTrainer);
+        checkTrainerUserId(updatedTrainer, trainer);
+        checkTrainerSpecializationId(updatedTrainer, trainer);
     }
 
     @Test
-    void getTrainee() {
-        Trainer retrievedTrainer = trainerDAO.getTrainer(trainerId);
-        assertEquals(savedTrainer, retrievedTrainer);
+    void get() {
+        Trainer retrievedTrainer = trainerDAO.get(TRAINER_1_ID);
+
+        TRAINER_MATCHER.assertMatch(retrievedTrainer, TRAINER_1);
+        checkTrainerUserId(TRAINER_1, retrievedTrainer);
+        checkTrainerSpecializationId(TRAINER_1, retrievedTrainer);
+    }
+
+    @Test
+    void getByUserId() {
+        Trainer retrievedTrainer = trainerDAO.getByUserId(USER_5.getId());
+
+        TRAINER_MATCHER.assertMatch(retrievedTrainer, TRAINER_1);
+        checkTrainerUserId(TRAINER_1, retrievedTrainer);
+        checkTrainerSpecializationId(TRAINER_1, retrievedTrainer);
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee1() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_1.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
+        TRAINER_MATCHER.assertMatch(actual, expected);
+
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee2() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_2.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_4);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee3() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_3.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3, TRAINER_4);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    void getFreeTrainersByUsernameForTrainee4() {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForUsername(TRAINEE_4.getUser().getUsername());
+        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_3);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    void getTrainersForTrainee() {
+        List<Trainer> expected = trainerDAO.getTrainersForTrainee(TRAINEE_1_ID);
+        List<Trainer> actual = Arrays.asList(TRAINER_2, TRAINER_4);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
     }
 }

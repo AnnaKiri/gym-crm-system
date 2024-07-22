@@ -1,49 +1,57 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
-import com.kirillova.gymcrmsystem.service.TraineeService;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TraineeDAO {
-    private static final Logger log = getLogger(TraineeService.class);
 
-    private final Map<Long, Trainee> traineeStorage;
-    private final AtomicLong index = new AtomicLong(0L);
+    private final SessionFactory sessionFactory;
 
-    @Autowired
-    public TraineeDAO(Map<Long, Trainee> traineeStorage) {
-        this.traineeStorage = traineeStorage;
-    }
-
+    @Transactional
     public Trainee save(Trainee trainee) {
-        long newId = index.incrementAndGet();
-        trainee.setId(newId);
-        traineeStorage.put(newId, trainee);
-        log.debug("New trainee with id = " + newId + " saved");
+        Session session = sessionFactory.getCurrentSession();
+        session.save(trainee);
+        session.flush();
+        session.refresh(trainee);
+        log.debug("New trainee with id = " + trainee.getId() + " saved");
         return trainee;
     }
 
-    public void update(long traineeId, Trainee updatedTrainee) {
-        traineeStorage.put(traineeId, updatedTrainee);
-        log.debug("Trainee with id = " + traineeId + " updated");
+    @Transactional
+    public void update(Trainee updatedTrainee) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(updatedTrainee);
+        log.debug("Trainee with id = " + updatedTrainee.getId() + " updated");
     }
 
-    public void delete(long traineeId) {
-        traineeStorage.remove(traineeId);
+    @Transactional
+    public void delete(int traineeId) {
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(Trainee.class, traineeId));
         log.debug("Trainee with id = " + traineeId + " deleted");
     }
 
-    public Trainee getTrainee(long traineeId) {
+    public Trainee get(int traineeId) {
+        Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainee with id = " + traineeId);
-        return traineeStorage.get(traineeId);
+        return session.get(Trainee.class, traineeId);
+    }
+
+    public Trainee getByUserId(int userId) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainee with userid = " + userId);
+        return session.createQuery("FROM Trainee t WHERE t.user.id = :userId", Trainee.class)
+                .setParameter("userId", userId)
+                .uniqueResult();
     }
 }
 

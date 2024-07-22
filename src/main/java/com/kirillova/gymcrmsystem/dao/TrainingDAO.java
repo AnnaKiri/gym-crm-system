@@ -1,38 +1,111 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Training;
-import com.kirillova.gymcrmsystem.service.TraineeService;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.util.List;
 
 @Component
+@Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TrainingDAO {
-    private static final Logger log = getLogger(TraineeService.class);
 
-    private final Map<Long, Training> trainingStorage;
-    private final AtomicLong index = new AtomicLong(0L);
+    private final SessionFactory sessionFactory;
 
-    @Autowired
-    public TrainingDAO(Map<Long, Training> trainingStorage) {
-        this.trainingStorage = trainingStorage;
-    }
-
+    @Transactional
     public Training save(Training training) {
-        long newId = index.incrementAndGet();
-        training.setId(newId);
-        trainingStorage.put(newId, training);
-        log.debug("New training with id = " + newId + " saved");
+        Session session = sessionFactory.getCurrentSession();
+        session.save(training);
+        session.flush();
+        session.refresh(training);
+        log.debug("New training with id = " + training.getId() + " saved");
         return training;
     }
 
-    public Training getTraining(long trainingId) {
+    public Training get(int trainingId) {
+        Session session = sessionFactory.getCurrentSession();
         log.debug("Get training with id = " + trainingId);
-        return trainingStorage.get(trainingId);
+        return session.get(Training.class, trainingId);
+    }
+
+    @Transactional
+    public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+        return getTrainings(traineeUsername, null, fromDate, toDate, trainingType, trainerFirstName, trainerLastName, null, null);
+    }
+
+    @Transactional
+    public List<Training> getTrainerTrainings(String trainerUsername, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
+        return getTrainings(null, trainerUsername, fromDate, toDate, null, null, null, traineeFirstName, traineeLastName);
+    }
+
+    private List<Training> getTrainings(String traineeUsername, String trainerUsername, LocalDate fromDate, LocalDate toDate,
+                                        String trainingType, String trainerFirstName, String trainerLastName,
+                                        String traineeFirstName, String traineeLastName) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Training> cq = cb.createQuery(Training.class);
+        Root<Training> training = cq.from(Training.class);
+        Join<Object, Object> traineeJoin = training.join("trainee", JoinType.LEFT);
+        Join<Object, Object> trainerJoin = training.join("trainer", JoinType.LEFT);
+        Join<Object, Object> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
+        Join<Object, Object> trainerUserJoin = trainerJoin.join("user", JoinType.LEFT);
+        Join<Object, Object> trainingTypeJoin = training.join("type", JoinType.LEFT);
+
+        Predicate predicate = cb.conjunction();
+
+        if (traineeUsername != null && !traineeUsername.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("username"), traineeUsername));
+        }
+
+        if (trainerUsername != null && !trainerUsername.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("username"), trainerUsername));
+        }
+
+        if (fromDate != null) {
+            predicate = cb.and(predicate, cb.greaterThanOrEqualTo(training.get("date"), fromDate));
+        }
+
+        if (toDate != null) {
+            predicate = cb.and(predicate, cb.lessThanOrEqualTo(training.get("date"), toDate));
+        }
+
+        if (trainerFirstName != null && !trainerFirstName.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("firstName"), trainerFirstName));
+        }
+
+        if (trainerLastName != null && !trainerLastName.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("lastName"), trainerLastName));
+        }
+
+        if (traineeFirstName != null && !traineeFirstName.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("firstName"), traineeFirstName));
+        }
+
+        if (traineeLastName != null && !traineeLastName.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("lastName"), traineeLastName));
+        }
+
+        if (trainingType != null && !trainingType.isEmpty()) {
+            predicate = cb.and(predicate, cb.equal(trainingTypeJoin.get("name"), trainingType));
+        }
+
+        cq.where(predicate);
+
+        List<Training> trainings = session.createQuery(cq).getResultList();
+        log.debug("Filtered trainings found: " + trainings.size());
+        return trainings;
     }
 }

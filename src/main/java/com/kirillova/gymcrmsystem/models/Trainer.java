@@ -1,70 +1,52 @@
 package com.kirillova.gymcrmsystem.models;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-public class Trainer {
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-    private long id;
-    private long specializationId;
-    private long userId;
+@Entity
+@Table(name = "trainer")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Trainer extends AbstractBaseEntity {
 
-    public Trainer() {
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "specialization_id", nullable = false)
+    @NotNull
+    private TrainingType specialization;
 
-    public Trainer(long id, long specializationId, long userId) {
-        this.id = id;
-        this.specializationId = specializationId;
-        this.userId = userId;
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private User user;
 
     public Trainer(Trainer trainer) {
-        this(trainer.id, trainer.specializationId, trainer.userId);
+        this(trainer.id, trainer.specialization, trainer.user);
     }
 
-    public long getSpecializationId() {
-        return specializationId;
-    }
-
-    public void setSpecialization(long specializationId) {
-        this.specializationId = specializationId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Trainer trainer = (Trainer) o;
-        return id == trainer.id
-                && specializationId == trainer.specializationId
-                && userId == trainer.userId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, specializationId, userId);
+    public Trainer(Integer id, TrainingType specialization, User user) {
+        super(id);
+        this.specialization = specialization;
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "Trainer{" +
-                "specializationId=" + specializationId +
-                ", userId=" + userId +
+                "specialization=" + specialization.getId() +
+                ", user=" + user.getId() +
                 ", id=" + id +
                 '}';
     }
