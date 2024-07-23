@@ -10,6 +10,8 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
@@ -22,7 +24,8 @@ import java.util.stream.Collectors;
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
 @EnableTransactionManagement
-public class SpringConfig {
+@EnableWebMvc
+public class SpringConfig implements WebMvcConfigurer {
 
     @Autowired
     private ConfigurationProperties configProperties;
