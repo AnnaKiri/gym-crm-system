@@ -19,7 +19,7 @@ public class TrainingUtil {
                     date(training.getDate()).
                     type(training.getType()).
                     duration(training.getDuration()).
-                    traineeName(firstName + " " + lastName). // есть еще поле для trainer, объединить? еще одно поле?
+                    traineeName(firstName + " " + lastName).
                     build();
 
             trainingToList.add(trainingTo);
@@ -27,7 +27,7 @@ public class TrainingUtil {
         return trainingToList;
     }
 
-    public static TrainingTo createTo(Training training){
+    public static TrainingTo createTo(Training training) {
         return TrainingTo.builder().
                 name(training.getName()).
                 date(training.getDate()).

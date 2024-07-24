@@ -18,34 +18,61 @@ public class UserDAO {
 
     private final SessionFactory sessionFactory;
 
-    @Transactional
     public User save(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.save(user);
         session.flush();
         session.refresh(user);
-        log.debug("New user with id = " + user.getId() + " saved");
+        log.debug("New user with id = {} saved", user.getId());
         return user;
     }
 
-    @Transactional
+    public boolean changePassword(String username, String newPassword) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Change password for user with username = {}", username);
+        int updatedEntities = session.createQuery("UPDATE User u SET u.password = :password WHERE u.username = :username")
+                .setParameter("username", username)
+                .setParameter("password", newPassword)
+                .executeUpdate();
+
+        return updatedEntities > 0;
+    }
+
+    public User get(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get user with username = {}", username);
+        return session.createQuery("FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .uniqueResult();
+    }
+
     public void update(User updatedUser) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedUser);
-        log.debug("User with id = " + updatedUser.getId() + " updated");
+        log.debug("User with id = {} updated", updatedUser.getId());
     }
 
-    @Transactional
-    public void delete(int id) {
+    public void delete(String username) {
         Session session = sessionFactory.getCurrentSession();
-        session.remove(session.get(User.class, id));
-        log.debug("User with id = " + id + " deleted");
+        int deletedEntities = session.createQuery("DELETE FROM User u WHERE u.username = :username")
+                .setParameter("username", username)
+                .executeUpdate();
+        if (deletedEntities > 0) {
+            log.debug("User and related entities with username = {} deleted", username);
+        } else {
+            log.debug("No user found with username = {}", username);
+        }
     }
 
-    public User get(int id) {
+    public boolean setActive(String username, boolean isActive) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get user with id = " + id);
-        return session.get(User.class, id);
+        log.debug("Change active status for user with username = " + username);
+        int updatedEntities = session.createQuery("UPDATE User u SET u.isActive = :isActive WHERE u.username = :username")
+                .setParameter("username", username)
+                .setParameter("isActive", isActive)
+                .executeUpdate();
+
+        return updatedEntities > 0;
     }
 
     public List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName) {
@@ -55,51 +82,6 @@ public class UserDAO {
                 .setParameter("firstName", firstName)
                 .setParameter("lastName", lastName)
                 .list();
-    }
-
-    public User getByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Get user with username = " + username);
-        return session.createQuery("FROM User u WHERE u.username = :username", User.class)
-                .setParameter("username", username)
-                .uniqueResult();
-    }
-
-    @Transactional
-    public boolean changePassword(int id, String newPassword) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Change password for user with id = " + id);
-        int updatedEntities = session.createQuery("UPDATE User u SET u.password = :password WHERE u.id = :id")
-                .setParameter("id", id)
-                .setParameter("password", newPassword)
-                .executeUpdate();
-
-        return updatedEntities > 0;
-    }
-
-    @Transactional
-    public boolean active(int id, boolean isActive) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Change active status for user with id = " + id);
-        int updatedEntities = session.createQuery("UPDATE User u SET u.isActive = :isActive WHERE u.id = :id")
-                .setParameter("id", id)
-                .setParameter("isActive", isActive)
-                .executeUpdate();
-
-        return updatedEntities > 0;
-    }
-
-    @Transactional
-    public void deleteByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        int deletedEntities = session.createQuery("DELETE FROM User u WHERE u.username = :username")
-                .setParameter("username", username)
-                .executeUpdate();
-        if (deletedEntities > 0) {
-            log.debug("User and related entities with username = " + username + " deleted");
-        } else {
-            log.debug("No user found with username = " + username);
-        }
     }
 
     public User getByUsernameAndPassword(String username, String password) {

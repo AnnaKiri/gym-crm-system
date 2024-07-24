@@ -33,7 +33,6 @@ import java.util.List;
 
 import static com.kirillova.gymcrmsystem.util.TrainerUtil.createToWithTraineeToList;
 import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingToList;
-import static com.kirillova.gymcrmsystem.util.ValidationUtil.assureIdConsistent;
 import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
@@ -58,56 +57,47 @@ public class TrainerController {
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
-    @PutMapping(value = "/{id}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable int id) {
-        log.info("Change password for user {} with id={}", userTo, id);
-        Trainer trainer = trainerService.getByUsername(userTo.getUsername());
-        assureIdConsistent(trainer, id);
-        trainerService.changePassword(id, userTo.getNewPassword());
+    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
+        log.info("Change password for user {} with username={}", userTo, username);
+        trainerService.changePassword(username, userTo.getNewPassword());
     }
 
-    @GetMapping("/{id}")
-    public TrainerTo get(@PathVariable int id) {
-        log.info("Get the trainer with id={}", id);
-        Trainer receivedTrainer = trainerService.getWithTrainees(id);
+    @GetMapping("/{username}")
+    public TrainerTo get(@PathVariable String username) {
+        log.info("Get the trainer with username={}", username);
+        Trainer receivedTrainer = trainerService.getWithTrainees(username);
         return createToWithTraineeToList(receivedTrainer);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public TrainerTo update(@PathVariable int id, @Valid @RequestBody TrainerTo trainerTo) {
-        log.info("Update the trainer with id {}", id);
-//        assureIdConsistent(dish, id); // может не надо?
-        // еще I. Username (required)
-        trainerService.update(id, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.isActive());
-        Trainer updatedTrainer = trainerService.getWithTrainees(id);
+    public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
+        log.info("Update the trainer with username {}", username);
+        trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.isActive());
+        Trainer updatedTrainer = trainerService.getWithTrainees(username);
         return createToWithTraineeToList(updatedTrainer);
     }
 
-    // надо проверять что trainer еще и активен. 10 пункт
-
-
-    @GetMapping("/{id}/trainings")
+    @GetMapping("/{username}/trainings")
     public List<TrainingTo> getTrainings(
-            @PathVariable int id,
-            @Valid @RequestBody TrainerTo trainerTo,
+            @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
             @RequestParam @Nullable LocalDate toDate,
             @RequestParam @Nullable String traineeFirstName,
             @RequestParam @Nullable String traineeLastName) {
-        log.debug("Get Trainings by trainer username {} for dates({} - {}) trainee {} {}", trainerTo.getUsername(), fromDate, toDate, traineeFirstName, traineeLastName);
-        List<Training> trainings = trainerService.getTrainings(trainerTo.getUsername(), fromDate, toDate, traineeFirstName, traineeLastName);
+        log.debug("Get Trainings by trainer username {} for dates({} - {}) trainee {} {}", username, fromDate, toDate, traineeFirstName, traineeLastName);
+        List<Training> trainings = trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
         return getTrainingToList(trainings, traineeFirstName, traineeLastName);
     }
 
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public void setActive(@PathVariable int id, @RequestParam boolean isActive) {
-        log.info(isActive ? "enable {}" : "disable {}", id);
-//        assureIdConsistent(dish, id); // может не надо?
-        trainerService.setActive(id, isActive);
+    public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
+        log.info(isActive ? "enable {}" : "disable {}", username);
+        trainerService.setActive(username, isActive);
     }
 }

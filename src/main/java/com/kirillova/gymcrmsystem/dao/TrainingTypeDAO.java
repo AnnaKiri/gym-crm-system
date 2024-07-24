@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.dao;
 
-import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

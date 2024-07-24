@@ -20,7 +20,7 @@ public class TraineeUtil {
 
         List<TrainerTo> trainerToList = TrainerUtil.getTrainerToList(trainerList);
 
-        TraineeTo filledTraineeTo = TraineeTo.builder().
+        return TraineeTo.builder().
                 username(receivedUser.getUsername()).
                 firstName(receivedUser.getFirstName()).
                 lastName(receivedUser.getLastName()).
@@ -29,8 +29,6 @@ public class TraineeUtil {
                 isActive(receivedUser.isActive()).
                 trainerList(trainerToList).
                 build();
-
-        return filledTraineeTo;
     }
 
     public static List<TraineeTo> getTraineeToList(List<Trainee> traineeList) {

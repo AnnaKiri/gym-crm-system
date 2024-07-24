@@ -18,21 +18,9 @@ public class TrainerUtil {
 
         List<Trainee> traineeList = updatedTrainer.getTraineeList();
 
-        List<TraineeTo> traineeToList = new ArrayList<>();
+        List<TraineeTo> traineeToList = TraineeUtil.getTraineeToList(traineeList);
 
-        for (Trainee trainee : traineeList) {
-            User traineesUser = trainee.getUser();
-
-            TraineeTo traineeTo = TraineeTo.builder().
-                    username(traineesUser.getUsername()).
-                    firstName(traineesUser.getFirstName()).
-                    lastName(traineesUser.getLastName()).
-                    build();
-
-            traineeToList.add(traineeTo);
-        }
-
-        TrainerTo filledTrainerTo = TrainerTo.builder().
+        return TrainerTo.builder().
                 username(receivedUser.getUsername()).
                 firstName(receivedUser.getFirstName()).
                 lastName(receivedUser.getLastName()).
@@ -40,8 +28,6 @@ public class TrainerUtil {
                 isActive(receivedUser.isActive()).
                 traineeList(traineeToList).
                 build();
-
-        return filledTrainerTo;
     }
 
     public static List<TrainerTo> getTrainerToList(List<Trainer> trainerList) {

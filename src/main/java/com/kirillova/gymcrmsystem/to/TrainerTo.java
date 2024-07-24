@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.to;
 
-import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

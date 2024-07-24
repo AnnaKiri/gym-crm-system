@@ -1,7 +1,7 @@
 package com.kirillova.gymcrmsystem.to;
 
-import lombok.Data;
 import com.kirillova.gymcrmsystem.HasId;
+import lombok.Data;
 
 @Data
 public abstract class BaseTo implements HasId {

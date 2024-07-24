@@ -37,7 +37,6 @@ import java.util.List;
 import static com.kirillova.gymcrmsystem.util.TraineeUtil.createToWithTrainerToList;
 import static com.kirillova.gymcrmsystem.util.TrainerUtil.getTrainerToList;
 import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingToList;
-import static com.kirillova.gymcrmsystem.util.ValidationUtil.assureIdConsistent;
 import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
@@ -48,7 +47,6 @@ public class TraineeController {
 
     @Autowired
     protected TraineeService traineeService;
-
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,67 +61,62 @@ public class TraineeController {
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
-    @PutMapping(value = "/{id}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable int id) {
-        log.info("Change password for user {} with id={}", userTo, id);
-        Trainee trainee = traineeService.getByUsername(userTo.getUsername());
-        assureIdConsistent(trainee, id);   // может не надо?
-        traineeService.changePassword(id, userTo.getNewPassword());
+    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
+        log.info("Change password for user {} with username={}", userTo, username);
+        traineeService.changePassword(username, userTo.getNewPassword());
     }
 
-    @GetMapping("/{id}")
-    public TraineeTo get(@PathVariable int id) {
-        log.info("Get the trainee with id={}", id);
-        Trainee receivedTrainee = traineeService.getWithTrainers(id);
+    @GetMapping("/{username}")
+    public TraineeTo get(@PathVariable String username) {
+        log.info("Get the trainee with username={}", username);
+        Trainee receivedTrainee = traineeService.getWithTrainers(username);
         return createToWithTrainerToList(receivedTrainee);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public TraineeTo update(@PathVariable int id, @Valid @RequestBody TraineeTo traineeTo) {
-        log.info("Update the trainee with id {}", id);
-//        assureIdConsistent(dish, id); // может не надо?
-        // еще I. Username (required)
-        traineeService.update(id, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.isActive());
-        Trainee updatedTrainee = traineeService.getWithTrainers(id);
+    public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
+        log.info("Update the trainee with username={}", username);
+        traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.isActive());
+        Trainee updatedTrainee = traineeService.getWithTrainers(username);
         return createToWithTrainerToList(updatedTrainee);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable int id, @Valid @RequestBody TraineeTo traineeTo) {
-        traineeService.deleteByUsername(traineeTo.getUsername());
+    public void delete(@PathVariable String username) {
+        log.debug("Delete trainee with username = {}", username);
+        traineeService.delete(username);
     }
 
-    @GetMapping("/{id}")
-    public List<TrainerTo> getFreeTrainersForTrainee(@PathVariable int id, @Valid @RequestBody TraineeTo traineeTo) {
-        log.info("Get trainers list that not assigned on trainee with traineeId={}", id);
-        List<Trainer> trainers = traineeService.getFreeTrainersForTrainee(traineeTo.getUsername());
+    @GetMapping("/{username}/free_trainers")
+    public List<TrainerTo> getFreeTrainersForTrainee(@PathVariable String username) {
+        log.info("Get trainers list that not assigned on trainee with username={}", username);
+        List<Trainer> trainers = traineeService.getFreeTrainersForTrainee(username);
         return getTrainerToList(trainers);
     }
 
-    @GetMapping("/{id}/trainings")
+    @GetMapping("/{username}/trainings")
     public List<TrainingTo> getTrainings(
-            @PathVariable int id,
-            @Valid @RequestBody TraineeTo traineeTo,
+            @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
             @RequestParam @Nullable LocalDate toDate,
             @RequestParam @Nullable String trainingType,
             @RequestParam @Nullable String trainerFirstName,
             @RequestParam @Nullable String trainerLastName) {
-        log.debug("Get Trainings by trainee username {} for dates({} - {}) trainingType{} trainer {} {}", traineeTo.getUsername(), fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
-        List<Training> trainings = traineeService.getTrainings(traineeTo.getUsername(), fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+        log.debug("Get Trainings by trainee username {} for dates({} - {}) trainingType{} trainer {} {}", username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+        List<Training> trainings = traineeService.getTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
         return getTrainingToList(trainings, trainerFirstName, trainerLastName);
     }
 
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public void setActive(@PathVariable int id, @RequestParam boolean isActive) {
-        log.info(isActive ? "enable {}" : "disable {}", id);
-//        assureIdConsistent(dish, id); // может не надо?
-        traineeService.setActive(id, isActive);
+    public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
+        log.info(isActive ? "enable {}" : "disable {}", username);
+        traineeService.setActive(username, isActive);
     }
 }

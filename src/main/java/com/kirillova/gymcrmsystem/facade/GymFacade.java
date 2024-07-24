@@ -27,39 +27,24 @@ public class GymFacade {
         traineeService.create(firstName, lastName, birthday, address);
     }
 
-    public void updateTrainee(String username, String password, int traineeId, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
+    public boolean changeTraineePassword(String username, String password, String newPassword) {
         authService.userAuthentication(username, password);
-        traineeService.update(traineeId, firstName, lastName, birthday, address, isActive);
+        return traineeService.changePassword(username, newPassword);
     }
 
-    public Trainee getTrainee(String username, String password, int traineeId) {
+    public Trainee getTraineeWithTrainers(String username, String password) {
         authService.userAuthentication(username, password);
-        return traineeService.get(traineeId);
+        return traineeService.getWithTrainers(username);
     }
 
-    public void deleteTrainee(String username, String password, int traineeId) {
+    public void updateTrainee(String username, String password, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
         authService.userAuthentication(username, password);
-        traineeService.delete(traineeId);
+        traineeService.update(username, firstName, lastName, birthday, address, isActive);
     }
 
-    public Trainee getTraineeByUserName(String username, String password) {
+    public void deleteTrainee(String username, String password) {
         authService.userAuthentication(username, password);
-        return traineeService.getByUsername(username);
-    }
-
-    public boolean changeTraineePassword(String username, String password, int traineeId, String newPassword) {
-        authService.userAuthentication(username, password);
-        return traineeService.changePassword(traineeId, newPassword);
-    }
-
-    public boolean activeTrainee(String username, String password, int traineeId, boolean isActive) {
-        authService.userAuthentication(username, password);
-        return traineeService.setActive(traineeId, isActive);
-    }
-
-    public void deleteTraineeByUsername(String username, String password) {
-        authService.userAuthentication(username, password);
-        traineeService.deleteByUsername(username);
+        traineeService.delete(username);
     }
 
     public List<Trainer> getFreeTrainersForTrainee(String username, String password) {
@@ -67,14 +52,19 @@ public class GymFacade {
         return traineeService.getFreeTrainersForTrainee(username);
     }
 
-    public Trainee getTraineeWithTrainers(String username, String password, int traineeId) {
-        authService.userAuthentication(username, password);
-        return traineeService.getWithTrainers(traineeId);
-    }
-
     private List<Training> getTraineeTrainings(String username, String password, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         authService.userAuthentication(username, password);
         return traineeService.getTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+    }
+
+    public boolean setActiveTrainee(String username, String password, boolean isActive) {
+        authService.userAuthentication(username, password);
+        return traineeService.setActive(username, isActive);
+    }
+
+    public Trainee getTrainee(String username, String password) {
+        authService.userAuthentication(username, password);
+        return traineeService.get(username);
     }
 
     // Methods for Trainer
@@ -82,34 +72,34 @@ public class GymFacade {
         trainerService.create(firstName, lastName, specialization);
     }
 
-    public void updateTrainer(String username, String password, int trainerId, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+    public boolean changeTrainerPassword(String username, String password, String newPassword) {
         authService.userAuthentication(username, password);
-        trainerService.update(trainerId, firstName, lastName, specialization, isActive);
+        return trainerService.changePassword(username, newPassword);
     }
 
-    public Trainer getTrainer(String username, String password, int trainerId) {
+    public Trainer getTrainerWithTrainees(String username, String password) {
         authService.userAuthentication(username, password);
-        return trainerService.get(trainerId);
+        return trainerService.getWithTrainees(username);
     }
 
-    public void getTrainerByUserName(String username, String password) {
+    public void updateTrainer(String username, String password, String firstName, String lastName, TrainingType specialization, boolean isActive) {
         authService.userAuthentication(username, password);
-        trainerService.getByUsername(username);
-    }
-
-    public boolean changeTrainerPassword(String username, String password, int trainerId, String newPassword) {
-        authService.userAuthentication(username, password);
-        return trainerService.changePassword(trainerId, newPassword);
-    }
-
-    public boolean activeTrainer(String username, String password, int trainerId, boolean isActive) {
-        authService.userAuthentication(username, password);
-        return trainerService.setActive(trainerId, isActive);
+        trainerService.update(username, firstName, lastName, specialization, isActive);
     }
 
     public List<Training> getTrainerTrainings(String username, String password, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         authService.userAuthentication(username, password);
         return trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+    }
+
+    public boolean setActiveTrainer(String username, String password, boolean isActive) {
+        authService.userAuthentication(username, password);
+        return trainerService.setActive(username, isActive);
+    }
+
+    public Trainer getTrainer(String username, String password) {
+        authService.userAuthentication(username, password);
+        return trainerService.get(username);
     }
 
     // Methods for Training

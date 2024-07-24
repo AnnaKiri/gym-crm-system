@@ -9,7 +9,6 @@ import com.kirillova.gymcrmsystem.service.TrainingService;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,9 +47,8 @@ public class TrainingController {
     public void create(@Valid @RequestBody TrainingTo trainingTo) {
         log.info("Create a new training {}", trainingTo);
         checkNew(trainingTo);
-        Trainee trainee = traineeService.getByUsername(trainingTo.getTraineeName());
-        Trainer trainer = trainerService.getByUsername(trainingTo.getTrainerName());
+        Trainee trainee = traineeService.get(trainingTo.getTraineeName());
+        Trainer trainer = trainerService.get(trainingTo.getTrainerName());
         trainingService.create(trainee, trainer, trainingTo.getName(), trainingTo.getType(), trainingTo.getDate(), trainingTo.getDuration());
     }
-
 }

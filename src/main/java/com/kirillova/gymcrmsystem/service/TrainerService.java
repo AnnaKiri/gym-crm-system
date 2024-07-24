@@ -28,28 +28,6 @@ public class TrainerService {
     private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
 
-    public Trainer get(int id) {
-        log.debug("Get trainer with trainerId = " + id);
-        return trainerDAO.get(id);
-    }
-
-    @Transactional
-    public void update(int id, String firstName, String lastName, TrainingType specialization, boolean isActive) {
-        log.debug("Update trainer with trainerId = " + id);
-        Trainer updatedTrainer = trainerDAO.get(id);
-        User updatedUser = userDAO.get(updatedTrainer.getUser().getId());
-
-        updatedUser.setFirstName(firstName);
-        updatedUser.setLastName(lastName);
-        updatedUser.setActive(isActive);
-        ValidationUtil.validate(updatedUser);
-        userDAO.update(updatedUser);
-
-        updatedTrainer.setSpecialization(specialization);
-        ValidationUtil.validate(updatedTrainer);
-        trainerDAO.update(updatedTrainer);
-    }
-
     @Transactional
     public Trainer create(String firstName, String lastName, TrainingType specialization) {
         log.debug("Create new user");
@@ -70,36 +48,50 @@ public class TrainerService {
         return trainerDAO.save(trainer);
     }
 
-    public Trainer getByUsername(String username) {
-        log.debug("Get user with username = " + username);
-        User user = userDAO.getByUsername(username);
-        return trainerDAO.getByUserId(user.getId());
-    }
-
     @Transactional
-    public boolean changePassword(int id, String newPassword) {
-        log.debug("Change password for trainer with id = " + id);
+    public boolean changePassword(String username, String newPassword) {
+        log.debug("Change password for trainer with username = {}", username);
         ValidationUtil.validatePassword(newPassword);
-        Trainer trainer = trainerDAO.get(id);
-        return userDAO.changePassword(trainer.getUser().getId(), newPassword);
+        return userDAO.changePassword(username, newPassword);
+    }
+
+    public Trainer getWithTrainees(String username) {
+        log.debug("Get trainees list for trainer with username = {}", username);
+        Trainer trainer = trainerDAO.get(username);
+        trainer.setTraineeList(traineeDAO.getTraineesForTrainer(username));
+        return trainer;
     }
 
     @Transactional
-    public boolean setActive(int id, boolean isActive) {
-        log.debug("Change active status for trainer with id = " + id);
-        Trainer trainer = trainerDAO.get(id);
-        return userDAO.active(trainer.getUser().getId(), isActive);
+    public void update(String username, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+        log.debug("Update trainer with username = {}", username);
+        Trainer updatedTrainer = trainerDAO.get(username);
+        User updatedUser = userDAO.get(username);
+
+        updatedUser.setFirstName(firstName);
+        updatedUser.setLastName(lastName);
+        updatedUser.setActive(isActive);
+        ValidationUtil.validate(updatedUser);
+        userDAO.update(updatedUser);
+
+        updatedTrainer.setSpecialization(specialization);
+        ValidationUtil.validate(updatedTrainer);
+        trainerDAO.update(updatedTrainer);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
-        log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = " + username);
+        log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = {}", username);
         return trainingDAO.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
     }
 
-    public Trainer getWithTrainees(int id) {
-        log.debug("Get trainees list for trainer with id = " + id);
-        Trainer trainer = trainerDAO.get(id);
-        trainer.setTraineeList(traineeDAO.getTraineesForTrainer(id));
-        return trainer;
+    @Transactional
+    public boolean setActive(String username, boolean isActive) {
+        log.debug("Change active status for trainer with username = {}", username);
+        return userDAO.setActive(username, isActive);
+    }
+
+    public Trainer get(String username) {
+        log.debug("Get trainer with username = {}", username);
+        return trainerDAO.get(username);
     }
 }

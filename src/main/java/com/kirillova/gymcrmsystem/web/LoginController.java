@@ -29,6 +29,4 @@ public class LoginController {
         log.info("Login user with username={}", userTo.getUsername());
         authenticationService.userAuthentication(userTo.getUsername(), userTo.getPassword());
     }
-
-
 }
