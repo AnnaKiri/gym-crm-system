@@ -1,10 +1,13 @@
 package com.kirillova.gymcrmsystem.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@UtilityClass
 public class UserUtil {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int PASSWORD_LENGTH = 10;

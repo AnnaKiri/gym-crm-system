@@ -36,10 +36,10 @@ public class TrainerDAO {
         log.debug("Trainer with id = " + updatedTrainer.getId() + " updated");
     }
 
-    public Trainer get(int trainerId) {
+    public Trainer get(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainer with id = " + trainerId);
-        return session.get(Trainer.class, trainerId);
+        log.debug("Get trainer with id = " + id);
+        return session.get(Trainer.class, id);
     }
 
     public Trainer getByUserId(int userId) {
@@ -50,9 +50,9 @@ public class TrainerDAO {
                 .uniqueResult();
     }
 
-    public List<Trainer> getFreeTrainersForUsername(String traineeUsername) {
+    public List<Trainer> getFreeTrainersForUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainers list that not assigned to trainee with username = " + traineeUsername);
+        log.debug("Get trainers list that not assigned to trainee with username = " + username);
 
         String hql = "SELECT DISTINCT trainer " +
                 "FROM Trainer trainer " +
@@ -69,21 +69,21 @@ public class TrainerDAO {
                 ")";
 
         List<Trainer> freeTrainers = session.createQuery(hql, Trainer.class)
-                .setParameter("username", traineeUsername)
+                .setParameter("username", username)
                 .list();
 
         freeTrainers.sort(Comparator.comparingLong(Trainer::getId));
         return freeTrainers;
     }
 
-    public List<Trainer> getTrainersForTrainee(int traineeId) {
+    public List<Trainer> getTrainersForTrainee(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainers list for trainee with id = " + traineeId);
+        log.debug("Get trainers list for trainee with id = " + id);
         return session.createQuery("SELECT DISTINCT t " +
                         "FROM Trainer t " +
                         "JOIN Training tr ON tr.trainer.id = t.id " +
                         "WHERE tr.trainee.id = :traineeId", Trainer.class)
-                .setParameter("traineeId", traineeId)
+                .setParameter("traineeId", id)
                 .list();
     }
 }

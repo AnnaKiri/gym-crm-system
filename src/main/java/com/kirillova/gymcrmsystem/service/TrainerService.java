@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
@@ -23,18 +24,19 @@ import java.util.List;
 public class TrainerService {
 
     private final TrainerDAO trainerDAO;
+    private final TraineeDAO traineeDAO;
     private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
 
-    public Trainer get(int trainerId) {
-        log.debug("Get trainer with trainerId = " + trainerId);
-        return trainerDAO.get(trainerId);
+    public Trainer get(int id) {
+        log.debug("Get trainer with trainerId = " + id);
+        return trainerDAO.get(id);
     }
 
     @Transactional
-    public void update(int trainerId, String firstName, String lastName, TrainingType specialization, boolean isActive) {
-        log.debug("Update trainer with trainerId = " + trainerId);
-        Trainer updatedTrainer = trainerDAO.get(trainerId);
+    public void update(int id, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+        log.debug("Update trainer with trainerId = " + id);
+        Trainer updatedTrainer = trainerDAO.get(id);
         User updatedUser = userDAO.get(updatedTrainer.getUser().getId());
 
         updatedUser.setFirstName(firstName);
@@ -75,22 +77,29 @@ public class TrainerService {
     }
 
     @Transactional
-    public boolean changePassword(int trainerId, String newPassword) {
-        log.debug("Change password for trainer with id = " + trainerId);
+    public boolean changePassword(int id, String newPassword) {
+        log.debug("Change password for trainer with id = " + id);
         ValidationUtil.validatePassword(newPassword);
-        Trainer trainer = trainerDAO.get(trainerId);
+        Trainer trainer = trainerDAO.get(id);
         return userDAO.changePassword(trainer.getUser().getId(), newPassword);
     }
 
     @Transactional
-    public boolean active(int trainerId, boolean isActive) {
-        log.debug("Change active status for trainer with id = " + trainerId);
-        Trainer trainer = trainerDAO.get(trainerId);
+    public boolean setActive(int id, boolean isActive) {
+        log.debug("Change active status for trainer with id = " + id);
+        Trainer trainer = trainerDAO.get(id);
         return userDAO.active(trainer.getUser().getId(), isActive);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = " + username);
         return trainingDAO.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+    }
+
+    public Trainer getWithTrainees(int id) {
+        log.debug("Get trainees list for trainer with id = " + id);
+        Trainer trainer = trainerDAO.get(id);
+        trainer.setTraineeList(traineeDAO.getTraineesForTrainer(id));
+        return trainer;
     }
 }

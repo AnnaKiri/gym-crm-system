@@ -1,6 +1,9 @@
 package com.kirillova.gymcrmsystem.util;
 
+import com.kirillova.gymcrmsystem.HasId;
+import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.User;
+import lombok.experimental.UtilityClass;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -9,6 +12,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
+@UtilityClass
 public class ValidationUtil {
 
     private static final Validator validator;
@@ -35,5 +39,19 @@ public class ValidationUtil {
     public static void validatePassword(String password) {
         Set<ConstraintViolation<User>> violations = validator.validateValue(User.class, "password", password);
         validateConstraints(violations);
+    }
+
+    public static void checkNew(HasId bean) {
+        if (!bean.isNew()) {
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be new (id=null)");
+        }
+    }
+
+    public static void assureIdConsistent(HasId bean, int id) {
+        if (bean.isNew()) {
+            bean.setId(id);
+        } else if (bean.id() != id) {
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must has id=" + id);
+        }
     }
 }

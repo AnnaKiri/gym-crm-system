@@ -167,7 +167,7 @@ public class TraineeServiceTest {
     void active() {
         when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
         when(userDAO.active(TRAINEE_1.getUser().getId(), false)).thenReturn(true);
-        Assertions.assertTrue(traineeService.active(TRAINEE_1_ID, false));
+        Assertions.assertTrue(traineeService.setActive(TRAINEE_1_ID, false));
     }
 
     @Test

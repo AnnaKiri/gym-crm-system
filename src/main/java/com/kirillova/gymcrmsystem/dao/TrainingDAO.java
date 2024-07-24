@@ -35,10 +35,10 @@ public class TrainingDAO {
         return training;
     }
 
-    public Training get(int trainingId) {
+    public Training get(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get training with id = " + trainingId);
-        return session.get(Training.class, trainingId);
+        log.debug("Get training with id = " + id);
+        return session.get(Training.class, id);
     }
 
     @Transactional

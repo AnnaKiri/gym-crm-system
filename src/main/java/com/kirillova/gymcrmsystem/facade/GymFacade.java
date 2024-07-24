@@ -54,7 +54,7 @@ public class GymFacade {
 
     public boolean activeTrainee(String username, String password, int traineeId, boolean isActive) {
         authService.userAuthentication(username, password);
-        return traineeService.active(traineeId, isActive);
+        return traineeService.setActive(traineeId, isActive);
     }
 
     public void deleteTraineeByUsername(String username, String password) {
@@ -104,7 +104,7 @@ public class GymFacade {
 
     public boolean activeTrainer(String username, String password, int trainerId, boolean isActive) {
         authService.userAuthentication(username, password);
-        return trainerService.active(trainerId, isActive);
+        return trainerService.setActive(trainerId, isActive);
     }
 
     public List<Training> getTrainerTrainings(String username, String password, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {

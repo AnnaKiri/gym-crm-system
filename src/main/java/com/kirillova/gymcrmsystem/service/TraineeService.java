@@ -28,22 +28,22 @@ public class TraineeService {
     private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
 
-    public Trainee get(int traineeId) {
-        log.debug("Get trainee with trainerId = " + traineeId);
-        return traineeDAO.get(traineeId);
+    public Trainee get(int id) {
+        log.debug("Get trainee with trainerId = " + id);
+        return traineeDAO.get(id);
     }
 
     @Transactional
-    public void delete(int traineeId) {
-        log.debug("Delete trainee with traineeId = " + traineeId);
-        Trainee trainee = traineeDAO.get(traineeId);
+    public void delete(int id) {
+        log.debug("Delete trainee with traineeId = " + id);
+        Trainee trainee = traineeDAO.get(id);
         userDAO.delete(trainee.getUser().getId());
     }
 
     @Transactional
-    public void update(int traineeId, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
-        log.debug("Update trainee with traineeId = " + traineeId);
-        Trainee updatedTrainee = traineeDAO.get(traineeId);
+    public void update(int id, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
+        log.debug("Update trainee with traineeId = " + id);
+        Trainee updatedTrainee = traineeDAO.get(id);
         User updatedUser = userDAO.get(updatedTrainee.getUser().getId());
 
         updatedUser.setFirstName(firstName);
@@ -94,9 +94,9 @@ public class TraineeService {
     }
 
     @Transactional
-    public boolean active(int traineeId, boolean isActive) {
-        log.debug("Change active status for trainee with id = " + traineeId);
-        Trainee trainee = traineeDAO.get(traineeId);
+    public boolean setActive(int id, boolean isActive) {
+        log.debug("Change active status for trainee with id = " + id);
+        Trainee trainee = traineeDAO.get(id);
         return userDAO.active(trainee.getUser().getId(), isActive);
     }
 
@@ -106,18 +106,17 @@ public class TraineeService {
         userDAO.deleteByUsername(username);
     }
 
-    public List<Trainer> getFreeTrainersForTrainee(String traineeUsername) {
-        log.debug("Get trainers list that not assigned on trainee by trainee's username = " + traineeUsername);
-        return trainerDAO.getFreeTrainersForUsername(traineeUsername);
+    public List<Trainer> getFreeTrainersForTrainee(String username) {
+        log.debug("Get trainers list that not assigned on trainee by trainee's username = " + username);
+        return trainerDAO.getFreeTrainersForUsername(username);
     }
 
-    public Trainee getWithTrainers(int traineeId) {
-        log.debug("Get trainers list for trainee with id = " + traineeId);
-        Trainee trainee = traineeDAO.get(traineeId);
-        trainee.setTrainerList(trainerDAO.getTrainersForTrainee(traineeId));
+    public Trainee getWithTrainers(int id) {
+        log.debug("Get trainers list for trainee with id = " + id);
+        Trainee trainee = traineeDAO.get(id);
+        trainee.setTrainerList(trainerDAO.getTrainersForTrainee(id));
         return trainee;
     }
-
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = " + username);
         return trainingDAO.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);

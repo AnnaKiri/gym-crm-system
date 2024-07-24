@@ -19,9 +19,9 @@ public class TrainingService {
 
     private final TrainingDAO trainingDAO;
 
-    public Training get(int trainingId) {
-        log.debug("Get training with trainingId = " + trainingId);
-        return trainingDAO.get(trainingId);
+    public Training get(int id) {
+        log.debug("Get training with trainingId = " + id);
+        return trainingDAO.get(id);
     }
 
     public Training create(Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {

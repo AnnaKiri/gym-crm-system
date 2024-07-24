@@ -152,7 +152,7 @@ class TrainerServiceTest {
         when(trainerDAO.get(TRAINER_1_ID)).thenReturn(TRAINER_1);
         when(userDAO.active(TRAINER_1.getUser().getId(), false)).thenReturn(true);
 
-        Assertions.assertTrue(trainerService.active(TRAINER_1_ID, false));
+        Assertions.assertTrue(trainerService.setActive(TRAINER_1_ID, false));
     }
 
     @Test

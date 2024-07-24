@@ -1,12 +1,15 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.models.Trainer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 @Slf4j
@@ -34,16 +37,16 @@ public class TraineeDAO {
     }
 
     @Transactional
-    public void delete(int traineeId) {
+    public void delete(int id) {
         Session session = sessionFactory.getCurrentSession();
-        session.remove(session.get(Trainee.class, traineeId));
-        log.debug("Trainee with id = " + traineeId + " deleted");
+        session.remove(session.get(Trainee.class, id));
+        log.debug("Trainee with id = " + id + " deleted");
     }
 
-    public Trainee get(int traineeId) {
+    public Trainee get(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainee with id = " + traineeId);
-        return session.get(Trainee.class, traineeId);
+        log.debug("Get trainee with id = " + id);
+        return session.get(Trainee.class, id);
     }
 
     public Trainee getByUserId(int userId) {
@@ -53,5 +56,18 @@ public class TraineeDAO {
                 .setParameter("userId", userId)
                 .uniqueResult();
     }
+
+    public List<Trainee> getTraineesForTrainer(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainees list for trainer with id = " + id);
+        return session.createQuery("SELECT DISTINCT t " +
+                        "FROM Trainee t " +
+                        "JOIN Training tr ON tr.trainee.id = t.id " +
+                        "WHERE tr.trainer.id = :trainerId", Trainee.class)
+                .setParameter("trainerId", id)
+                .list();
+    }
+
+
 }
 
