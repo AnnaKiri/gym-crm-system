@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
+import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.models.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.getUpdatedUser;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UserDAOTest extends AbstractDAOTest {
+class UserDAOTest extends AbstractSpringTest {
 
     @Autowired
     private UserDAO userDAO;

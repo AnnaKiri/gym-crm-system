@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
+import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
 
-class TraineeDAOTest extends AbstractDAOTest {
+class TraineeDAOTest extends AbstractSpringTest {
 
     @Autowired
     private TraineeDAO traineeDAO;
