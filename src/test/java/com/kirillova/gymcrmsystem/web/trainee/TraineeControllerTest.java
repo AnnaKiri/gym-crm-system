@@ -14,11 +14,17 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER_WITH_TRAINER_LIST;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeTo;
+import static com.kirillova.gymcrmsystem.TrainerTestData.FREE_TRAINERS_FOR_TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_LIST_FOR_TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,7 +67,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
         perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_TO_MATCHER.contentJson(TRAINEE_TO_1));
+                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_TO_1));
     }
 
     @Test
@@ -76,6 +82,42 @@ public class TraineeControllerTest extends AbstractSpringTest {
                 .content(JsonUtil.writeValue(traineeTo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_TO_MATCHER.contentJson(traineeToWithTrainerList));
+                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeToWithTrainerList));
     }
+
+    @Test
+    void delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + USER_1_USERNAME))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        Assertions.assertNull(traineeService.get(USER_1.getUsername()));
+    }
+
+    @Test
+    void getFreeTrainersForTrainee() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME + "/free_trainers"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TRAINER_TO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
+    }
+
+    @Test
+    void getTrainings() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME + "/trainings"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINEE_1));
+    }
+
+    @Test
+    void setActive() throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL + USER_1_USERNAME)
+                .param("isActive", "false"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
+    }
+
 }

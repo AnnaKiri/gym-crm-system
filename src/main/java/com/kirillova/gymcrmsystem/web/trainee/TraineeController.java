@@ -97,7 +97,7 @@ public class TraineeController {
     }
 
     @DeleteMapping("/{username}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String username) {
         log.debug("Delete trainee with username = {}", username);
         traineeService.delete(username);
@@ -120,12 +120,11 @@ public class TraineeController {
             @RequestParam @Nullable String trainerLastName) {
         log.debug("Get Trainings by trainee username {} for dates({} - {}) trainingType{} trainer {} {}", username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
         List<Training> trainings = traineeService.getTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
-        return getTrainingToList(trainings, trainerFirstName, trainerLastName);
+        return getTrainingToList(trainings);
     }
 
-    @PatchMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @Transactional
+    @PatchMapping("/{username}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         traineeService.setActive(username, isActive);

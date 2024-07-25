@@ -98,7 +98,7 @@ public class TrainerController {
             @RequestParam @Nullable String traineeLastName) {
         log.debug("Get Trainings by trainer username {} for dates({} - {}) trainee {} {}", username, fromDate, toDate, traineeFirstName, traineeLastName);
         List<Training> trainings = trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
-        return getTrainingToList(trainings, traineeFirstName, traineeLastName);
+        return getTrainingToList(trainings);
     }
 
     @PatchMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)

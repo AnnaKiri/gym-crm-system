@@ -30,13 +30,51 @@ public class TrainerTestData {
     public static final Trainer TRAINER_3 = new Trainer(3, TRAINING_TYPE_3, USER_7);
     public static final Trainer TRAINER_4 = new Trainer(4, TRAINING_TYPE_4, USER_8);
 
-    public static final TrainerTo TRAINER_TO_1 = TrainerTo.builder().id(1).username(USER_5.getUsername()).firstName(USER_5.getFirstName()).lastName(USER_5.getLastName()).isActive(USER_5.isActive()).specialization(TRAINING_TYPE_1).build();
-    public static final TrainerTo TRAINER_TO_2 = TrainerTo.builder().id(2).username(USER_6.getUsername()).firstName(USER_6.getFirstName()).lastName(USER_6.getLastName()).isActive(USER_6.isActive()).specialization(TRAINING_TYPE_2).build();
-    public static final TrainerTo TRAINER_TO_3 = TrainerTo.builder().id(3).username(USER_7.getUsername()).firstName(USER_7.getFirstName()).lastName(USER_7.getLastName()).isActive(USER_7.isActive()).specialization(TRAINING_TYPE_3).build();
-    public static final TrainerTo TRAINER_TO_4 = TrainerTo.builder().id(4).username(USER_8.getUsername()).firstName(USER_8.getFirstName()).lastName(USER_8.getLastName()).isActive(USER_8.isActive()).specialization(TRAINING_TYPE_4).build();
+    public static final TrainerTo TRAINER_TO_1 = TrainerTo.builder()
+            .id(1)
+            .username(USER_5.getUsername())
+            .firstName(USER_5.getFirstName())
+            .lastName(USER_5.getLastName())
+            .isActive(USER_5.isActive())
+            .specialization(TRAINING_TYPE_1)
+            .build();
+
+    public static final TrainerTo TRAINER_TO_2 = TrainerTo.builder()
+            .id(2)
+            .username(USER_6.getUsername())
+            .firstName(USER_6.getFirstName())
+            .lastName(USER_6.getLastName())
+            .isActive(USER_6.isActive())
+            .specialization(TRAINING_TYPE_2)
+            .build();
+
+    public static final TrainerTo TRAINER_TO_3 = TrainerTo.builder()
+            .id(3)
+            .username(USER_7.getUsername())
+            .firstName(USER_7.getFirstName())
+            .lastName(USER_7.getLastName())
+            .isActive(USER_7.isActive())
+            .specialization(TRAINING_TYPE_3)
+            .build();
+
+    public static final TrainerTo TRAINER_TO_4 = TrainerTo.builder()
+            .id(4)
+            .username(USER_8.getUsername())
+            .firstName(USER_8.getFirstName())
+            .lastName(USER_8.getLastName())
+            .isActive(USER_8.isActive())
+            .specialization(TRAINING_TYPE_4)
+            .build();
+
+    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_TO_1, TRAINER_TO_3);
+    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_2 = List.of(TRAINER_TO_1, TRAINER_TO_4);
+    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_3 = List.of(TRAINER_TO_1, TRAINER_TO_3, TRAINER_TO_4);
+    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_TO_2, TRAINER_TO_3);
 
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization");
-    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER =
+    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerTo.class, "traineeList");
+
+    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER_WITH_TRAINEE_LIST =
             MatcherFactory.usingAssertions(TrainerTo.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList").isEqualTo(e),
                     (a, e) -> {

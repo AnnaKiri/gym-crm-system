@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
@@ -58,20 +59,22 @@ public class TrainingDAO {
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Training> cq = cb.createQuery(Training.class);
         Root<Training> training = cq.from(Training.class);
-        Join<Object, Object> traineeJoin = training.join("trainee", JoinType.LEFT);
-        Join<Object, Object> trainerJoin = training.join("trainer", JoinType.LEFT);
-        Join<Object, Object> traineeUserJoin = traineeJoin.join("user", JoinType.LEFT);
-        Join<Object, Object> trainerUserJoin = trainerJoin.join("user", JoinType.LEFT);
-        Join<Object, Object> trainingTypeJoin = training.join("type", JoinType.LEFT);
+
+        // Use fetch instead of join
+        Fetch<Object, Object> traineeFetch = training.fetch("trainee", JoinType.LEFT);
+        Fetch<Object, Object> trainerFetch = training.fetch("trainer", JoinType.LEFT);
+        Fetch<Object, Object> traineeUserFetch = ((Join<?, ?>) traineeFetch).fetch("user", JoinType.LEFT);
+        Fetch<Object, Object> trainerUserFetch = ((Join<?, ?>) trainerFetch).fetch("user", JoinType.LEFT);
+        Fetch<Object, Object> trainingTypeFetch = training.fetch("type", JoinType.LEFT);
 
         Predicate predicate = cb.conjunction();
 
         if (traineeUsername != null && !traineeUsername.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("username"), traineeUsername));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("username"), traineeUsername));
         }
 
         if (trainerUsername != null && !trainerUsername.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("username"), trainerUsername));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("username"), trainerUsername));
         }
 
         if (fromDate != null) {
@@ -83,23 +86,23 @@ public class TrainingDAO {
         }
 
         if (trainerFirstName != null && !trainerFirstName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("firstName"), trainerFirstName));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("firstName"), trainerFirstName));
         }
 
         if (trainerLastName != null && !trainerLastName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(trainerUserJoin.get("lastName"), trainerLastName));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("lastName"), trainerLastName));
         }
 
         if (traineeFirstName != null && !traineeFirstName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("firstName"), traineeFirstName));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("firstName"), traineeFirstName));
         }
 
         if (traineeLastName != null && !traineeLastName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(traineeUserJoin.get("lastName"), traineeLastName));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("lastName"), traineeLastName));
         }
 
         if (trainingType != null && !trainingType.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(trainingTypeJoin.get("name"), trainingType));
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainingTypeFetch).get("name"), trainingType));
         }
 
         cq.where(predicate);
@@ -108,4 +111,5 @@ public class TrainingDAO {
         log.debug("Filtered trainings found: " + trainings.size());
         return trainings;
     }
+
 }

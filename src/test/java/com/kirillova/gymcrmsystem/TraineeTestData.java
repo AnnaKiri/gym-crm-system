@@ -29,13 +29,50 @@ public class TraineeTestData {
     public static final Trainee TRAINEE_3 = new Trainee(3, LocalDate.of(1976, 9, 15), "some address", USER_3);
     public static final Trainee TRAINEE_4 = new Trainee(4, LocalDate.of(1964, 9, 2), "some address", USER_4);
 
-    public static final TraineeTo TRAINEE_TO_1 = TraineeTo.builder().id(1).username(USER_1.getUsername()).firstName(USER_1.getFirstName()).lastName(USER_1.getLastName()).birthday(TRAINEE_1.getDateOfBirth()).address(TRAINEE_1.getAddress()).isActive(USER_1.isActive()).build();
-    public static final TraineeTo TRAINEE_TO_2 = TraineeTo.builder().id(2).username(USER_2.getUsername()).firstName(USER_2.getFirstName()).lastName(USER_2.getLastName()).birthday(TRAINEE_2.getDateOfBirth()).address(TRAINEE_2.getAddress()).isActive(USER_2.isActive()).build();
-    public static final TraineeTo TRAINEE_TO_3 = TraineeTo.builder().id(3).username(USER_3.getUsername()).firstName(USER_3.getFirstName()).lastName(USER_3.getLastName()).birthday(TRAINEE_3.getDateOfBirth()).address(TRAINEE_3.getAddress()).isActive(USER_3.isActive()).build();
-    public static final TraineeTo TRAINEE_TO_4 = TraineeTo.builder().id(4).username(USER_4.getUsername()).firstName(USER_4.getFirstName()).lastName(USER_4.getLastName()).birthday(TRAINEE_4.getDateOfBirth()).address(TRAINEE_4.getAddress()).isActive(USER_4.isActive()).build();
+    public static final TraineeTo TRAINEE_TO_1 = TraineeTo.builder()
+            .id(1)
+            .username(USER_1.getUsername())
+            .firstName(USER_1.getFirstName())
+            .lastName(USER_1.getLastName())
+            .birthday(TRAINEE_1.getDateOfBirth())
+            .address(TRAINEE_1.getAddress())
+            .isActive(USER_1.isActive())
+            .build();
+
+    public static final TraineeTo TRAINEE_TO_2 = TraineeTo.builder()
+            .id(2)
+            .username(USER_2.getUsername())
+            .firstName(USER_2.getFirstName())
+            .lastName(USER_2.getLastName())
+            .birthday(TRAINEE_2.getDateOfBirth())
+            .address(TRAINEE_2.getAddress())
+            .isActive(USER_2.isActive())
+            .build();
+
+    public static final TraineeTo TRAINEE_TO_3 = TraineeTo.builder()
+            .id(3)
+            .username(USER_3.getUsername())
+            .firstName(USER_3.getFirstName())
+            .lastName(USER_3.getLastName())
+            .birthday(TRAINEE_3.getDateOfBirth())
+            .address(TRAINEE_3.getAddress())
+            .isActive(USER_3.isActive())
+            .build();
+
+    public static final TraineeTo TRAINEE_TO_4 = TraineeTo.builder()
+            .id(4)
+            .username(USER_4.getUsername())
+            .firstName(USER_4.getFirstName())
+            .lastName(USER_4.getLastName())
+            .birthday(TRAINEE_4.getDateOfBirth())
+            .address(TRAINEE_4.getAddress())
+            .isActive(USER_4.isActive())
+            .build();
 
     public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user");
-    public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER =
+    public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeTo.class, "trainerList");
+
+    public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER_WITH_TRAINER_LIST =
             MatcherFactory.usingAssertions(TraineeTo.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList").isEqualTo(e),
                     (a, e) -> {

@@ -66,9 +66,11 @@ public class TrainerDAO {
 
         String hql = "SELECT DISTINCT trainer " +
                 "FROM Trainer trainer " +
-                "JOIN Training training ON training.trainer.id = trainer.id " +
-                "JOIN training.trainee trainee " +
-                "JOIN trainee.user user " +
+                "JOIN FETCH trainer.user " +
+                "JOIN FETCH trainer.specialization " +
+                "LEFT JOIN Training training ON training.trainer.id = trainer.id " +
+                "LEFT JOIN training.trainee trainee " +
+                "LEFT JOIN trainee.user user " +
                 "WHERE trainer.id NOT IN (" +
                 "    SELECT trainer.id " +
                 "    FROM Trainer trainer " +
