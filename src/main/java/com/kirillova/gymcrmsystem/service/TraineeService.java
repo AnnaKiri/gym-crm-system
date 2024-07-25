@@ -105,4 +105,9 @@ public class TraineeService {
         log.debug("Get trainee with username = {}", username);
         return traineeDAO.get(username);
     }
+
+    public Trainee getWithUser(String username) {
+        log.debug("Get trainee with username = {} with user entity", username);
+        return traineeDAO.getWithUser(username);
+    }
 }

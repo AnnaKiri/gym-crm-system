@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.to.TraineeTo;
@@ -50,6 +51,8 @@ public class TraineeController {
     protected TraineeService traineeService;
     @Autowired
     private TrainerService trainerService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -66,8 +69,10 @@ public class TraineeController {
 
     @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
+    @Transactional
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
         log.info("Change password for user {} with username={}", userTo, username);
+        authenticationService.userAuthentication(userTo.getUsername(), userTo.getPassword());
         traineeService.changePassword(username, userTo.getNewPassword());
     }
 
@@ -75,7 +80,7 @@ public class TraineeController {
     @Transactional
     public TraineeTo get(@PathVariable String username) {
         log.info("Get the trainee with username={}", username);
-        Trainee receivedTrainee = traineeService.get(username);
+        Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
         return createToWithTrainerToList(receivedTrainee, listTrainers);
     }

@@ -8,17 +8,23 @@ import com.kirillova.gymcrmsystem.to.UserTo;
 import com.kirillova.gymcrmsystem.web.json.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TraineeControllerTest extends AbstractSpringTest {
     private static final String REST_URL = TraineeController.REST_URL + '/';
 
+    @Autowired
     private TraineeService traineeService;
 
     @Test
@@ -33,7 +39,27 @@ public class TraineeControllerTest extends AbstractSpringTest {
         String expectedUsername = newTraineeTo.getFirstName() + "." + newTraineeTo.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
         Assertions.assertEquals(USER_1.getId() + 9, created.getId());
-
     }
 
+    @Test
+    void changePassword() throws Exception {
+        String newPassword = "1234567890";
+        UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).newPassword(newPassword).build();
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_1.getUsername() + "/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(userTo)))
+                .andExpect(status().isOk());
+
+        clearSession();
+
+        Assertions.assertEquals(newPassword, traineeService.get(USER_1_USERNAME).getUser().getPassword());
+    }
+
+    @Test
+    void get() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TRAINEE_TO_MATCHER.contentJson(TRAINEE_TO_1));
+    }
 }

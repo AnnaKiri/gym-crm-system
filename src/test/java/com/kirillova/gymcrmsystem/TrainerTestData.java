@@ -1,8 +1,16 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Trainer;
+import com.kirillova.gymcrmsystem.to.TrainerTo;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_2;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_3;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_4;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
@@ -12,6 +20,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_7;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_8;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TrainerTestData {
     public static final int TRAINER_1_ID = 1;
@@ -21,7 +30,25 @@ public class TrainerTestData {
     public static final Trainer TRAINER_3 = new Trainer(3, TRAINING_TYPE_3, USER_7);
     public static final Trainer TRAINER_4 = new Trainer(4, TRAINING_TYPE_4, USER_8);
 
+    public static final TrainerTo TRAINER_TO_1 = TrainerTo.builder().id(1).username(USER_5.getUsername()).firstName(USER_5.getFirstName()).lastName(USER_5.getLastName()).isActive(USER_5.isActive()).specialization(TRAINING_TYPE_1).build();
+    public static final TrainerTo TRAINER_TO_2 = TrainerTo.builder().id(2).username(USER_6.getUsername()).firstName(USER_6.getFirstName()).lastName(USER_6.getLastName()).isActive(USER_6.isActive()).specialization(TRAINING_TYPE_2).build();
+    public static final TrainerTo TRAINER_TO_3 = TrainerTo.builder().id(3).username(USER_7.getUsername()).firstName(USER_7.getFirstName()).lastName(USER_7.getLastName()).isActive(USER_7.isActive()).specialization(TRAINING_TYPE_3).build();
+    public static final TrainerTo TRAINER_TO_4 = TrainerTo.builder().id(4).username(USER_8.getUsername()).firstName(USER_8.getFirstName()).lastName(USER_8.getLastName()).isActive(USER_8.isActive()).specialization(TRAINING_TYPE_4).build();
+
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization");
+    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER =
+            MatcherFactory.usingAssertions(TrainerTo.class,
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList").isEqualTo(e),
+                    (a, e) -> {
+                        throw new UnsupportedOperationException();
+                    });
+
+    static {
+        TRAINER_TO_1.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_4)));
+        TRAINER_TO_2.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_1, TRAINEE_TO_2, TRAINEE_TO_3)));
+        TRAINER_TO_3.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_2)));
+        TRAINER_TO_4.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_1, TRAINEE_TO_4)));
+    }
 
     public static Trainer getNewTrainer() {
         return new Trainer(null, TRAINING_TYPE_4, USER_9);

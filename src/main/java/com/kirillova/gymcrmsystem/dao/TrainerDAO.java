@@ -34,6 +34,8 @@ public class TrainerDAO {
         return session.createQuery("SELECT DISTINCT trn " +
                         "FROM Training tr " +
                         "JOIN tr.trainer trn " +
+                        "JOIN FETCH trn.user " +
+                        "JOIN FETCH trn.specialization " +
                         "JOIN tr.trainee t " +
                         "JOIN t.user u " +
                         "WHERE u.username = :username", Trainer.class)

@@ -19,6 +19,7 @@ public class TraineeUtil {
         List<TrainerTo> trainerToList = TrainerUtil.getTrainerToList(trainerList);
 
         return TraineeTo.builder().
+                id(updatedTrainee.getId()).
                 username(receivedUser.getUsername()).
                 firstName(receivedUser.getFirstName()).
                 lastName(receivedUser.getLastName()).
@@ -36,9 +37,12 @@ public class TraineeUtil {
             User traineesUser = trainee.getUser();
 
             TraineeTo traineeTo = TraineeTo.builder().
+                    id(trainee.getId()).
                     username(traineesUser.getUsername()).
                     firstName(traineesUser.getFirstName()).
                     lastName(traineesUser.getLastName()).
+                    birthday(trainee.getDateOfBirth()).
+                    isActive(traineesUser.isActive()).
                     build();
 
             traineeToList.add(traineeTo);

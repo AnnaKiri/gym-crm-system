@@ -36,6 +36,7 @@ public class TrainerTo extends BaseTo {
     private Boolean isActive;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<TraineeTo> traineeList;
 
     @NotNull

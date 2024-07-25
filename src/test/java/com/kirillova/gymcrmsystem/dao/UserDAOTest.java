@@ -5,6 +5,7 @@ import com.kirillova.gymcrmsystem.models.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ class UserDAOTest extends AbstractSpringTest {
     private UserDAO userDAO;
 
     @Test
+    @DirtiesContext
     void save() {
         User savedUser = userDAO.save(getNewUser());
         int userId = savedUser.getId();

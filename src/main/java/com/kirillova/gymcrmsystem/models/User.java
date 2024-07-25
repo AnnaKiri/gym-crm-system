@@ -36,10 +36,10 @@ public class User extends AbstractBaseEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 50)
-    protected String password;
+    private String password;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "bool default true")
-    protected boolean isActive;
+    private boolean isActive;
 
     public User(User user) {
         this(user.id, user.firstName, user.lastName, user.username, user.password, user.isActive);

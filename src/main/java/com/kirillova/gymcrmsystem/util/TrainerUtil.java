@@ -35,10 +35,12 @@ public class TrainerUtil {
             User trainersUser = trainer.getUser();
 
             TrainerTo trainerTo = TrainerTo.builder().
+                    id(trainer.getId()).
                     username(trainersUser.getUsername()).
                     firstName(trainersUser.getFirstName()).
                     lastName(trainersUser.getLastName()).
                     specialization(trainer.getSpecialization()).
+                    isActive(trainersUser.isActive()).
                     build();
 
             trainerToList.add(trainerTo);

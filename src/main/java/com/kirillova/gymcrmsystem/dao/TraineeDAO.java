@@ -45,6 +45,17 @@ public class TraineeDAO {
                 .uniqueResult();
     }
 
+    public Trainee getWithUser(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainee with username = {} with user entity", username);
+        return session.createQuery("SELECT t " +
+                        "FROM Trainee t " +
+                        "JOIN FETCH t.user u " +
+                        "WHERE u.username = :username", Trainee.class)
+                .setParameter("username", username)
+                .uniqueResult();
+    }
+
     public List<Trainee> getTraineesForTrainer(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainees list for trainer with username = {}", username);
