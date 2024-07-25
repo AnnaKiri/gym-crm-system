@@ -31,10 +31,11 @@ public class TrainerDAO {
     public List<Trainer> getTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list for trainee with username = {}", username);
-        return session.createQuery("SELECT DISTINCT t " +
-                        "FROM Trainer t " +
-                        "JOIN User u ON t.user.id = t.id " +
-                        "JOIN Training tr ON tr.trainer.id = t.id " +
+        return session.createQuery("SELECT DISTINCT trn " +
+                        "FROM Training tr " +
+                        "JOIN tr.trainer trn " +
+                        "JOIN tr.trainee t " +
+                        "JOIN t.user u " +
                         "WHERE u.username = :username", Trainer.class)
                 .setParameter("username", username)
                 .list();
@@ -57,7 +58,7 @@ public class TrainerDAO {
                 .uniqueResult();
     }
 
-    public List<Trainer> getFreeTrainersForUsername(String username) {
+    public List<Trainer> getFreeTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list that not assigned to trainee with username = {}", username);
 
@@ -72,7 +73,7 @@ public class TrainerDAO {
                 "    JOIN Training training ON training.trainer.id = trainer.id " +
                 "    JOIN training.trainee trainee " +
                 "    JOIN trainee.user user " +
-                "    WHERE user.username = :username AND user.isActive = :true" +
+                "    WHERE user.username = :username AND user.isActive = true" +
                 ")";
 
         List<Trainer> freeTrainers = session.createQuery(hql, Trainer.class)

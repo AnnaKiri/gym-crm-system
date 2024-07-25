@@ -1,11 +1,11 @@
 package com.kirillova.gymcrmsystem.to;
 
 import com.kirillova.gymcrmsystem.models.TrainingType;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Builder
+@SuperBuilder
 public class TrainingTo extends BaseTo {
 
     @Size(min = 2, max = 128)
@@ -37,9 +37,4 @@ public class TrainingTo extends BaseTo {
 
     @NotBlank
     private String trainerName;
-
-    public TrainingTo(Integer id) {
-        super(id);
-    }
-
 }

@@ -13,10 +13,8 @@ import java.util.List;
 @UtilityClass
 public class TraineeUtil {
 
-    public static TraineeTo createToWithTrainerToList(Trainee updatedTrainee) {
+    public static TraineeTo createToWithTrainerToList(Trainee updatedTrainee, List<Trainer> trainerList) {
         User receivedUser = updatedTrainee.getUser();
-
-        List<Trainer> trainerList = updatedTrainee.getTrainerList();
 
         List<TrainerTo> trainerToList = TrainerUtil.getTrainerToList(trainerList);
 

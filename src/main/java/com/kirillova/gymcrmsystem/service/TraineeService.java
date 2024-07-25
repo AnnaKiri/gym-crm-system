@@ -56,11 +56,9 @@ public class TraineeService {
         return userDAO.changePassword(username, newPassword);
     }
 
-    public Trainee getWithTrainers(String username) {
-        log.debug("Get trainers list for trainee with username = {}", username);
-        Trainee trainee = traineeDAO.get(username);
-        trainee.setTrainerList(trainerDAO.getTrainersForTrainee(username));
-        return trainee;
+    public List<Trainee> getTraineesForTrainer(String username) {
+        log.debug("Get trainees list for trainer with username = {}", username);
+        return traineeDAO.getTraineesForTrainer(username);
     }
 
     @Transactional
@@ -89,7 +87,7 @@ public class TraineeService {
 
     public List<Trainer> getFreeTrainersForTrainee(String username) {
         log.debug("Get trainers list that not assigned on trainee by trainee's username = {}", username);
-        return trainerDAO.getFreeTrainersForUsername(username);
+        return trainerDAO.getFreeTrainersForTrainee(username);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {

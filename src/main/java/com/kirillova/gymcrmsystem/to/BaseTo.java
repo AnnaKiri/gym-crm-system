@@ -2,8 +2,10 @@ package com.kirillova.gymcrmsystem.to;
 
 import com.kirillova.gymcrmsystem.HasId;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
+@SuperBuilder
 public abstract class BaseTo implements HasId {
 
     protected Integer id;

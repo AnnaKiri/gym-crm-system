@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static com.kirillova.gymcrmsystem.UserTestData.getUpdatedUser;
@@ -28,24 +28,25 @@ class UserDAOTest extends AbstractDAOTest {
         newUser.setId(userId);
 
         USER_MATCHER.assertMatch(savedUser, newUser);
-        USER_MATCHER.assertMatch(userDAO.get(userId), newUser);
+        USER_MATCHER.assertMatch(userDAO.get(savedUser.getUsername()), newUser);
     }
 
     @Test
     void update() {
-        userDAO.update(getUpdatedUser());
-        USER_MATCHER.assertMatch(userDAO.get(USER_1_ID), getUpdatedUser());
+        User user = getUpdatedUser();
+        userDAO.update(user);
+        USER_MATCHER.assertMatch(userDAO.get(user.getUsername()), user);
     }
 
     @Test
     void delete() {
-        userDAO.delete(USER_1_ID);
-        Assertions.assertNull(userDAO.get(USER_1_ID));
+        userDAO.delete(USER_1_USERNAME);
+        Assertions.assertNull(userDAO.get(USER_1_USERNAME));
     }
 
     @Test
     void get() {
-        User retrievedUser = userDAO.get(USER_1_ID);
+        User retrievedUser = userDAO.get(USER_1_USERNAME);
         USER_MATCHER.assertMatch(retrievedUser, USER_1);
     }
 
@@ -57,14 +58,14 @@ class UserDAOTest extends AbstractDAOTest {
 
     @Test
     void getByUsername() {
-        User retrievedUser = userDAO.getByUsername(USER_1.getUsername());
+        User retrievedUser = userDAO.get(USER_1.getUsername());
         USER_MATCHER.assertMatch(retrievedUser, USER_1);
     }
 
     @Test
     void changePassword() {
-        userDAO.changePassword(USER_1_ID, "newPassword");
-        User retrievedUser = userDAO.get(USER_1_ID);
+        userDAO.changePassword(USER_1_USERNAME, "newPassword");
+        User retrievedUser = userDAO.get(USER_1_USERNAME);
         User updatedUser = new User(USER_1);
         updatedUser.setPassword("newPassword");
         USER_MATCHER.assertMatch(retrievedUser, updatedUser);
@@ -72,17 +73,17 @@ class UserDAOTest extends AbstractDAOTest {
 
     @Test
     void active() {
-        assertTrue(userDAO.active(USER_1_ID, false));
-        assertFalse(userDAO.get(USER_1_ID).isActive());
-        assertTrue(userDAO.active(USER_1_ID, true));
+        assertTrue(userDAO.setActive(USER_1_USERNAME, false));
+        assertFalse(userDAO.get(USER_1_USERNAME).isActive());
+        assertTrue(userDAO.setActive(USER_1_USERNAME, true));
         clearSession();
-        assertTrue(userDAO.get(USER_1_ID).isActive());
+        assertTrue(userDAO.get(USER_1_USERNAME).isActive());
     }
 
     @Test
     void deleteByUsername() {
-        userDAO.deleteByUsername(USER_1.getUsername());
-        Assertions.assertNull(userDAO.get(USER_1_ID));
+        userDAO.delete(USER_1.getUsername());
+        Assertions.assertNull(userDAO.get(USER_1_USERNAME));
     }
 
     @Test

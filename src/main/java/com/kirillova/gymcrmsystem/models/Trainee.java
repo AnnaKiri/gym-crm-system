@@ -10,14 +10,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "trainee")
@@ -40,9 +38,6 @@ public class Trainee extends AbstractBaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private User user;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Trainer> trainerList;
 
     public Trainee(Trainee trainee) {
         this(trainee.id, trainee.dateOfBirth, trainee.address, trainee.user);

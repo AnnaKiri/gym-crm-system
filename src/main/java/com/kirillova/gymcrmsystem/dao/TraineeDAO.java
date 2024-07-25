@@ -30,6 +30,7 @@ public class TraineeDAO {
     public void update(Trainee updatedTrainee) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainee);
+        session.flush();
         log.debug("Trainee with id = {} updated", updatedTrainee.getId());
     }
 
@@ -48,9 +49,10 @@ public class TraineeDAO {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainees list for trainer with username = {}", username);
         return session.createQuery("SELECT DISTINCT t " +
-                        "FROM Trainee t " +
-                        "JOIN User u ON t.user.id = t.id " +
-                        "JOIN Training tr ON tr.trainee.id = t.id " +
+                        "FROM Training tr " +
+                        "JOIN tr.trainee t " +
+                        "JOIN tr.trainer trn " +
+                        "JOIN trn.user u " +
                         "WHERE u.username = :username", Trainee.class)
                 .setParameter("username", username)
                 .list();

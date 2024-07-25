@@ -11,6 +11,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_7;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_8;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
 
 public class TrainerTestData {
     public static final int TRAINER_1_ID = 1;
@@ -23,7 +24,7 @@ public class TrainerTestData {
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization");
 
     public static Trainer getNewTrainer() {
-        return new Trainer(null, TRAINING_TYPE_4, USER_6);
+        return new Trainer(null, TRAINING_TYPE_4, USER_9);
     }
 
     public static Trainer getUpdatedTrainer() {

@@ -32,9 +32,9 @@ public class GymFacade {
         return traineeService.changePassword(username, newPassword);
     }
 
-    public Trainee getTraineeWithTrainers(String username, String password) {
+    public List<Trainee> getTraineesForTrainer(String username, String password) {
         authService.userAuthentication(username, password);
-        return traineeService.getWithTrainers(username);
+        return traineeService.getTraineesForTrainer(username);
     }
 
     public void updateTrainee(String username, String password, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
@@ -77,9 +77,9 @@ public class GymFacade {
         return trainerService.changePassword(username, newPassword);
     }
 
-    public Trainer getTrainerWithTrainees(String username, String password) {
+    public List<Trainer> getTrainersForTrainee(String username, String password) {
         authService.userAuthentication(username, password);
-        return trainerService.getWithTrainees(username);
+        return trainerService.getTrainersForTrainee(username);
     }
 
     public void updateTrainer(String username, String password, String firstName, String lastName, TrainingType specialization, boolean isActive) {

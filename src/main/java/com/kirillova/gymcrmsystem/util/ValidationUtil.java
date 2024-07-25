@@ -3,7 +3,6 @@ package com.kirillova.gymcrmsystem.util;
 import com.kirillova.gymcrmsystem.HasId;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.User;
-import lombok.experimental.UtilityClass;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -12,7 +11,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-@UtilityClass
 public class ValidationUtil {
 
     private static final Validator validator;

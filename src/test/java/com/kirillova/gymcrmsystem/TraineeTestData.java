@@ -9,6 +9,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_2;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_3;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_4;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
 
 public class TraineeTestData {
     public static final int TRAINEE_1_ID = 1;
@@ -21,7 +22,7 @@ public class TraineeTestData {
     public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "trainerList", "user");
 
     public static Trainee getNewTrainee() {
-        return new Trainee(null, LocalDate.of(1969, 11, 4), "some new address", USER_1);
+        return new Trainee(null, LocalDate.of(1969, 11, 4), "some new address", USER_9);
     }
 
     public static Trainee getUpdatedTrainee() {

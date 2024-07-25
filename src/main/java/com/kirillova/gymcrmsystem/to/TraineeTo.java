@@ -1,10 +1,10 @@
 package com.kirillova.gymcrmsystem.to;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Builder
+@SuperBuilder
 public class TraineeTo extends BaseTo {
 
     @NotBlank
@@ -41,8 +41,4 @@ public class TraineeTo extends BaseTo {
 
     @ToString.Exclude
     private List<TrainerTo> trainerList;
-
-    public TraineeTo(Integer id) {
-        super(id);
-    }
 }

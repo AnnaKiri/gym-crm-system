@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
@@ -24,7 +23,6 @@ import java.util.List;
 public class TrainerService {
 
     private final TrainerDAO trainerDAO;
-    private final TraineeDAO traineeDAO;
     private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
 
@@ -55,11 +53,9 @@ public class TrainerService {
         return userDAO.changePassword(username, newPassword);
     }
 
-    public Trainer getWithTrainees(String username) {
-        log.debug("Get trainees list for trainer with username = {}", username);
-        Trainer trainer = trainerDAO.get(username);
-        trainer.setTraineeList(traineeDAO.getTraineesForTrainer(username));
-        return trainer;
+    public List<Trainer> getTrainersForTrainee(String username) {
+        log.debug("Get trainers list for trainee with username = {}", username);
+        return trainerDAO.getTrainersForTrainee(username);
     }
 
     @Transactional

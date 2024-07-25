@@ -1,8 +1,10 @@
 package com.kirillova.gymcrmsystem.web.trainer;
 
+import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
@@ -44,6 +46,9 @@ public class TrainerController {
     @Autowired
     protected TrainerService trainerService;
 
+    @Autowired
+    protected TraineeService traineeService;
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
@@ -65,10 +70,12 @@ public class TrainerController {
     }
 
     @GetMapping("/{username}")
+    @Transactional
     public TrainerTo get(@PathVariable String username) {
         log.info("Get the trainer with username={}", username);
-        Trainer receivedTrainer = trainerService.getWithTrainees(username);
-        return createToWithTraineeToList(receivedTrainer);
+        Trainer receivedTrainer = trainerService.get(username);
+        List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
+        return createToWithTraineeToList(receivedTrainer, traineeList);
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -77,8 +84,9 @@ public class TrainerController {
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
         log.info("Update the trainer with username {}", username);
         trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.isActive());
-        Trainer updatedTrainer = trainerService.getWithTrainees(username);
-        return createToWithTraineeToList(updatedTrainer);
+        Trainer receivedTrainer = trainerService.get(username);
+        List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
+        return createToWithTraineeToList(receivedTrainer, traineeList);
     }
 
     @GetMapping("/{username}/trainings")

@@ -5,6 +5,7 @@ import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.service.TraineeService;
+import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.to.TraineeTo;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
@@ -47,6 +48,8 @@ public class TraineeController {
 
     @Autowired
     protected TraineeService traineeService;
+    @Autowired
+    private TrainerService trainerService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -69,10 +72,12 @@ public class TraineeController {
     }
 
     @GetMapping("/{username}")
+    @Transactional
     public TraineeTo get(@PathVariable String username) {
         log.info("Get the trainee with username={}", username);
-        Trainee receivedTrainee = traineeService.getWithTrainers(username);
-        return createToWithTrainerToList(receivedTrainee);
+        Trainee receivedTrainee = traineeService.get(username);
+        List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
+        return createToWithTrainerToList(receivedTrainee, listTrainers);
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -81,8 +86,9 @@ public class TraineeController {
     public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
         log.info("Update the trainee with username={}", username);
         traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.isActive());
-        Trainee updatedTrainee = traineeService.getWithTrainers(username);
-        return createToWithTrainerToList(updatedTrainee);
+        Trainee receivedTrainee = traineeService.get(username);
+        List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
+        return createToWithTrainerToList(receivedTrainee, listTrainers);
     }
 
     @DeleteMapping("/{username}")
