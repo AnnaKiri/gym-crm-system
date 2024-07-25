@@ -48,7 +48,7 @@ public class TraineeController {
     static final String REST_URL = "/trainee";
 
     @Autowired
-    protected TraineeService traineeService;
+    private TraineeService traineeService;
     @Autowired
     private TrainerService trainerService;
     @Autowired

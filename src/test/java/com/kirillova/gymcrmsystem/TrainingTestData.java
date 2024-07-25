@@ -118,6 +118,17 @@ public class TrainingTestData {
         return new Training(null, TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
     }
 
+    public static TrainingTo getNewTrainingTo() {
+        return TrainingTo.builder().
+                name("Yoga").
+                type(TRAINING_TYPE_3).
+                date(LocalDate.of(2024, 1, 5)).
+                duration(60).
+                traineeName(TRAINEE_3.getUser().getUsername()).
+                trainerName(TRAINER_3.getUser().getUsername()).
+                build();
+    }
+
     public static void checkTrainingTraineeId(Training expected, Training actual) {
         Assertions.assertEquals(expected.getTrainee().getId(), actual.getTrainee().getId());
     }

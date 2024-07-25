@@ -42,6 +42,20 @@ public class TrainingDAO {
         return session.get(Training.class, id);
     }
 
+    public Training getFull(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get training with id = " + id);
+        return session.createQuery("SELECT tr FROM Training tr " +
+                        "JOIN FETCH tr.trainee t " +
+                        "JOIN FETCH t.user tu " +
+                        "JOIN FETCH tr.trainer r " +
+                        "JOIN FETCH r.user ru " +
+                        "JOIN FETCH tr.type tp " +
+                        "WHERE tr.id = :id", Training.class)
+                .setParameter("id", id)
+                .uniqueResult();
+    }
+
     @Transactional
     public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         return getTrainings(traineeUsername, null, fromDate, toDate, trainingType, trainerFirstName, trainerLastName, null, null);

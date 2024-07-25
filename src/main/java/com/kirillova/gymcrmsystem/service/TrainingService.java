@@ -24,6 +24,11 @@ public class TrainingService {
         return trainingDAO.get(id);
     }
 
+    public Training getFull(int id) {
+        log.debug("Get full training with trainingId = " + id);
+        return trainingDAO.getFull(id);
+    }
+
     public Training create(Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {
         log.debug("Create new training");
         Training training = new Training();

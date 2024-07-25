@@ -44,10 +44,10 @@ public class TrainerController {
     static final String REST_URL = "/trainer";
 
     @Autowired
-    protected TrainerService trainerService;
+    private TrainerService trainerService;
 
     @Autowired
-    protected TraineeService traineeService;
+    private TraineeService traineeService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
