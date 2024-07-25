@@ -106,6 +106,11 @@ public class TrainingTestData {
     public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_3 = List.of(TRAINING_TO_5);
     public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_4 = List.of(TRAINING_TO_6, TRAINING_TO_7);
 
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_1 = List.of(TRAINING_TO_7);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_2 = List.of(TRAINING_TO_2, TRAINING_TO_3, TRAINING_TO_5);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_3 = List.of(TRAINING_TO_4);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_4 = List.of(TRAINING_TO_1, TRAINING_TO_6);
+
     public static final MatcherFactory.Matcher<Training> TRAINING_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Training.class, "trainee", "trainer", "type");
     public static final MatcherFactory.Matcher<TrainingTo> TRAINING_TO_MATCHER = MatcherFactory.usingEqualsComparator(TrainingTo.class);
 

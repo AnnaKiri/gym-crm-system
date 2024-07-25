@@ -73,13 +73,13 @@ public class TrainerController {
     @Transactional
     public TrainerTo get(@PathVariable String username) {
         log.info("Get the trainer with username={}", username);
-        Trainer receivedTrainer = trainerService.get(username);
+        Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
         return createToWithTraineeToList(receivedTrainer, traineeList);
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
         log.info("Update the trainer with username {}", username);
@@ -101,9 +101,8 @@ public class TrainerController {
         return getTrainingToList(trainings);
     }
 
-    @PatchMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @Transactional
+    @PatchMapping("/{username}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         trainerService.setActive(username, isActive);

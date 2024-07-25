@@ -42,6 +42,7 @@ public class TraineeUtil {
                     firstName(traineesUser.getFirstName()).
                     lastName(traineesUser.getLastName()).
                     birthday(trainee.getDateOfBirth()).
+                    address(trainee.getAddress()).
                     isActive(traineesUser.isActive()).
                     build();
 

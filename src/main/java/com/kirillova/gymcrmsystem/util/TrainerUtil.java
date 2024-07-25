@@ -19,6 +19,7 @@ public class TrainerUtil {
         List<TraineeTo> traineeToList = TraineeUtil.getTraineeToList(traineeList);
 
         return TrainerTo.builder().
+                id(updatedTrainer.getId()).
                 username(receivedUser.getUsername()).
                 firstName(receivedUser.getFirstName()).
                 lastName(receivedUser.getLastName()).

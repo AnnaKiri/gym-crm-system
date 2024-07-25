@@ -60,6 +60,18 @@ public class TrainerDAO {
                 .uniqueResult();
     }
 
+    public Trainer getWithUserAndSpecialization(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainer with username = {} with user and specialization entities", username);
+        return session.createQuery("SELECT t " +
+                        "FROM Trainer t " +
+                        "JOIN FETCH t.user u " +
+                        "JOIN FETCH t.specialization s " +
+                        "WHERE u.username = :username", Trainer.class)
+                .setParameter("username", username)
+                .uniqueResult();
+    }
+
     public List<Trainer> getFreeTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list that not assigned to trainee with username = {}", username);

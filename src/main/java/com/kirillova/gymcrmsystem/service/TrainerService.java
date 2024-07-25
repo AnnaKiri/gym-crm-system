@@ -90,4 +90,9 @@ public class TrainerService {
         log.debug("Get trainer with username = {}", username);
         return trainerDAO.get(username);
     }
+
+    public Trainer getWithUserAndSpecialization(String username) {
+        log.debug("Get trainer with username = {} with user and specialization entity", username);
+        return trainerDAO.getWithUserAndSpecialization(username);
+    }
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -23,7 +24,6 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +35,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
     private TraineeService traineeService;
 
     @Test
+    @DirtiesContext
     void register() throws Exception {
         TraineeTo newTraineeTo = TraineeTestData.getNewTraineeTo();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -117,7 +118,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
+        Assertions.assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
     }
 
 }

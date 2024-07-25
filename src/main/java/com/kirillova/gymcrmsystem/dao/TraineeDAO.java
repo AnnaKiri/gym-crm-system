@@ -62,9 +62,9 @@ public class TraineeDAO {
         return session.createQuery("SELECT DISTINCT t " +
                         "FROM Training tr " +
                         "JOIN tr.trainee t " +
+                        "JOIN FETCH t.user u " +
                         "JOIN tr.trainer trn " +
-                        "JOIN trn.user u " +
-                        "WHERE u.username = :username", Trainee.class)
+                        "WHERE trn.user.username = :username", Trainee.class)
                 .setParameter("username", username)
                 .list();
     }

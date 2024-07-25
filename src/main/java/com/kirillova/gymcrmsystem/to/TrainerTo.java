@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.to;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 public class TrainerTo extends BaseTo {
 
-    @NotBlank
     private String username;
 
     @NotBlank
