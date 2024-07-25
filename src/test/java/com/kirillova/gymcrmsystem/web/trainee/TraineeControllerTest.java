@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeTo;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
@@ -61,5 +62,20 @@ public class TraineeControllerTest extends AbstractSpringTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_TO_MATCHER.contentJson(TRAINEE_TO_1));
+    }
+
+    @Test
+    void update() throws Exception {
+        TraineeTo traineeTo = getUpdatedTraineeTo();
+
+        TraineeTo traineeToWithTrainerList = getUpdatedTraineeTo();
+        traineeToWithTrainerList.setTrainerList(TRAINEE_TO_1.getTrainerList());
+
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_1_USERNAME)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(traineeTo)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TRAINEE_TO_MATCHER.contentJson(traineeToWithTrainerList));
     }
 }

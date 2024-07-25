@@ -86,12 +86,12 @@ public class TraineeController {
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
         log.info("Update the trainee with username={}", username);
         traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.getIsActive());
-        Trainee receivedTrainee = traineeService.get(username);
+        Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
         return createToWithTrainerToList(receivedTrainee, listTrainers);
     }

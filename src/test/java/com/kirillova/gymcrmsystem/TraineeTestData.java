@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.TraineeTo;
 import org.junit.jupiter.api.Assertions;
 
@@ -13,6 +14,7 @@ import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_3;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_4;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_2;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_3;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_4;
@@ -63,6 +65,20 @@ public class TraineeTestData {
 
     public static Trainee getUpdatedTrainee() {
         return new Trainee(1, LocalDate.of(1970, 12, 1), "updated address", USER_1);
+    }
+
+    public static TraineeTo getUpdatedTraineeTo() {
+        User updatedUser = UserTestData.getUpdatedUser();
+        Trainee updatedTrainee = getUpdatedTrainee();
+        return TraineeTo.builder()
+                .id(updatedTrainee.id())
+                .firstName(updatedUser.getFirstName())
+                .lastName(updatedUser.getLastName())
+                .birthday(updatedTrainee.getDateOfBirth())
+                .address(updatedTrainee.getAddress())
+                .isActive(updatedUser.isActive())
+                .username(USER_1_USERNAME)
+                .build();
     }
 
     public static void checkTraineeUserId(Trainee expected, Trainee actual) {

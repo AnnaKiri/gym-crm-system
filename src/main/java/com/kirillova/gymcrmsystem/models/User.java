@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "password", callSuper = true)
+@Proxy(lazy = false) // Отключаем использование прокси для этой сущности
 public class User extends AbstractBaseEntity {
 
     @Column(name = "first_name", nullable = false)
