@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem.to;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
+@NoArgsConstructor
 public class TrainingTo extends BaseTo {
 
     @Size(min = 2, max = 128)
@@ -30,7 +32,7 @@ public class TrainingTo extends BaseTo {
     private LocalDate date;
 
     @NotNull
-    private int duration;
+    private Integer duration;
 
     @NotBlank
     private String traineeName;

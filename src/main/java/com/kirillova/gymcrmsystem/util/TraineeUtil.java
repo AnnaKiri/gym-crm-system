@@ -45,4 +45,18 @@ public class TraineeUtil {
         }
         return traineeToList;
     }
+
+    public static Trainee createNewFromTo(TraineeTo traineeTo) {
+        User newUser = new User();
+        newUser.setFirstName(traineeTo.getFirstName());
+        newUser.setLastName(traineeTo.getLastName());
+        newUser.setUsername(traineeTo.getFirstName() + "." + traineeTo.getLastName());
+        newUser.setActive(true);
+
+        Trainee trainee = new Trainee();
+        trainee.setAddress(traineeTo.getAddress());
+        trainee.setDateOfBirth(traineeTo.getBirthday());
+        trainee.setUser(newUser);
+        return trainee;
+    }
 }

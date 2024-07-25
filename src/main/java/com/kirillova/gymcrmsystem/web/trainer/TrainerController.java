@@ -58,7 +58,7 @@ public class TrainerController {
         User newUser = newTrainer.getUser();
         UserTo userTo = new UserTo(newUser.getId(), newUser.getUsername(), newUser.getPassword());
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL).build().toUri();
+                .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
@@ -83,7 +83,7 @@ public class TrainerController {
     @Transactional
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
         log.info("Update the trainer with username {}", username);
-        trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.isActive());
+        trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.getIsActive());
         Trainer receivedTrainer = trainerService.get(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
         return createToWithTraineeToList(receivedTrainer, traineeList);

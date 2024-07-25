@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.to;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class UserTo extends BaseTo {
 
     @NotBlank
@@ -26,8 +28,9 @@ public class UserTo extends BaseTo {
     private String newPassword;
 
     public UserTo(Integer id, String username, String password) {
-        super(id);
+        super.setId(id);
         this.username = username;
         this.password = password;
     }
+
 }

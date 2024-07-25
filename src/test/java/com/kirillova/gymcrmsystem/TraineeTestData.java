@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.to.TraineeTo;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
@@ -23,6 +24,16 @@ public class TraineeTestData {
 
     public static Trainee getNewTrainee() {
         return new Trainee(null, LocalDate.of(1969, 11, 4), "some new address", USER_9);
+    }
+
+    public static TraineeTo getNewTraineeTo() {
+        return TraineeTo.builder()
+                .firstName("FirstName")
+                .lastName("LastName")
+                .birthday(LocalDate.of(1980, 8, 15))
+                .address("Address")
+                .isActive(true)
+                .build();
     }
 
     public static Trainee getUpdatedTrainee() {

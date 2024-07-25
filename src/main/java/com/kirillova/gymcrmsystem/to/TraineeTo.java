@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.to;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -17,9 +18,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
+@NoArgsConstructor
 public class TraineeTo extends BaseTo {
 
-    @NotBlank
     private String username;
 
     @NotBlank
@@ -36,8 +37,8 @@ public class TraineeTo extends BaseTo {
     @Size(min = 5, max = 128)
     private String address;
 
-    @NotBlank
-    private boolean isActive;
+    @NotNull
+    private Boolean isActive;
 
     @ToString.Exclude
     private List<TrainerTo> trainerList;
