@@ -5,7 +5,6 @@ import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
@@ -83,10 +82,10 @@ public class TrainerTestData {
                     });
 
     static {
-        TRAINER_TO_1.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_4)));
-        TRAINER_TO_2.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_1, TRAINEE_TO_2, TRAINEE_TO_3)));
-        TRAINER_TO_3.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_2)));
-        TRAINER_TO_4.setTraineeList(new ArrayList<>(List.of(TRAINEE_TO_1, TRAINEE_TO_4)));
+        TRAINER_TO_1.setTraineeList(List.of(TRAINEE_TO_4));
+        TRAINER_TO_2.setTraineeList(List.of(TRAINEE_TO_1, TRAINEE_TO_2, TRAINEE_TO_3));
+        TRAINER_TO_3.setTraineeList(List.of(TRAINEE_TO_2));
+        TRAINER_TO_4.setTraineeList(List.of(TRAINEE_TO_1, TRAINEE_TO_4));
     }
 
     public static Trainer getNewTrainer() {
