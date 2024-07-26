@@ -10,12 +10,12 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 public class MySpringMvcDispatcherSerlvetInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{SpringConfig.class};  // Указываете здесь ваш конфиг корня, если он есть
+        return null;
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{WebConfig.class};
+        return new Class[]{SpringConfig.class};
     }
 
     @Override
@@ -27,6 +27,7 @@ public class MySpringMvcDispatcherSerlvetInitializer extends AbstractAnnotationC
     public void onStartup(ServletContext aServletContext) throws ServletException {
         super.onStartup(aServletContext);
         registerTransactionIdFilter(aServletContext);
+        registerRequestResponseLoggingFilter(aServletContext);
         registerHiddenFieldFilter(aServletContext);
         registerAuthenticationFilter(aServletContext);
     }
@@ -45,6 +46,12 @@ public class MySpringMvcDispatcherSerlvetInitializer extends AbstractAnnotationC
     private void registerTransactionIdFilter(ServletContext aContext) {
         FilterRegistration.Dynamic registration = aContext.addFilter("transactionIdFilter", DelegatingFilterProxy.class);
         registration.setInitParameter("targetBeanName", "transactionIdFilter");
+        registration.addMappingForUrlPatterns(null, false, "/*");
+    }
+
+    private void registerRequestResponseLoggingFilter(ServletContext aContext) {
+        FilterRegistration.Dynamic registration = aContext.addFilter("requestResponseLoggingFilter", DelegatingFilterProxy.class);
+        registration.setInitParameter("targetBeanName", "requestResponseLoggingFilter");
         registration.addMappingForUrlPatterns(null, false, "/*");
     }
 }
