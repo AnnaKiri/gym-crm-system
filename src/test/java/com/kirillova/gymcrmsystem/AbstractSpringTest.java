@@ -3,6 +3,8 @@ package com.kirillova.gymcrmsystem;
 import com.kirillova.gymcrmsystem.config.ConfidentialProperties;
 import com.kirillova.gymcrmsystem.config.ConfigurationProperties;
 import com.kirillova.gymcrmsystem.config.SpringConfig;
+import com.kirillova.gymcrmsystem.config.WebConfig;
+import jakarta.annotation.PostConstruct;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.PostConstruct;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         SpringConfig.class,
+        WebConfig.class,
         ConfigurationProperties.class,
         ConfidentialProperties.class})
 @Transactional

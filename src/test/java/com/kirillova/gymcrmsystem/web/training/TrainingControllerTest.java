@@ -11,11 +11,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.web.training.TrainingController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TrainingControllerTest extends AbstractSpringTest {
-    private static final String REST_URL = TrainingController.REST_URL + '/';
+    private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Test
     void create() throws Exception {
@@ -28,7 +29,7 @@ public class TrainingControllerTest extends AbstractSpringTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + TRAINING_1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_1));

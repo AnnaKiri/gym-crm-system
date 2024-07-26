@@ -3,12 +3,12 @@ package com.kirillova.gymcrmsystem.util;
 import com.kirillova.gymcrmsystem.HasId;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.User;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 public class ValidationUtil {

@@ -7,11 +7,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_LIST;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_MATCHER;
+import static com.kirillova.gymcrmsystem.web.trainingtype.TrainingTypeController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TrainingTypeControllerTest extends AbstractSpringTest {
-    private static final String REST_URL = TrainingTypeController.REST_URL + '/';
+    private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Test
     void get() throws Exception {

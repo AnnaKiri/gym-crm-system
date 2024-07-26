@@ -24,12 +24,13 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TraineeControllerTest extends AbstractSpringTest {
-    private static final String REST_URL = TraineeController.REST_URL + '/';
+    private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Autowired
     private TraineeService traineeService;
@@ -53,7 +54,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
     void changePassword() throws Exception {
         String newPassword = "1234567890";
         UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).newPassword(newPassword).build();
-        perform(MockMvcRequestBuilders.put(REST_URL + USER_1.getUsername() + "/password")
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(userTo)))
                 .andExpect(status().isOk());
@@ -65,7 +66,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_TO_1));
@@ -78,7 +79,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
         TraineeTo traineeToWithTrainerList = getUpdatedTraineeTo();
         traineeToWithTrainerList.setTrainerList(TRAINEE_TO_1.getTrainerList());
 
-        perform(MockMvcRequestBuilders.put(REST_URL + USER_1_USERNAME)
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(traineeTo)))
                 .andExpect(status().isOk())
@@ -88,7 +89,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + USER_1_USERNAME))
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -97,7 +98,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void getFreeTrainersForTrainee() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME + "/free_trainers"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free_trainers"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
@@ -105,7 +106,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void getTrainings() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + USER_1_USERNAME + "/trainings"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINEE_1));
@@ -113,7 +114,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void setActive() throws Exception {
-        perform(MockMvcRequestBuilders.patch(REST_URL + USER_1_USERNAME)
+        perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
                 .param("isActive", "false"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
