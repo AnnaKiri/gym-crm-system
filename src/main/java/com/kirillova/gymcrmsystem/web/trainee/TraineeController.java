@@ -97,7 +97,7 @@ public class TraineeController {
     }
 
     @DeleteMapping("/{username}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable String username) {
         log.debug("Delete trainee with username = {}", username);
         traineeService.delete(username);
@@ -124,7 +124,7 @@ public class TraineeController {
     }
 
     @PatchMapping("/{username}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         traineeService.setActive(username, isActive);

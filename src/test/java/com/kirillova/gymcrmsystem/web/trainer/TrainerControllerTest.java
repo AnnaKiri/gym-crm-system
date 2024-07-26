@@ -99,7 +99,7 @@ public class TrainerControllerTest extends AbstractSpringTest {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_5_USERNAME)
                 .param("isActive", "false"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Assertions.assertFalse(trainerService.getWithUserAndSpecialization(USER_5_USERNAME).getUser().isActive());
     }

@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +30,17 @@ public class UserDAO {
 
     public boolean changePassword(String username, String newPassword) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Change password for user with username = {}", username);
         int updatedEntities = session.createQuery("UPDATE User u SET u.password = :password WHERE u.username = :username")
                 .setParameter("username", username)
                 .setParameter("password", newPassword)
                 .executeUpdate();
 
-        return updatedEntities > 0;
+        if (updatedEntities > 0) {
+            log.debug("Changed password for user with username = {}", username);
+            return true;
+        } else {
+            throw new NotFoundException("Not found entity with " + username);
+        }
     }
 
     public User get(String username) {
@@ -52,27 +57,32 @@ public class UserDAO {
         log.debug("User with id = {} updated", updatedUser.getId());
     }
 
-    public void delete(String username) {
+    public boolean delete(String username) {
         Session session = sessionFactory.getCurrentSession();
         int deletedEntities = session.createQuery("DELETE FROM User u WHERE u.username = :username")
                 .setParameter("username", username)
                 .executeUpdate();
         if (deletedEntities > 0) {
             log.debug("User and related entities with username = {} deleted", username);
+            return true;
         } else {
-            log.debug("No user found with username = {}", username);
+            throw new NotFoundException("Not found entity with " + username);
         }
     }
 
     public boolean setActive(String username, boolean isActive) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Change active status for user with username = " + username);
         int updatedEntities = session.createQuery("UPDATE User u SET u.isActive = :isActive WHERE u.username = :username")
                 .setParameter("username", username)
                 .setParameter("isActive", isActive)
                 .executeUpdate();
 
-        return updatedEntities > 0;
+        if (updatedEntities > 0) {
+            log.debug("Changed active status for user with username = {}", username);
+            return true;
+        } else {
+            throw new NotFoundException("Not found entity with " + username);
+        }
     }
 
     public List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName) {

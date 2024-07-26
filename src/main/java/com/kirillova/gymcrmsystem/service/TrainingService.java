@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNotFoundWithId;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,13 +22,13 @@ public class TrainingService {
     private final TrainingDAO trainingDAO;
 
     public Training get(int id) {
-        log.debug("Get training with trainingId = " + id);
-        return trainingDAO.get(id);
+        log.debug("Get training with trainingId = {}", id);
+        return checkNotFoundWithId(trainingDAO.get(id), id);
     }
 
     public Training getFull(int id) {
-        log.debug("Get full training with trainingId = " + id);
-        return trainingDAO.getFull(id);
+        log.debug("Get full training with trainingId = {}", id);
+        return checkNotFoundWithId(trainingDAO.getFull(id), id);
     }
 
     public Training create(Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {

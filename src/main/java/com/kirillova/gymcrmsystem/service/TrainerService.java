@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNotFoundWithUsername;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -61,8 +63,8 @@ public class TrainerService {
     @Transactional
     public void update(String username, String firstName, String lastName, TrainingType specialization, boolean isActive) {
         log.debug("Update trainer with username = {}", username);
-        Trainer updatedTrainer = trainerDAO.get(username);
-        User updatedUser = userDAO.get(username);
+        Trainer updatedTrainer = checkNotFoundWithUsername(trainerDAO.get(username), username);
+        User updatedUser = checkNotFoundWithUsername(userDAO.get(username), username);
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
@@ -88,11 +90,11 @@ public class TrainerService {
 
     public Trainer get(String username) {
         log.debug("Get trainer with username = {}", username);
-        return trainerDAO.get(username);
+        return checkNotFoundWithUsername(trainerDAO.get(username), username);
     }
 
     public Trainer getWithUserAndSpecialization(String username) {
         log.debug("Get trainer with username = {} with user and specialization entity", username);
-        return trainerDAO.getWithUserAndSpecialization(username);
+        return checkNotFoundWithUsername(trainerDAO.getWithUserAndSpecialization(username), username);
     }
 }

@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.web.trainee;
 
 import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.TraineeTestData;
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.to.TraineeTo;
 import com.kirillova.gymcrmsystem.to.UserTo;
@@ -25,6 +26,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,9 +93,9 @@ public class TraineeControllerTest extends AbstractSpringTest {
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
-        Assertions.assertNull(traineeService.get(USER_1.getUsername()));
+        assertThrows(NotFoundException.class, () -> traineeService.get(USER_1.getUsername()));
     }
 
     @Test
@@ -117,7 +119,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
                 .param("isActive", "false"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         Assertions.assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
     }

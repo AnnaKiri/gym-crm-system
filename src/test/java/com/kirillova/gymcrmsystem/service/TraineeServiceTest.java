@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -36,6 +37,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,13 +114,14 @@ public class TraineeServiceTest {
     @Test
     void delete() {
         User user = TRAINEE_1.getUser();
+        String username = user.getUsername();
+        when(traineeDAO.get(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + username));
+        traineeService.delete(username);
 
-        traineeService.delete(user.getUsername());
+        verify(userDAO, times(1)).delete(username);
 
-        verify(userDAO, times(1)).delete(user.getUsername());
-        when(traineeDAO.get(USER_1_USERNAME)).thenReturn(null);
 
-        Assertions.assertNull(traineeService.get(user.getUsername()));
+        assertThrows(NotFoundException.class, () -> traineeDAO.get(username));
     }
 
     @Test

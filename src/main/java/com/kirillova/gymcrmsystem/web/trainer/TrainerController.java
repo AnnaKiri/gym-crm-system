@@ -102,7 +102,7 @@ public class TrainerController {
     }
 
     @PatchMapping("/{username}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         trainerService.setActive(username, isActive);

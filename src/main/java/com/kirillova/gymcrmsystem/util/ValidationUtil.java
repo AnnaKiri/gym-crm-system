@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.util;
 
 import com.kirillova.gymcrmsystem.HasId;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -50,6 +51,35 @@ public class ValidationUtil {
             bean.setId(id);
         } else if (bean.id() != id) {
             throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must has id=" + id);
+        }
+    }
+
+    public static <T> T checkNotFoundWithUsername(T object, String username) {
+        checkNotFoundWithUsername(object != null, username);
+        return object;
+    }
+
+    public static void checkNotFoundWithUsername(boolean found, String username) {
+        checkNotFound(found, "username=" + username);
+    }
+
+    public static <T> T checkNotFoundWithId(T object, int id) {
+        checkNotFoundWithId(object != null, id);
+        return object;
+    }
+
+    public static void checkNotFoundWithId(boolean found, int id) {
+        checkNotFound(found, "id=" + id);
+    }
+
+    public static <T> T checkNotFound(T object, String msg) {
+        checkNotFound(object != null, msg);
+        return object;
+    }
+
+    public static void checkNotFound(boolean found, String msg) {
+        if (!found) {
+            throw new NotFoundException("Not found entity with " + msg);
         }
     }
 }

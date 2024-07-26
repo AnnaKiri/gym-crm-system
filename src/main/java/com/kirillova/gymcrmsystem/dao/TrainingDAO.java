@@ -32,19 +32,19 @@ public class TrainingDAO {
         session.save(training);
         session.flush();
         session.refresh(training);
-        log.debug("New training with id = " + training.getId() + " saved");
+        log.debug("New training with id = {} saved", training.getId());
         return training;
     }
 
     public Training get(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get training with id = " + id);
+        log.debug("Get training with id = {}", id);
         return session.get(Training.class, id);
     }
 
     public Training getFull(int id) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get training with id = " + id);
+        log.debug("Get training with id = {}", id);
         return session.createQuery("SELECT tr FROM Training tr " +
                         "JOIN FETCH tr.trainee t " +
                         "JOIN FETCH t.user tu " +
@@ -57,13 +57,22 @@ public class TrainingDAO {
     }
 
     @Transactional
-    public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
-        return getTrainings(traineeUsername, null, fromDate, toDate, trainingType, trainerFirstName, trainerLastName, null, null);
+    public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate,
+                                              LocalDate toDate, String trainingType,
+                                              String trainerFirstName, String trainerLastName) {
+        return getTrainings(traineeUsername, null,
+                fromDate, toDate, trainingType, trainerFirstName,
+                trainerLastName, null, null);
     }
 
     @Transactional
-    public List<Training> getTrainerTrainings(String trainerUsername, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
-        return getTrainings(null, trainerUsername, fromDate, toDate, null, null, null, traineeFirstName, traineeLastName);
+    public List<Training> getTrainerTrainings(String trainerUsername,
+                                              LocalDate fromDate, LocalDate toDate,
+                                              String traineeFirstName, String traineeLastName) {
+        return getTrainings(null, trainerUsername,
+                fromDate, toDate, null,
+                null, null,
+                traineeFirstName, traineeLastName);
     }
 
     private List<Training> getTrainings(String traineeUsername, String trainerUsername, LocalDate fromDate, LocalDate toDate,
