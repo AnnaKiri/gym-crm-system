@@ -26,6 +26,7 @@ public class MySpringMvcDispatcherSerlvetInitializer extends AbstractAnnotationC
     @Override
     public void onStartup(ServletContext aServletContext) throws ServletException {
         super.onStartup(aServletContext);
+        registerTransactionIdFilter(aServletContext);
         registerHiddenFieldFilter(aServletContext);
         registerAuthenticationFilter(aServletContext);
     }
@@ -38,6 +39,12 @@ public class MySpringMvcDispatcherSerlvetInitializer extends AbstractAnnotationC
     private void registerAuthenticationFilter(ServletContext aContext) {
         FilterRegistration.Dynamic registration = aContext.addFilter("authenticationFilter", DelegatingFilterProxy.class);
         registration.setInitParameter("targetBeanName", "authenticationFilter");
+        registration.addMappingForUrlPatterns(null, false, "/*");
+    }
+
+    private void registerTransactionIdFilter(ServletContext aContext) {
+        FilterRegistration.Dynamic registration = aContext.addFilter("transactionIdFilter", DelegatingFilterProxy.class);
+        registration.setInitParameter("targetBeanName", "transactionIdFilter");
         registration.addMappingForUrlPatterns(null, false, "/*");
     }
 }
