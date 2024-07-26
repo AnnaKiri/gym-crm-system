@@ -36,8 +36,6 @@ import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_3;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,8 +67,6 @@ class GymFacadeTest {
 
     @Test
     void updateTrainee() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
-
         gymFacade.updateTrainee(USER_1.getUsername(), USER_1.getPassword(), "updatedFirstName", "updatedLastName", LocalDate.of(1976, 4, 10), "updated address", false);
 
         verify(traineeService, times(1)).update(USER_1.getUsername(), "updatedFirstName", "updatedLastName", LocalDate.of(1976, 4, 10), "updated address", false);
@@ -78,7 +74,6 @@ class GymFacadeTest {
 
     @Test
     void getTrainee() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
         when(traineeService.get(USER_1.getUsername())).thenReturn(TRAINEE_1);
 
         Trainee actual = gymFacade.getTrainee(USER_1.getUsername(), USER_1.getPassword());
@@ -90,8 +85,6 @@ class GymFacadeTest {
 
     @Test
     void deleteTrainee() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
-
         gymFacade.deleteTrainee(USER_1.getUsername(), USER_1.getPassword());
 
         verify(traineeService, times(1)).delete(USER_1.getUsername());
@@ -106,8 +99,6 @@ class GymFacadeTest {
 
     @Test
     void updateTrainer() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
-
         gymFacade.updateTrainer(USER_5.getUsername(), USER_5.getPassword(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2, false);
 
         verify(trainerService, times(1)).update(USER_5.getUsername(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2, false);
@@ -115,7 +106,6 @@ class GymFacadeTest {
 
     @Test
     void getTrainer() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
         when(trainerService.get(USER_5.getUsername())).thenReturn(TRAINER_1);
 
         Trainer actual = gymFacade.getTrainer(USER_5.getUsername(), USER_5.getPassword());
@@ -128,8 +118,6 @@ class GymFacadeTest {
 
     @Test
     void createTraining() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
-
         gymFacade.createTraining(USER_3.getUsername(), USER_3.getPassword(), TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingService, times(1)).create(TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
@@ -137,7 +125,6 @@ class GymFacadeTest {
 
     @Test
     void getTraining() {
-        doNothing().when(authService).userAuthentication(anyString(), anyString());
         when(trainingService.get(TRAINING_1_ID)).thenReturn(TRAINING_1);
 
         Training actual = gymFacade.getTraining(USER_1.getUsername(), USER_1.getPassword(), TRAINING_1_ID);

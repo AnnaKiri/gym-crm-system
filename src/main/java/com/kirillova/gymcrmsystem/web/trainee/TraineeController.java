@@ -72,7 +72,7 @@ public class TraineeController {
     @Transactional
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
         log.info("Change password for user {} with username={}", userTo, username);
-        authenticationService.userAuthentication(userTo.getUsername(), userTo.getPassword());
+        authenticationService.getAuthenticatedUser(userTo.getUsername(), userTo.getPassword());
         traineeService.changePassword(username, userTo.getNewPassword());
     }
 

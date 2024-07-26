@@ -26,6 +26,6 @@ public class LoginController {
     @ResponseStatus(HttpStatus.OK)
     public void login(@Valid @RequestBody UserTo userTo) {
         log.info("Login user with username={}", userTo.getUsername());
-        authenticationService.userAuthentication(userTo.getUsername(), userTo.getPassword());
+        authenticationService.getAuthenticatedUser(userTo.getUsername(), userTo.getPassword());
     }
 }

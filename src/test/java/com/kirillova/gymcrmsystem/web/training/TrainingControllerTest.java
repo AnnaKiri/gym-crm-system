@@ -12,6 +12,7 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.web.training.TrainingController.REST_URL;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,4 +36,10 @@ public class TrainingControllerTest extends AbstractSpringTest {
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_1));
     }
 
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }

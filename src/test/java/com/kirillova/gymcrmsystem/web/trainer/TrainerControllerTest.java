@@ -104,4 +104,20 @@ public class TrainerControllerTest extends AbstractSpringTest {
         Assertions.assertFalse(trainerService.getWithUserAndSpecialization(USER_5_USERNAME).getUser().isActive());
     }
 
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        TrainerTo trainerTo = TrainerTo.builder().build();
+
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(trainerTo)))
+                .andExpect(status().isUnprocessableEntity());
+    }
 }

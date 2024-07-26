@@ -124,4 +124,20 @@ public class TraineeControllerTest extends AbstractSpringTest {
         Assertions.assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
     }
 
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        TraineeTo traineeTo = TraineeTo.builder().build();
+
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(traineeTo)))
+                .andExpect(status().isUnprocessableEntity());
+    }
 }
