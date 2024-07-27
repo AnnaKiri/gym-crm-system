@@ -3,7 +3,6 @@ package com.kirillova.gymcrmsystem.web.training;
 import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.TrainingTestData;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -11,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.jsonWithTypeId;
 import static com.kirillova.gymcrmsystem.web.training.TrainingController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -24,7 +24,7 @@ public class TrainingControllerTest extends AbstractSpringTest {
         TrainingTo newTrainingTo = TrainingTestData.getNewTrainingTo();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newTrainingTo)))
+                .content(jsonWithTypeId(newTrainingTo, newTrainingTo.getTypeId())))
                 .andExpect(status().isOk());
     }
 

@@ -25,6 +25,7 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,10 +56,10 @@ public class TraineeControllerTest extends AbstractSpringTest {
     @Test
     void changePassword() throws Exception {
         String newPassword = "1234567890";
-        UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).newPassword(newPassword).build();
+        UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(userTo)))
+                .content(jsonWithPassword(userTo, newPassword)))
                 .andExpect(status().isOk());
 
         clearSession();

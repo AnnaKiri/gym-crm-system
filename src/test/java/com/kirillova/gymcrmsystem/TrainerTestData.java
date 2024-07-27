@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
+import com.kirillova.gymcrmsystem.web.json.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
@@ -77,11 +78,11 @@ public class TrainerTestData {
     public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_TO_2, TRAINER_TO_3);
 
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization");
-    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerTo.class, "traineeList");
+    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerTo.class, "traineeList", "specializationId");
 
     public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER_WITH_TRAINEE_LIST =
             MatcherFactory.usingAssertions(TrainerTo.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList").isEqualTo(e),
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList", "specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
@@ -130,5 +131,9 @@ public class TrainerTestData {
 
     public static void checkTrainerSpecializationId(Trainer expected, Trainer actual) {
         Assertions.assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
+    }
+
+    public static String jsonWithSpecializationId(TrainerTo trainerTo, int specializationId) {
+        return JsonUtil.writeAdditionProps(trainerTo, "specializationId", specializationId);
     }
 }

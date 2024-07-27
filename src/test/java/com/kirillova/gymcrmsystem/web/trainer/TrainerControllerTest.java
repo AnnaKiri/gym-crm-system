@@ -17,12 +17,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_MATCHER_WITH_TRAINEE_LIST;
 import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainerTo;
+import static com.kirillova.gymcrmsystem.TrainerTestData.jsonWithSpecializationId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_LIST_FOR_TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainer.TrainerController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,7 +42,7 @@ public class TrainerControllerTest extends AbstractSpringTest {
         TrainerTo newTrainerTo = TrainerTestData.getNewTrainerTo();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newTrainerTo)))
+                .content(jsonWithSpecializationId(newTrainerTo, newTrainerTo.getSpecializationId())))
                 .andExpect(status().isCreated());
 
         UserTo created = USER_TO_MATCHER.readFromJson(action);
@@ -52,10 +54,10 @@ public class TrainerControllerTest extends AbstractSpringTest {
     @Test
     void changePassword() throws Exception {
         String newPassword = "1234567890";
-        UserTo userTo = UserTo.builder().username(USER_5_USERNAME).password(USER_5.getPassword()).newPassword(newPassword).build();
+        UserTo userTo = UserTo.builder().username(USER_5_USERNAME).password(USER_5.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(userTo)))
+                .content(jsonWithPassword(userTo, newPassword)))
                 .andExpect(status().isOk());
 
         clearSession();
@@ -85,7 +87,7 @@ public class TrainerControllerTest extends AbstractSpringTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(trainerTo)))
+                .content(jsonWithSpecializationId(trainerTo, trainerTo.getSpecializationId())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER_WITH_TRAINEE_LIST.contentJson(trainerExpected));

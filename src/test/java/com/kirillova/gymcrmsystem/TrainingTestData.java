@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
+import com.kirillova.gymcrmsystem.web.json.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
@@ -119,7 +120,7 @@ public class TrainingTestData {
     public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_4 = List.of(TRAINING_TO_1, TRAINING_TO_6);
 
     public static final MatcherFactory.Matcher<Training> TRAINING_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Training.class, "trainee", "trainer", "type");
-    public static final MatcherFactory.Matcher<TrainingTo> TRAINING_TO_MATCHER = MatcherFactory.usingEqualsComparator(TrainingTo.class);
+    public static final MatcherFactory.Matcher<TrainingTo> TRAINING_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainingTo.class, "typeId");
 
     public static Training getNewTraining() {
         return new Training(null, TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
@@ -147,5 +148,9 @@ public class TrainingTestData {
 
     public static void checkTrainingTypeId(Training expected, Training actual) {
         Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
+    }
+
+    public static String jsonWithTypeId(TrainingTo trainingTo, int typeId) {
+        return JsonUtil.writeAdditionProps(trainingTo, "typeId", typeId);
     }
 }

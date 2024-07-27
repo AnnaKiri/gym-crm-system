@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.to;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kirillova.gymcrmsystem.models.TrainingType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -46,5 +47,6 @@ public class TrainerTo extends BaseTo {
 
     @NotNull
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer specializationId;
 }

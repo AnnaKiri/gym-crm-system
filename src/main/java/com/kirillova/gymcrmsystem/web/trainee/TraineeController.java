@@ -88,7 +88,7 @@ public class TraineeController {
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
         log.info("Change password for user {} with username={}", userTo, username);
-        authenticationService.getAuthenticatedUser(userTo.getUsername(), userTo.getPassword());
+        authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
         traineeService.changePassword(username, userTo.getNewPassword());
     }
 

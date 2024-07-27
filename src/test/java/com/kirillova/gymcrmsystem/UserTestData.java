@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.UserTo;
+import com.kirillova.gymcrmsystem.web.json.JsonUtil;
 
 import java.util.List;
 
@@ -32,4 +33,7 @@ public class UserTestData {
         return new User(1, "Ryan", "Reeves", "Ryan.Reeves", "password11", false);
     }
 
+    public static String jsonWithPassword(UserTo userTo, String passw) {
+        return JsonUtil.writeAdditionProps(userTo, "newPassword", passw);
+    }
 }

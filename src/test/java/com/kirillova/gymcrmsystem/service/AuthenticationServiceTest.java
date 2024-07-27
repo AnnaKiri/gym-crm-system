@@ -23,7 +23,7 @@ public class AuthenticationServiceTest {
     @Test
     void testGetAuthenticatedUserSuccess() {
         when(userDAO.getByUsernameAndPassword(USER_1.getUsername(), USER_1.getPassword())).thenReturn(USER_1);
-        authenticationService.getAuthenticatedUser(USER_1.getUsername(), USER_1.getPassword());
+        authenticationService.checkAuthenticatedUser(USER_1.getUsername(), USER_1.getPassword());
     }
 
     @Test

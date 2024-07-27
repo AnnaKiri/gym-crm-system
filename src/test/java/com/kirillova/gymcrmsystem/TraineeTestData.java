@@ -73,7 +73,7 @@ public class TraineeTestData {
 
     public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER_WITH_TRAINER_LIST =
             MatcherFactory.usingAssertions(TraineeTo.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList").isEqualTo(e),
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });

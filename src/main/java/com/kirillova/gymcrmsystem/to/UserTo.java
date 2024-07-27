@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.to;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class UserTo extends BaseTo {
 
-    @NotBlank
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
 
     @NotBlank
@@ -28,6 +29,7 @@ public class UserTo extends BaseTo {
     @NotBlank
     @Size(min = 5, max = 50)
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String newPassword;
 
     public UserTo(Integer id, String username, String password) {

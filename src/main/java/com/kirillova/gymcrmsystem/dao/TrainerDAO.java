@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem.dao;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
@@ -63,14 +64,20 @@ public class TrainerDAO {
     public Trainer getWithUserAndSpecialization(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainer with username = {} with user and specialization entities", username);
-        return session.createQuery("SELECT t " +
+
+        Trainer trainer = session.createQuery("SELECT t " +
                         "FROM Trainer t " +
                         "JOIN FETCH t.user u " +
-                        "JOIN FETCH t.specialization s " +
+                        "LEFT JOIN FETCH t.specialization s " +
                         "WHERE u.username = :username", Trainer.class)
                 .setParameter("username", username)
                 .uniqueResult();
+        if (trainer != null) {
+            Hibernate.initialize(trainer.getSpecialization());
+        }
+        return trainer;
     }
+
 
     public List<Trainer> getFreeTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();

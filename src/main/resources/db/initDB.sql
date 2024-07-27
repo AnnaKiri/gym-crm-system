@@ -24,8 +24,8 @@ CREATE TABLE training_type
 CREATE TABLE trainee
 (
     id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    date_of_birth    DATE                              NOT NULL,
-    address          VARCHAR                           NOT NULL,
+    date_of_birth    DATE                                            ,
+    address          VARCHAR                                         ,
     user_id          BIGINT                            NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
@@ -54,6 +55,9 @@ public class TrainerController {
     @Autowired
     private TraineeService traineeService;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Register a new trainer", description = "Creates a new trainer and associated user")
@@ -82,6 +86,7 @@ public class TrainerController {
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
         log.info("Change password for user {} with username={}", userTo, username);
+        authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
         trainerService.changePassword(username, userTo.getNewPassword());
     }
 
@@ -111,7 +116,7 @@ public class TrainerController {
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
         log.info("Update the trainer with username {}", username);
         trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId(), trainerTo.getIsActive());
-        Trainer receivedTrainer = trainerService.get(username);
+        Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
         return createToWithTraineeToList(receivedTrainer, traineeList);
     }
