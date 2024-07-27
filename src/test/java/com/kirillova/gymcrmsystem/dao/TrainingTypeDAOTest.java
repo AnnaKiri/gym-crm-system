@@ -20,8 +20,8 @@ class TrainingTypeDAOTest extends AbstractSpringTest {
     private TrainingTypeDAO trainingTypeDAO;
 
     @Test
-    void get() {
-        List<TrainingType> actual = trainingTypeDAO.get();
+    void getAll() {
+        List<TrainingType> actual = trainingTypeDAO.getAll();
         List<TrainingType> expected = Arrays.asList(TRAINING_TYPE_1, TRAINING_TYPE_2, TRAINING_TYPE_3, TRAINING_TYPE_4);
 
         TRAINING_TYPE_MATCHER.assertMatch(actual, expected);

@@ -92,16 +92,16 @@ class GymFacadeTest {
 
     @Test
     void createTrainer() {
-        gymFacade.createTrainer("New", "Trainer", TRAINING_TYPE_1);
+        gymFacade.createTrainer("New", "Trainer", TRAINING_TYPE_1.getId());
 
-        verify(trainerService, times(1)).create("New", "Trainer", TRAINING_TYPE_1);
+        verify(trainerService, times(1)).create("New", "Trainer", TRAINING_TYPE_1.getId());
     }
 
     @Test
     void updateTrainer() {
-        gymFacade.updateTrainer(USER_5.getUsername(), USER_5.getPassword(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2, false);
+        gymFacade.updateTrainer(USER_5.getUsername(), USER_5.getPassword(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2.getId(), false);
 
-        verify(trainerService, times(1)).update(USER_5.getUsername(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2, false);
+        verify(trainerService, times(1)).update(USER_5.getUsername(), "updatedFirstName", "updatedLastName", TRAINING_TYPE_2.getId(), false);
     }
 
     @Test
@@ -118,9 +118,9 @@ class GymFacadeTest {
 
     @Test
     void createTraining() {
-        gymFacade.createTraining(USER_3.getUsername(), USER_3.getPassword(), TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+        gymFacade.createTraining(USER_3.getUsername(), USER_3.getPassword(), TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
-        verify(trainingService, times(1)).create(TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+        verify(trainingService, times(1)).create(TRAINEE_3, TRAINER_3, "New Training", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
     }
 
     @Test

@@ -24,6 +24,7 @@ public class TrainerUtil {
                 firstName(receivedUser.getFirstName()).
                 lastName(receivedUser.getLastName()).
                 specialization(updatedTrainer.getSpecialization()).
+                specializationId(updatedTrainer.getSpecialization().getId()).
                 isActive(receivedUser.isActive()).
                 traineeList(traineeToList).
                 build();
@@ -41,6 +42,7 @@ public class TrainerUtil {
                     firstName(trainersUser.getFirstName()).
                     lastName(trainersUser.getLastName()).
                     specialization(trainer.getSpecialization()).
+                    specializationId(trainer.getSpecialization().getId()).
                     isActive(trainersUser.isActive()).
                     build();
 

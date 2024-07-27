@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.to;
 
 import com.kirillova.gymcrmsystem.models.TrainingType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,7 +27,11 @@ public class TrainingTo extends BaseTo {
     private String name;
 
     @NotNull
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private TrainingType type;
+
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    private Integer typeId;
 
     @NotNull
     private LocalDate date;
@@ -35,8 +40,8 @@ public class TrainingTo extends BaseTo {
     private Integer duration;
 
     @NotBlank
-    private String traineeName;
+    private String traineeUsername;
 
     @NotBlank
-    private String trainerName;
+    private String trainerUsername;
 }

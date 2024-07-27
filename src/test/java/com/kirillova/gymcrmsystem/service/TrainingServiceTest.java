@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
+import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.models.Training;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,9 @@ class TrainingServiceTest {
     @Mock
     private TrainingDAO trainingDAO;
 
+    @Mock
+    private TrainingTypeDAO trainingTypeDAO;
+
     @InjectMocks
     private TrainingService trainingService;
 
@@ -54,8 +58,10 @@ class TrainingServiceTest {
             return training;
         });
 
+        when(trainingTypeDAO.get(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
+
         Training newTraining = getNewTraining();
-        Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+        Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingDAO, times(1)).save(any(Training.class));
 

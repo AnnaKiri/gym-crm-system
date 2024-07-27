@@ -54,7 +54,6 @@ public class TraineeService {
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainee with username = {}", username);
-        ValidationUtil.validatePassword(newPassword);
         return userDAO.changePassword(username, newPassword);
     }
 

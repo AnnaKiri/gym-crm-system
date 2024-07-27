@@ -2,10 +2,10 @@ package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
+import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
-import com.kirillova.gymcrmsystem.models.TrainingType;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
@@ -27,9 +27,10 @@ public class TrainerService {
     private final TrainerDAO trainerDAO;
     private final TrainingDAO trainingDAO;
     private final UserDAO userDAO;
+    private final TrainingTypeDAO trainingTypeDAO;
 
     @Transactional
-    public Trainer create(String firstName, String lastName, TrainingType specialization) {
+    public Trainer create(String firstName, String lastName, Integer specializationId) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
@@ -42,7 +43,7 @@ public class TrainerService {
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
-        trainer.setSpecialization(specialization);
+        trainer.setSpecialization(trainingTypeDAO.get(specializationId));
         trainer.setUser(newUser);
         ValidationUtil.validate(trainer);
         return trainerDAO.save(trainer);
@@ -61,7 +62,7 @@ public class TrainerService {
     }
 
     @Transactional
-    public void update(String username, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+    public void update(String username, String firstName, String lastName, Integer specializationId, boolean isActive) {
         log.debug("Update trainer with username = {}", username);
         Trainer updatedTrainer = checkNotFoundWithUsername(trainerDAO.get(username), username);
         User updatedUser = checkNotFoundWithUsername(userDAO.get(username), username);
@@ -72,7 +73,7 @@ public class TrainerService {
         ValidationUtil.validate(updatedUser);
         userDAO.update(updatedUser);
 
-        updatedTrainer.setSpecialization(specialization);
+        updatedTrainer.setSpecialization(trainingTypeDAO.get(specializationId));
         ValidationUtil.validate(updatedTrainer);
         trainerDAO.update(updatedTrainer);
     }

@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
+import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -32,6 +33,7 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTraineeId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTrainerId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.checkTrainingTypeId;
+import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
@@ -54,6 +56,9 @@ class TrainerServiceTest {
     @Mock
     private TrainingDAO trainingDAO;
 
+    @Mock
+    private TrainingTypeDAO trainingTypeDAO;
+
     @InjectMocks
     private TrainerService trainerService;
 
@@ -75,8 +80,9 @@ class TrainerServiceTest {
 
         when(trainerDAO.get(user.getUsername())).thenReturn(trainer);
         when(userDAO.get(user.getUsername())).thenReturn(user);
+        when(trainingTypeDAO.get(trainer.getSpecialization().getId())).thenReturn(trainer.getSpecialization());
 
-        trainerService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainer.getSpecialization(), user.isActive());
+        trainerService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainer.getSpecialization().getId(), user.isActive());
 
         verify(userDAO, times(1)).update(user);
         verify(trainerDAO, times(1)).update(trainer);
@@ -112,9 +118,11 @@ class TrainerServiceTest {
                     .toList();
         });
 
+        when(trainingTypeDAO.get(any(Integer.class))).thenAnswer(invocation -> TRAINING_TYPE_4);
+
         User newUser = getNewUser();
         Trainer newTrainer = getNewTrainer();
-        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization());
+        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization().getId());
 
         verify(userDAO, times(1)).save(any(User.class));
         verify(trainerDAO, times(1)).save(any(Trainer.class));

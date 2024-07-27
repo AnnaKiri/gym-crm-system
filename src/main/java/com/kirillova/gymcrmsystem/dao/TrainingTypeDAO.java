@@ -18,10 +18,16 @@ public class TrainingTypeDAO {
 
     private final SessionFactory sessionFactory;
 
-    public List<TrainingType> get() {
+    public List<TrainingType> getAll() {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training types");
         return session.createQuery("FROM TrainingType", TrainingType.class).getResultList();
+    }
+
+    public TrainingType get(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get training type with id {}", id);
+        return session.get(TrainingType.class, id);
     }
 }
 

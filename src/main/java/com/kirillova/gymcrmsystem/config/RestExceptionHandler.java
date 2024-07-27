@@ -8,6 +8,7 @@ import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -68,6 +69,7 @@ public class RestExceptionHandler {
             put(HttpRequestMethodNotSupportedException.class, BAD_REQUEST);
             put(ServletRequestBindingException.class, BAD_REQUEST);
             put(AccessDeniedException.class, FORBIDDEN);
+            put(ConstraintViolationException.class, BAD_REQUEST);
         }
     };
 

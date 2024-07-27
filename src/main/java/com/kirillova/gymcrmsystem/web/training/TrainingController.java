@@ -67,8 +67,8 @@ public class TrainingController {
     public void create(@Valid @RequestBody TrainingTo trainingTo) {
         log.info("Create a new training {}", trainingTo);
         checkNew(trainingTo);
-        Trainee trainee = traineeService.get(trainingTo.getTraineeName());
-        Trainer trainer = trainerService.get(trainingTo.getTrainerName());
-        trainingService.create(trainee, trainer, trainingTo.getName(), trainingTo.getType(), trainingTo.getDate(), trainingTo.getDuration());
+        Trainee trainee = traineeService.get(trainingTo.getTraineeUsername());
+        Trainer trainer = trainerService.get(trainingTo.getTrainerUsername());
+        trainingService.create(trainee, trainer, trainingTo.getName(), trainingTo.getTypeId(), trainingTo.getDate(), trainingTo.getDuration());
     }
 }

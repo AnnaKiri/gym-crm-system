@@ -33,6 +33,6 @@ public class TrainingTypeController {
     })
     public List<TrainingType> get() {
         log.debug("Get training types");
-        return trainingTypeDAO.get();
+        return trainingTypeDAO.getAll();
     }
 }

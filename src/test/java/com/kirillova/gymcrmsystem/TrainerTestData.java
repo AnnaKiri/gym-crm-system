@@ -12,6 +12,7 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_2;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_3;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_4;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
+import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
@@ -37,6 +38,7 @@ public class TrainerTestData {
             .lastName(USER_5.getLastName())
             .isActive(USER_5.isActive())
             .specialization(TRAINING_TYPE_1)
+            .specializationId(TRAINING_TYPE_1_ID)
             .build();
 
     public static final TrainerTo TRAINER_TO_2 = TrainerTo.builder()
@@ -46,6 +48,7 @@ public class TrainerTestData {
             .lastName(USER_6.getLastName())
             .isActive(USER_6.isActive())
             .specialization(TRAINING_TYPE_2)
+            .specializationId(TRAINING_TYPE_1_ID + 1)
             .build();
 
     public static final TrainerTo TRAINER_TO_3 = TrainerTo.builder()
@@ -55,6 +58,7 @@ public class TrainerTestData {
             .lastName(USER_7.getLastName())
             .isActive(USER_7.isActive())
             .specialization(TRAINING_TYPE_3)
+            .specializationId(TRAINING_TYPE_1_ID + 2)
             .build();
 
     public static final TrainerTo TRAINER_TO_4 = TrainerTo.builder()
@@ -64,6 +68,7 @@ public class TrainerTestData {
             .lastName(USER_8.getLastName())
             .isActive(USER_8.isActive())
             .specialization(TRAINING_TYPE_4)
+            .specializationId(TRAINING_TYPE_1_ID + 3)
             .build();
 
     public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_TO_1, TRAINER_TO_3);
@@ -100,7 +105,7 @@ public class TrainerTestData {
         return TrainerTo.builder()
                 .firstName("FirstName")
                 .lastName("LastName")
-                .specialization(TRAINING_TYPE_4)
+                .specializationId(TRAINING_TYPE_4.getId())
                 .isActive(true)
                 .build();
     }
@@ -113,6 +118,7 @@ public class TrainerTestData {
                 .firstName(updatedUser.getFirstName())
                 .lastName(updatedUser.getLastName())
                 .specialization(updatedTrainer.getSpecialization())
+                .specializationId(updatedTrainer.getSpecialization().getId())
                 .isActive(updatedUser.isActive())
                 .username(USER_5.getUsername())
                 .build();

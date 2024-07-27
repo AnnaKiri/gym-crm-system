@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.to;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,7 @@ public class UserTo extends BaseTo {
 
     @NotBlank
     @Size(min = 5, max = 50)
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     private String newPassword;
 
     public UserTo(Integer id, String username, String password) {

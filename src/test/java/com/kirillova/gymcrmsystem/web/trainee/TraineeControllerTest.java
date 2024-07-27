@@ -76,17 +76,23 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void update() throws Exception {
-        TraineeTo traineeTo = getUpdatedTraineeTo();
+        TraineeTo traineeExpected = getUpdatedTraineeTo();
+        traineeExpected.setTrainerList(TRAINEE_TO_1.getTrainerList());
 
-        TraineeTo traineeToWithTrainerList = getUpdatedTraineeTo();
-        traineeToWithTrainerList.setTrainerList(TRAINEE_TO_1.getTrainerList());
+        TraineeTo traineeTo = TraineeTo.builder()
+                .firstName(traineeExpected.getFirstName())
+                .lastName(traineeExpected.getLastName())
+                .birthday(traineeExpected.getBirthday())
+                .address(traineeExpected.getAddress())
+                .isActive(traineeExpected.getIsActive())
+                .build();
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(traineeTo)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeToWithTrainerList));
+                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
     }
 
     @Test

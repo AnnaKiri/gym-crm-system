@@ -3,7 +3,6 @@ package com.kirillova.gymcrmsystem.facade;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
-import com.kirillova.gymcrmsystem.models.TrainingType;
 import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
@@ -68,8 +67,8 @@ public class GymFacade {
     }
 
     // Methods for Trainer
-    public void createTrainer(String firstName, String lastName, TrainingType specialization) {
-        trainerService.create(firstName, lastName, specialization);
+    public void createTrainer(String firstName, String lastName, Integer specializationId) {
+        trainerService.create(firstName, lastName, specializationId);
     }
 
     public boolean changeTrainerPassword(String username, String password, String newPassword) {
@@ -82,9 +81,9 @@ public class GymFacade {
         return trainerService.getTrainersForTrainee(username);
     }
 
-    public void updateTrainer(String username, String password, String firstName, String lastName, TrainingType specialization, boolean isActive) {
+    public void updateTrainer(String username, String password, String firstName, String lastName, Integer specializationId, boolean isActive) {
         authService.getAuthenticatedUser(username, password);
-        trainerService.update(username, firstName, lastName, specialization, isActive);
+        trainerService.update(username, firstName, lastName, specializationId, isActive);
     }
 
     public List<Training> getTrainerTrainings(String username, String password, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
@@ -103,9 +102,9 @@ public class GymFacade {
     }
 
     // Methods for Training
-    public void createTraining(String username, String password, Trainee trainee, Trainer trainer, String name, TrainingType type, LocalDate date, int duration) {
+    public void createTraining(String username, String password, Trainee trainee, Trainer trainer, String name, Integer typeId, LocalDate date, int duration) {
         authService.getAuthenticatedUser(username, password);
-        trainingService.create(trainee, trainer, name, type, date, duration);
+        trainingService.create(trainee, trainer, name, typeId, date, duration);
     }
 
     public Training getTraining(String username, String password, int trainingId) {

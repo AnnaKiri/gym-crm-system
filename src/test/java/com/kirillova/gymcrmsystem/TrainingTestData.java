@@ -35,70 +35,77 @@ public class TrainingTestData {
             .id(1)
             .name(TRAINING_1.getName())
             .type(TRAINING_1.getType())
+            .typeId(TRAINING_1.getType().getId())
             .date(TRAINING_1.getDate())
             .duration(TRAINING_1.getDuration())
-            .traineeName(TRAINEE_1.getUser().getUsername())
-            .trainerName(TRAINER_4.getUser().getUsername())
+            .traineeUsername(TRAINEE_1.getUser().getUsername())
+            .trainerUsername(TRAINER_4.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_2 = TrainingTo.builder()
             .id(2)
             .name(TRAINING_2.getName())
             .type(TRAINING_2.getType())
+            .typeId(TRAINING_2.getType().getId())
             .date(TRAINING_2.getDate())
             .duration(TRAINING_2.getDuration())
-            .traineeName(TRAINEE_1.getUser().getUsername())
-            .trainerName(TRAINER_2.getUser().getUsername())
+            .traineeUsername(TRAINEE_1.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_3 = TrainingTo.builder()
             .id(3)
             .name(TRAINING_3.getName())
             .type(TRAINING_3.getType())
+            .typeId(TRAINING_3.getType().getId())
             .date(TRAINING_3.getDate())
             .duration(TRAINING_3.getDuration())
-            .traineeName(TRAINEE_2.getUser().getUsername())
-            .trainerName(TRAINER_2.getUser().getUsername())
+            .traineeUsername(TRAINEE_2.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_4 = TrainingTo.builder()
             .id(4)
             .name(TRAINING_4.getName())
             .type(TRAINING_4.getType())
+            .typeId(TRAINING_4.getType().getId())
             .date(TRAINING_4.getDate())
             .duration(TRAINING_4.getDuration())
-            .traineeName(TRAINEE_2.getUser().getUsername())
-            .trainerName(TRAINER_3.getUser().getUsername())
+            .traineeUsername(TRAINEE_2.getUser().getUsername())
+            .trainerUsername(TRAINER_3.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_5 = TrainingTo.builder()
             .id(5)
             .name(TRAINING_5.getName())
             .type(TRAINING_5.getType())
+            .typeId(TRAINING_5.getType().getId())
             .date(TRAINING_5.getDate())
             .duration(TRAINING_5.getDuration())
-            .traineeName(TRAINEE_3.getUser().getUsername())
-            .trainerName(TRAINER_2.getUser().getUsername())
+            .traineeUsername(TRAINEE_3.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_6 = TrainingTo.builder()
             .id(6)
             .name(TRAINING_6.getName())
             .type(TRAINING_6.getType())
+            .typeId(TRAINING_6.getType().getId())
             .date(TRAINING_6.getDate())
             .duration(TRAINING_6.getDuration())
-            .traineeName(TRAINEE_4.getUser().getUsername())
-            .trainerName(TRAINER_4.getUser().getUsername())
+            .traineeUsername(TRAINEE_4.getUser().getUsername())
+            .trainerUsername(TRAINER_4.getUser().getUsername())
             .build();
 
     public static final TrainingTo TRAINING_TO_7 = TrainingTo.builder()
             .id(7)
             .name(TRAINING_7.getName())
             .type(TRAINING_7.getType())
+            .typeId(TRAINING_7.getType().getId())
             .date(TRAINING_7.getDate())
             .duration(TRAINING_7.getDuration())
-            .traineeName(TRAINEE_4.getUser().getUsername())
-            .trainerName(TRAINER_1.getUser().getUsername())
+            .traineeUsername(TRAINEE_4.getUser().getUsername())
+            .trainerUsername(TRAINER_1.getUser().getUsername())
             .build();
 
     public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_1 = List.of(TRAINING_TO_1, TRAINING_TO_2);
@@ -122,10 +129,11 @@ public class TrainingTestData {
         return TrainingTo.builder().
                 name("Yoga").
                 type(TRAINING_TYPE_3).
+                typeId(TRAINING_TYPE_3.getId()).
                 date(LocalDate.of(2024, 1, 5)).
                 duration(60).
-                traineeName(TRAINEE_3.getUser().getUsername()).
-                trainerName(TRAINER_3.getUser().getUsername()).
+                traineeUsername(TRAINEE_3.getUser().getUsername()).
+                trainerUsername(TRAINER_3.getUser().getUsername()).
                 build();
     }
 

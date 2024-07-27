@@ -23,9 +23,10 @@ public class TrainingUtil {
                     name(training.getName()).
                     date(training.getDate()).
                     type(training.getType()).
+                    typeId(training.getType().getId()).
                     duration(training.getDuration()).
-                    traineeName(trainee.getUser().getUsername()).
-                    trainerName(trainer.getUser().getUsername()).
+                    traineeUsername(trainee.getUser().getUsername()).
+                    trainerUsername(trainer.getUser().getUsername()).
                     build();
 
             trainingToList.add(trainingTo);
@@ -39,9 +40,10 @@ public class TrainingUtil {
                 name(training.getName()).
                 date(training.getDate()).
                 type(training.getType()).
+                typeId(training.getType().getId()).
                 duration(training.getDuration()).
-                traineeName(training.getTrainee().getUser().getUsername()).
-                trainerName(training.getTrainer().getUser().getUsername()).
+                traineeUsername(training.getTrainee().getUser().getUsername()).
+                trainerUsername(training.getTrainer().getUser().getUsername()).
                 build();
 
     }

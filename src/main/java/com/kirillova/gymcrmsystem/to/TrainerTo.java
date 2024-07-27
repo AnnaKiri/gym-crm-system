@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.to;
 
 import com.kirillova.gymcrmsystem.models.TrainingType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TrainerTo extends BaseTo {
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
 
     @NotBlank
@@ -36,8 +38,13 @@ public class TrainerTo extends BaseTo {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<TraineeTo> traineeList;
 
-    @NotNull
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private TrainingType specialization;
+
+    @NotNull
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+    private Integer specializationId;
 }
