@@ -7,6 +7,10 @@ import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.service.TrainingService;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RestController
 @Slf4j
 @RequestMapping(value = TrainingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Training Controller", description = "Managing gym trainings")
 public class TrainingController {
     static final String REST_URL = "/training";
 
@@ -40,6 +45,11 @@ public class TrainingController {
     private TrainerService trainerService;
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get training details", description = "Gets the details of the specified training")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Training details retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Training not found")
+    })
     public TrainingTo get(@PathVariable int id) {
         log.info("Get the training with id={}", id);
         Training training = trainingService.getFull(id);
@@ -49,6 +59,11 @@ public class TrainingController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
+    @Operation(summary = "Create a new training", description = "Creates a new training with the specified details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Training created successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error")
+    })
     public void create(@Valid @RequestBody TrainingTo trainingTo) {
         log.info("Create a new training {}", trainingTo);
         checkNew(trainingTo);

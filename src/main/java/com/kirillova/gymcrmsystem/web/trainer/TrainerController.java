@@ -9,6 +9,10 @@ import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
 import com.kirillova.gymcrmsystem.to.UserTo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +44,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RestController
 @Slf4j
 @RequestMapping(value = TrainerController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Trainer Controller", description = "Managing gym trainers")
 public class TrainerController {
     static final String REST_URL = "/trainer";
 
@@ -51,8 +56,13 @@ public class TrainerController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Register a new trainer", description = "Creates a new trainer and associated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trainer created successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error")
+    })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
-        log.info("Register a new trainee {}", trainerTo);
+        log.info("Register a new trainer {}", trainerTo);
         checkNew(trainerTo);
         Trainer newTrainer = trainerService.create(trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization());
         User newUser = newTrainer.getUser();
@@ -64,13 +74,24 @@ public class TrainerController {
 
     @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
+    @Operation(summary = "Change password", description = "Changes the password of the specified trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
+    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
         log.info("Change password for user {} with username={}", userTo, username);
         trainerService.changePassword(username, userTo.getNewPassword());
     }
 
     @GetMapping("/{username}")
     @Transactional
+    @Operation(summary = "Get trainer details", description = "Gets the details of the specified trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainer details retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
     public TrainerTo get(@PathVariable String username) {
         log.info("Get the trainer with username={}", username);
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
@@ -81,6 +102,12 @@ public class TrainerController {
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
+    @Operation(summary = "Update trainer details", description = "Updates the details of the specified trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainer updated successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
         log.info("Update the trainer with username {}", username);
         trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecialization(), trainerTo.getIsActive());
@@ -90,6 +117,11 @@ public class TrainerController {
     }
 
     @GetMapping("/{username}/trainings")
+    @Operation(summary = "Get trainer's trainings", description = "Gets the list of trainings for the specified trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainings retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
     public List<TrainingTo> getTrainings(
             @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
@@ -103,6 +135,11 @@ public class TrainerController {
 
     @PatchMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Set trainer active status", description = "Sets the active status of the specified trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainer status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         trainerService.setActive(username, isActive);

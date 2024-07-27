@@ -11,6 +11,10 @@ import com.kirillova.gymcrmsystem.to.TraineeTo;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
 import com.kirillova.gymcrmsystem.to.UserTo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +48,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RestController
 @Slf4j
 @RequestMapping(value = TraineeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Trainee Controller", description = "Managing gym trainees")
 public class TraineeController {
     static final String REST_URL = "/trainee";
 
@@ -56,6 +61,11 @@ public class TraineeController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Register a new trainee", description = "Creates a new trainee and associated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error")
+    })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TraineeTo traineeTo) {
         log.info("Register a new trainee {}", traineeTo);
         checkNew(traineeTo);
@@ -70,7 +80,13 @@ public class TraineeController {
     @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {   // @PathVariable можно не считывать, userTo несет в себе username?
+    @Operation(summary = "Change password", description = "Changes the password of the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found"),
+            @ApiResponse(responseCode = "422", description = "Validation error")
+    })
+    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
         log.info("Change password for user {} with username={}", userTo, username);
         authenticationService.getAuthenticatedUser(userTo.getUsername(), userTo.getPassword());
         traineeService.changePassword(username, userTo.getNewPassword());
@@ -78,6 +94,11 @@ public class TraineeController {
 
     @GetMapping("/{username}")
     @Transactional
+    @Operation(summary = "Get trainee details", description = "Gets the details of the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainee details retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public TraineeTo get(@PathVariable String username) {
         log.info("Get the trainee with username={}", username);
         Trainee receivedTrainee = traineeService.getWithUser(username);
@@ -88,6 +109,12 @@ public class TraineeController {
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
+    @Operation(summary = "Update trainee details", description = "Updates the details of the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainee updated successfully"),
+            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
         log.info("Update the trainee with username={}", username);
         traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.getIsActive());
@@ -98,12 +125,22 @@ public class TraineeController {
 
     @DeleteMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete trainee", description = "Deletes the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainee deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public void delete(@PathVariable String username) {
         log.debug("Delete trainee with username = {}", username);
         traineeService.delete(username);
     }
 
     @GetMapping("/{username}/free_trainers")
+    @Operation(summary = "Get free trainers", description = "Gets the list of trainers that are not assigned to the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Free trainers retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public List<TrainerTo> getFreeTrainersForTrainee(@PathVariable String username) {
         log.info("Get trainers list that not assigned on trainee with username={}", username);
         List<Trainer> trainers = traineeService.getFreeTrainersForTrainee(username);
@@ -111,6 +148,11 @@ public class TraineeController {
     }
 
     @GetMapping("/{username}/trainings")
+    @Operation(summary = "Get trainee's trainings", description = "Gets the list of trainings for the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainings retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public List<TrainingTo> getTrainings(
             @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
@@ -125,6 +167,11 @@ public class TraineeController {
 
     @PatchMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Set trainee active status", description = "Sets the active status of the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainee status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.info(isActive ? "enable {}" : "disable {}", username);
         traineeService.setActive(username, isActive);
