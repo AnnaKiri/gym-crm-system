@@ -3,10 +3,14 @@ package com.kirillova.gymcrmsystem.dao;
 import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.models.Training;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
@@ -57,16 +61,12 @@ class TrainingDAOTest extends AbstractSpringTest {
         checkTrainingTypeId(TRAINING_1, retrievedTraining);
     }
 
-    @Test
-    void getTraineeTrainings() {
-        List<Training> expected = trainingDAO.getTraineeTrainings(
-                TRAINEE_1.getUser().getUsername(),
-                LocalDate.of(2023, 1, 1),
-                LocalDate.of(2024, 1, 15),
-                TRAINING_TYPE_2.getName(),
-                TRAINER_2.getUser().getFirstName(),
-                TRAINER_2.getUser().getLastName());
-        List<Training> actual = List.of(TRAINING_2);
+    @ParameterizedTest
+    @MethodSource("provideTraineeTrainingsParams")
+    void getTraineeTrainings(String traineeUsername, LocalDate fromDate, LocalDate toDate, String trainingType,
+                             String trainerFirstName, String trainerLastName, List<Training> expected) {
+        List<Training> actual = trainingDAO.getTraineeTrainings(
+                traineeUsername, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
 
         TRAINING_MATCHER.assertMatch(actual, expected);
 
@@ -77,16 +77,22 @@ class TrainingDAOTest extends AbstractSpringTest {
         }
     }
 
-    @Test
-    void getTraineeTrainingsWithoutParams() {
-        List<Training> expected = trainingDAO.getTraineeTrainings(
-                TRAINEE_1.getUser().getUsername(),
-                null,
-                null,
-                null,
-                null,
-                null);
-        List<Training> actual = List.of(TRAINING_1, TRAINING_2);
+    private static Stream<Arguments> provideTraineeTrainingsParams() {
+        return Stream.of(
+                Arguments.of(TRAINEE_1.getUser().getUsername(), LocalDate.of(2023, 1, 1),
+                        LocalDate.of(2024, 1, 15), TRAINING_TYPE_2.getName(),
+                        TRAINER_2.getUser().getFirstName(), TRAINER_2.getUser().getLastName(), List.of(TRAINING_2)),
+                Arguments.of(TRAINEE_1.getUser().getUsername(), null, null, null, null, null,
+                        List.of(TRAINING_1, TRAINING_2))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTrainerTrainingsParams")
+    void getTrainerTrainings(String trainerUsername, LocalDate fromDate, LocalDate toDate,
+                             String traineeFirstName, String traineeLastName, List<Training> expected) {
+        List<Training> actual = trainingDAO.getTrainerTrainings(
+                trainerUsername, fromDate, toDate, traineeFirstName, traineeLastName);
 
         TRAINING_MATCHER.assertMatch(actual, expected);
 
@@ -97,41 +103,13 @@ class TrainingDAOTest extends AbstractSpringTest {
         }
     }
 
-    @Test
-    void getTrainerTrainings() {
-        List<Training> expected = trainingDAO.getTrainerTrainings(
-                TRAINER_4.getUser().getUsername(),
-                LocalDate.of(2023, 1, 1),
-                LocalDate.of(2024, 1, 15),
-                TRAINEE_1.getUser().getFirstName(),
-                TRAINEE_1.getUser().getLastName());
-        List<Training> actual = List.of(TRAINING_1);
-
-        TRAINING_MATCHER.assertMatch(actual, expected);
-
-        for (int i = 0; i < expected.size(); i++) {
-            checkTrainingTraineeId(expected.get(i), actual.get(i));
-            checkTrainingTrainerId(expected.get(i), actual.get(i));
-            checkTrainingTypeId(expected.get(i), actual.get(i));
-        }
-    }
-
-    @Test
-    void getTrainerTrainingsWithoutParams() {
-        List<Training> expected = trainingDAO.getTrainerTrainings(
-                TRAINER_4.getUser().getUsername(),
-                null,
-                null,
-                null,
-                null);
-        List<Training> actual = List.of(TRAINING_1, TRAINING_6);
-
-        TRAINING_MATCHER.assertMatch(actual, expected);
-
-        for (int i = 0; i < expected.size(); i++) {
-            checkTrainingTraineeId(expected.get(i), actual.get(i));
-            checkTrainingTrainerId(expected.get(i), actual.get(i));
-            checkTrainingTypeId(expected.get(i), actual.get(i));
-        }
+    private static Stream<Arguments> provideTrainerTrainingsParams() {
+        return Stream.of(
+                Arguments.of(TRAINER_4.getUser().getUsername(), LocalDate.of(2023, 1, 1),
+                        LocalDate.of(2024, 1, 15), TRAINEE_1.getUser().getFirstName(),
+                        TRAINEE_1.getUser().getLastName(), List.of(TRAINING_1)),
+                Arguments.of(TRAINER_4.getUser().getUsername(), null, null, null, null,
+                        List.of(TRAINING_1, TRAINING_6))
+        );
     }
 }

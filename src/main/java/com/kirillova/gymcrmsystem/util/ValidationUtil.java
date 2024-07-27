@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.util;
 
-import com.kirillova.gymcrmsystem.HasId;
+import com.kirillova.gymcrmsystem.Entity;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;
@@ -40,13 +40,13 @@ public class ValidationUtil {
         validateConstraints(violations);
     }
 
-    public static void checkNew(HasId bean) {
+    public static void checkNew(Entity bean) {
         if (!bean.isNew()) {
             throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be new (id=null)");
         }
     }
 
-    public static void assureIdConsistent(HasId bean, int id) {
+    public static void assureIdConsistent(Entity bean, int id) {
         if (bean.isNew()) {
             bean.setId(id);
         } else if (bean.id() != id) {

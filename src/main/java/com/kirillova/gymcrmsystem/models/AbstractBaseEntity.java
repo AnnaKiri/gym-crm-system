@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.models;
 
-import com.kirillova.gymcrmsystem.HasId;
+import com.kirillova.gymcrmsystem.Entity;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -21,7 +21,7 @@ import org.hibernate.Hibernate;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractBaseEntity implements HasId {
+public abstract class AbstractBaseEntity implements Entity {
 
     @Id
     @Column(name = "id")

@@ -1,12 +1,16 @@
 package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.AbstractSpringTest;
+import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_2;
@@ -64,10 +68,11 @@ class TrainerDAOTest extends AbstractSpringTest {
         checkTrainerSpecializationId(TRAINER_1, retrievedTrainer);
     }
 
-    @Test
-    void getFreeTrainersByUsernameForTrainee1() {
-        List<Trainer> actual = trainerDAO.getFreeTrainersForTrainee(TRAINEE_1.getUser().getUsername());
-        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
+    @ParameterizedTest
+    @MethodSource("provideTraineesAndExpectedTrainers")
+    void getFreeTrainersByUsername(Trainee trainee, List<Trainer> expected) {
+        List<Trainer> actual = trainerDAO.getFreeTrainersForTrainee(trainee.getUser().getUsername());
+
         TRAINER_MATCHER.assertMatch(actual, expected);
 
         for (int i = 0; i < expected.size(); i++) {
@@ -76,46 +81,19 @@ class TrainerDAOTest extends AbstractSpringTest {
         }
     }
 
-    @Test
-    void getFreeTrainersByUsernameForTrainee2() {
-        List<Trainer> actual = trainerDAO.getFreeTrainersForTrainee(TRAINEE_2.getUser().getUsername());
-        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_4);
-
-        TRAINER_MATCHER.assertMatch(actual, expected);
-        for (int i = 0; i < expected.size(); i++) {
-            checkTrainerUserId(expected.get(i), actual.get(i));
-            checkTrainerSpecializationId(expected.get(i), actual.get(i));
-        }
-    }
-
-    @Test
-    void getFreeTrainersByUsernameForTrainee3() {
-        List<Trainer> actual = trainerDAO.getFreeTrainersForTrainee(TRAINEE_3.getUser().getUsername());
-        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3, TRAINER_4);
-
-        TRAINER_MATCHER.assertMatch(actual, expected);
-        for (int i = 0; i < expected.size(); i++) {
-            checkTrainerUserId(expected.get(i), actual.get(i));
-            checkTrainerSpecializationId(expected.get(i), actual.get(i));
-        }
-    }
-
-    @Test
-    void getFreeTrainersByUsernameForTrainee4() {
-        List<Trainer> actual = trainerDAO.getFreeTrainersForTrainee(TRAINEE_4.getUser().getUsername());
-        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_3);
-
-        TRAINER_MATCHER.assertMatch(actual, expected);
-        for (int i = 0; i < expected.size(); i++) {
-            checkTrainerUserId(expected.get(i), actual.get(i));
-            checkTrainerSpecializationId(expected.get(i), actual.get(i));
-        }
+    private static Stream<Arguments> provideTraineesAndExpectedTrainers() {
+        return Stream.of(
+                Arguments.of(TRAINEE_1, List.of(TRAINER_1, TRAINER_3)),
+                Arguments.of(TRAINEE_2, List.of(TRAINER_1, TRAINER_4)),
+                Arguments.of(TRAINEE_3, List.of(TRAINER_1, TRAINER_3, TRAINER_4)),
+                Arguments.of(TRAINEE_4, List.of(TRAINER_2, TRAINER_3))
+        );
     }
 
     @Test
     void getTrainersForTrainee() {
         List<Trainer> actual = trainerDAO.getTrainersForTrainee(USER_1.getUsername());
-        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
+        List<Trainer> expected = List.of(TRAINER_2, TRAINER_4);
 
         TRAINER_MATCHER.assertMatch(actual, expected);
         for (int i = 0; i < expected.size(); i++) {

@@ -3,7 +3,7 @@ package com.kirillova.gymcrmsystem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.Assert;
 
-public interface HasId {
+public interface Entity {
     Integer getId();
 
     void setId(Integer id);
