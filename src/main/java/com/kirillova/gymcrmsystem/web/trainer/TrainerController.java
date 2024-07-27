@@ -66,7 +66,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "422", description = "Validation error")
     })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
-        log.info("Register a new trainer {}", trainerTo);
+        log.debug("Register a new trainer {}", trainerTo);
         checkNew(trainerTo);
         Trainer newTrainer = trainerService.create(trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId());
         User newUser = newTrainer.getUser();
@@ -85,7 +85,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
-        log.info("Change password for user {} with username={}", userTo, username);
+        log.debug("Change password for user {} with username={}", userTo, username);
         authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
         trainerService.changePassword(username, userTo.getNewPassword());
     }
@@ -98,7 +98,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public TrainerTo get(@PathVariable String username) {
-        log.info("Get the trainer with username={}", username);
+        log.debug("Get the trainer with username={}", username);
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
         return createToWithTraineeToList(receivedTrainer, traineeList);
@@ -114,7 +114,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
-        log.info("Update the trainer with username {}", username);
+        log.debug("Update the trainer with username {}", username);
         trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId(), trainerTo.getIsActive());
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
@@ -146,7 +146,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
-        log.info(isActive ? "enable {}" : "disable {}", username);
+        log.debug(isActive ? "enable {}" : "disable {}", username);
         trainerService.setActive(username, isActive);
     }
 }

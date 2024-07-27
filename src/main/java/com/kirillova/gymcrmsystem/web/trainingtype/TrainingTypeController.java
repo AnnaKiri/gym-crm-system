@@ -24,7 +24,7 @@ public class TrainingTypeController {
     static final String REST_URL = "/training_type";
 
     @Autowired
-    protected TrainingTypeDAO trainingTypeDAO;
+    private TrainingTypeDAO trainingTypeDAO;
 
     @GetMapping
     @Operation(summary = "Get training types", description = "Gets the list of all training types")

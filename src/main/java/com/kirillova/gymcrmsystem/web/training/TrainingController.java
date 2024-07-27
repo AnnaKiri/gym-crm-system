@@ -51,7 +51,7 @@ public class TrainingController {
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     public TrainingTo get(@PathVariable int id) {
-        log.info("Get the training with id={}", id);
+        log.debug("Get the training with id={}", id);
         Training training = trainingService.getFull(id);
         return createTo(training);
     }
@@ -65,7 +65,7 @@ public class TrainingController {
             @ApiResponse(responseCode = "422", description = "Validation error")
     })
     public void create(@Valid @RequestBody TrainingTo trainingTo) {
-        log.info("Create a new training {}", trainingTo);
+        log.debug("Create a new training {}", trainingTo);
         checkNew(trainingTo);
         Trainee trainee = traineeService.get(trainingTo.getTraineeUsername());
         Trainer trainer = trainerService.get(trainingTo.getTrainerUsername());

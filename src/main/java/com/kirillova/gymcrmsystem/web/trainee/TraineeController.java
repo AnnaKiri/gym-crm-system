@@ -67,7 +67,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "422", description = "Validation error")
     })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TraineeTo traineeTo) {
-        log.info("Register a new trainee {}", traineeTo);
+        log.debug("Register a new trainee {}", traineeTo);
         checkNew(traineeTo);
         Trainee newTrainee = traineeService.create(traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress());
         User newUser = newTrainee.getUser();
@@ -87,7 +87,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "422", description = "Validation error")
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
-        log.info("Change password for user {} with username={}", userTo, username);
+        log.debug("Change password for user {} with username={}", userTo, username);
         authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
         traineeService.changePassword(username, userTo.getNewPassword());
     }
@@ -100,7 +100,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
     public TraineeTo get(@PathVariable String username) {
-        log.info("Get the trainee with username={}", username);
+        log.debug("Get the trainee with username={}", username);
         Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
         return createToWithTrainerToList(receivedTrainee, listTrainers);
@@ -116,7 +116,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
     public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
-        log.info("Update the trainee with username={}", username);
+        log.debug("Update the trainee with username={}", username);
         traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.getIsActive());
         Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
@@ -142,7 +142,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
     public List<TrainerTo> getFreeTrainersForTrainee(@PathVariable String username) {
-        log.info("Get trainers list that not assigned on trainee with username={}", username);
+        log.debug("Get trainers list that not assigned on trainee with username={}", username);
         List<Trainer> trainers = traineeService.getFreeTrainersForTrainee(username);
         return getTrainerToList(trainers);
     }
@@ -173,7 +173,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
-        log.info(isActive ? "enable {}" : "disable {}", username);
+        log.debug(isActive ? "enable {}" : "disable {}", username);
         traineeService.setActive(username, isActive);
     }
 }

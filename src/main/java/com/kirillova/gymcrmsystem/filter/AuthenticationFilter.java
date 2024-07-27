@@ -42,11 +42,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (authenticationService.getAuthenticatedUser(username, password) == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Unauthorized. User with this credentials doesn't exist");
-                log.debug("Failed authentication with username = {}", username);
+                log.info("Failed authentication with username = {}", username);
                 return;
             }
 
-            log.debug("Successful authentication with username = {}", username);
+            log.info("Successful authentication with username = {}", username);
         }
 
         filterChain.doFilter(request, response);
