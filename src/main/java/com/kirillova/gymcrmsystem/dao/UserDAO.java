@@ -19,6 +19,19 @@ public class UserDAO {
 
     private final SessionFactory sessionFactory;
 
+    private static final String UPDATE_USER_PASSWORD_QUERY = "UPDATE User u SET u.password = :password WHERE u.username = :username";
+    private static final String GET_USER_BY_USERNAME_QUERY = "FROM User u WHERE u.username = :username";
+    private static final String DELETE_USER_BY_USERNAME_QUERY = "DELETE FROM User u WHERE u.username = :username";
+    private static final String UPDATE_USER_ACTIVE_STATUS_QUERY = "UPDATE User u SET u.isActive = :isActive WHERE u.username = :username";
+    private static final String FIND_USERNAMES_BY_FIRST_NAME_AND_LAST_NAME_QUERY = "SELECT u.username FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName ORDER BY u.username";
+    private static final String GET_USER_BY_USERNAME_AND_PASSWORD_QUERY = "FROM User u WHERE u.username = :username AND u.password = :password";
+    private static final String USERNAME_PARAM = "username";
+    private static final String PASSWORD_PARAM = "password";
+    private static final String IS_ACTIVE_PARAM = "isActive";
+    private static final String FIRST_NAME_PARAM = "firstName";
+    private static final String LAST_NAME_PARAM = "lastName";
+
+    @Transactional
     public User save(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.save(user);
@@ -28,11 +41,12 @@ public class UserDAO {
         return user;
     }
 
+    @Transactional
     public boolean changePassword(String username, String newPassword) {
         Session session = sessionFactory.getCurrentSession();
-        int updatedEntities = session.createQuery("UPDATE User u SET u.password = :password WHERE u.username = :username")
-                .setParameter("username", username)
-                .setParameter("password", newPassword)
+        int updatedEntities = session.createQuery(UPDATE_USER_PASSWORD_QUERY)
+                .setParameter(USERNAME_PARAM, username)
+                .setParameter(PASSWORD_PARAM, newPassword)
                 .executeUpdate();
 
         if (updatedEntities > 0) {
@@ -46,21 +60,23 @@ public class UserDAO {
     public User get(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get user with username = {}", username);
-        return session.createQuery("FROM User u WHERE u.username = :username", User.class)
-                .setParameter("username", username)
+        return session.createQuery(GET_USER_BY_USERNAME_QUERY, User.class)
+                .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
     }
 
+    @Transactional
     public void update(User updatedUser) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedUser);
         log.debug("User with id = {} updated", updatedUser.getId());
     }
 
+    @Transactional
     public boolean delete(String username) {
         Session session = sessionFactory.getCurrentSession();
-        int deletedEntities = session.createQuery("DELETE FROM User u WHERE u.username = :username")
-                .setParameter("username", username)
+        int deletedEntities = session.createQuery(DELETE_USER_BY_USERNAME_QUERY)
+                .setParameter(USERNAME_PARAM, username)
                 .executeUpdate();
         if (deletedEntities > 0) {
             log.debug("User and related entities with username = {} deleted", username);
@@ -70,11 +86,12 @@ public class UserDAO {
         }
     }
 
+    @Transactional
     public boolean setActive(String username, boolean isActive) {
         Session session = sessionFactory.getCurrentSession();
-        int updatedEntities = session.createQuery("UPDATE User u SET u.isActive = :isActive WHERE u.username = :username")
-                .setParameter("username", username)
-                .setParameter("isActive", isActive)
+        int updatedEntities = session.createQuery(UPDATE_USER_ACTIVE_STATUS_QUERY)
+                .setParameter(USERNAME_PARAM, username)
+                .setParameter(IS_ACTIVE_PARAM, isActive)
                 .executeUpdate();
 
         if (updatedEntities > 0) {
@@ -87,20 +104,19 @@ public class UserDAO {
 
     public List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get all usernames by firstname = " + firstName + " and lastname = " + lastName);
-        return session.createQuery("SELECT u.username FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName ORDER BY u.username", String.class)
-                .setParameter("firstName", firstName)
-                .setParameter("lastName", lastName)
+        log.debug("Get all usernames by firstname = {} and lastname = {}", firstName, lastName);
+        return session.createQuery(FIND_USERNAMES_BY_FIRST_NAME_AND_LAST_NAME_QUERY, String.class)
+                .setParameter(FIRST_NAME_PARAM, firstName)
+                .setParameter(LAST_NAME_PARAM, lastName)
                 .list();
     }
 
     public User getByUsernameAndPassword(String username, String password) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get user with username = " + username + " for authentication");
-        return session.createQuery("FROM User u WHERE u.username = :username AND u.password = :password", User.class)
-                .setParameter("username", username)
-                .setParameter("password", password)
+        log.debug("Get user with username = {} for authentication", username);
+        return session.createQuery(GET_USER_BY_USERNAME_AND_PASSWORD_QUERY, User.class)
+                .setParameter(USERNAME_PARAM, username)
+                .setParameter(PASSWORD_PARAM, password)
                 .uniqueResult();
     }
 }
-

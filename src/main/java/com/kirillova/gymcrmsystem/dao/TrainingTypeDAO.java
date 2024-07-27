@@ -18,16 +18,21 @@ public class TrainingTypeDAO {
 
     private final SessionFactory sessionFactory;
 
+    private static final String GET_ALL_TRAINING_TYPES_QUERY = "FROM TrainingType";
+    private static final String GET_TRAINING_TYPE_BY_ID_QUERY = "FROM TrainingType WHERE id = :id";
+    private static final String ID_PARAM = "id";
+
     public List<TrainingType> getAll() {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training types");
-        return session.createQuery("FROM TrainingType", TrainingType.class).getResultList();
+        return session.createQuery(GET_ALL_TRAINING_TYPES_QUERY, TrainingType.class).getResultList();
     }
 
     public TrainingType get(int id) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training type with id {}", id);
-        return session.get(TrainingType.class, id);
+        return session.createQuery(GET_TRAINING_TYPE_BY_ID_QUERY, TrainingType.class)
+                .setParameter(ID_PARAM, id)
+                .uniqueResult();
     }
 }
-

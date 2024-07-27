@@ -20,6 +20,52 @@ public class TrainerDAO {
 
     private final SessionFactory sessionFactory;
 
+    private static final String GET_TRAINERS_FOR_TRAINEE_QUERY = """
+            SELECT DISTINCT trn 
+            FROM Training tr 
+            JOIN tr.trainer trn 
+            JOIN FETCH trn.user 
+            JOIN FETCH trn.specialization 
+            JOIN tr.trainee t 
+            JOIN t.user u 
+            WHERE u.username = :username
+            """;
+
+    private static final String GET_TRAINER_BY_USERNAME_QUERY = """
+            SELECT t 
+            FROM Trainer t 
+            JOIN User u ON t.user.id = u.id 
+            WHERE u.username = :username
+            """;
+
+    private static final String GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY = """
+            SELECT t 
+            FROM Trainer t 
+            JOIN FETCH t.user u 
+            LEFT JOIN FETCH t.specialization s 
+            WHERE u.username = :username
+            """;
+
+    private static final String GET_FREE_TRAINERS_FOR_TRAINEE_QUERY = """
+            SELECT DISTINCT trainer 
+            FROM Trainer trainer 
+            JOIN FETCH trainer.user 
+            JOIN FETCH trainer.specialization 
+            LEFT JOIN Training training ON training.trainer.id = trainer.id 
+            LEFT JOIN training.trainee trainee 
+            LEFT JOIN trainee.user user 
+            WHERE trainer.id NOT IN (
+                SELECT trainer.id 
+                FROM Trainer trainer 
+                JOIN Training training ON training.trainer.id = trainer.id 
+                JOIN training.trainee trainee 
+                JOIN trainee.user user 
+                WHERE user.username = :username AND user.isActive = true
+            )
+            """;
+    private static final String USERNAME_PARAM = "username";
+
+    @Transactional
     public Trainer save(Trainer trainer) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainer);
@@ -32,18 +78,12 @@ public class TrainerDAO {
     public List<Trainer> getTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list for trainee with username = {}", username);
-        return session.createQuery("SELECT DISTINCT trn " +
-                        "FROM Training tr " +
-                        "JOIN tr.trainer trn " +
-                        "JOIN FETCH trn.user " +
-                        "JOIN FETCH trn.specialization " +
-                        "JOIN tr.trainee t " +
-                        "JOIN t.user u " +
-                        "WHERE u.username = :username", Trainer.class)
-                .setParameter("username", username)
+        return session.createQuery(GET_TRAINERS_FOR_TRAINEE_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .list();
     }
 
+    @Transactional
     public void update(Trainer updatedTrainer) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainer);
@@ -53,11 +93,8 @@ public class TrainerDAO {
     public Trainer get(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainer with username = {}", username);
-        return session.createQuery("SELECT t " +
-                        "FROM Trainer t " +
-                        "JOIN User u ON t.user.id = u.id " +
-                        "WHERE u.username = :username", Trainer.class)
-                .setParameter("username", username)
+        return session.createQuery(GET_TRAINER_BY_USERNAME_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
     }
 
@@ -65,12 +102,8 @@ public class TrainerDAO {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainer with username = {} with user and specialization entities", username);
 
-        Trainer trainer = session.createQuery("SELECT t " +
-                        "FROM Trainer t " +
-                        "JOIN FETCH t.user u " +
-                        "LEFT JOIN FETCH t.specialization s " +
-                        "WHERE u.username = :username", Trainer.class)
-                .setParameter("username", username)
+        Trainer trainer = session.createQuery(GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
         if (trainer != null) {
             Hibernate.initialize(trainer.getSpecialization());
@@ -78,29 +111,12 @@ public class TrainerDAO {
         return trainer;
     }
 
-
     public List<Trainer> getFreeTrainersForTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainers list that not assigned to trainee with username = {}", username);
 
-        String hql = "SELECT DISTINCT trainer " +
-                "FROM Trainer trainer " +
-                "JOIN FETCH trainer.user " +
-                "JOIN FETCH trainer.specialization " +
-                "LEFT JOIN Training training ON training.trainer.id = trainer.id " +
-                "LEFT JOIN training.trainee trainee " +
-                "LEFT JOIN trainee.user user " +
-                "WHERE trainer.id NOT IN (" +
-                "    SELECT trainer.id " +
-                "    FROM Trainer trainer " +
-                "    JOIN Training training ON training.trainer.id = trainer.id " +
-                "    JOIN training.trainee trainee " +
-                "    JOIN trainee.user user " +
-                "    WHERE user.username = :username AND user.isActive = true" +
-                ")";
-
-        List<Trainer> freeTrainers = session.createQuery(hql, Trainer.class)
-                .setParameter("username", username)
+        List<Trainer> freeTrainers = session.createQuery(GET_FREE_TRAINERS_FOR_TRAINEE_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .list();
 
         freeTrainers.sort(Comparator.comparingLong(Trainer::getId));

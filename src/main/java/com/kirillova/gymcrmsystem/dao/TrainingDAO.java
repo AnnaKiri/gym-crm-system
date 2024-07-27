@@ -10,6 +10,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,24 @@ import java.util.List;
 public class TrainingDAO {
 
     private final SessionFactory sessionFactory;
+
+    private static final String GET_TRAINING_WITH_DETAILS_QUERY = """
+            SELECT tr FROM Training tr 
+            JOIN FETCH tr.trainee t 
+            JOIN FETCH t.user tu 
+            JOIN FETCH tr.trainer r 
+            JOIN FETCH r.user ru 
+            JOIN FETCH tr.type tp 
+            WHERE tr.id = :id
+            """;
+    private static final String ID_PARAM = "id";
+    private static final String TRAINEE_PARAM = "trainee";
+    private static final String TRAINER_PARAM = "trainer";
+    private static final String DATE_PARAM = "date";
+    private static final String NAME_PARAM = "name";
+    private static final String FIRST_NAME_PARAM = "firstName";
+    private static final String LAST_NAME_PARAM = "lastName";
+    private static final String USERNAME_PARAM = "username";
 
     @Transactional
     public Training save(Training training) {
@@ -45,14 +64,8 @@ public class TrainingDAO {
     public Training getFull(int id) {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get training with id = {}", id);
-        return session.createQuery("SELECT tr FROM Training tr " +
-                        "JOIN FETCH tr.trainee t " +
-                        "JOIN FETCH t.user tu " +
-                        "JOIN FETCH tr.trainer r " +
-                        "JOIN FETCH r.user ru " +
-                        "JOIN FETCH tr.type tp " +
-                        "WHERE tr.id = :id", Training.class)
-                .setParameter("id", id)
+        return session.createQuery(GET_TRAINING_WITH_DETAILS_QUERY, Training.class)
+                .setParameter(ID_PARAM, id)
                 .uniqueResult();
     }
 
@@ -83,55 +96,54 @@ public class TrainingDAO {
         CriteriaQuery<Training> cq = cb.createQuery(Training.class);
         Root<Training> training = cq.from(Training.class);
 
-        Fetch<Object, Object> traineeFetch = training.fetch("trainee", JoinType.LEFT);
-        Fetch<Object, Object> trainerFetch = training.fetch("trainer", JoinType.LEFT);
+        Fetch<Object, Object> traineeFetch = training.fetch(TRAINEE_PARAM, JoinType.LEFT);
+        Fetch<Object, Object> trainerFetch = training.fetch(TRAINER_PARAM, JoinType.LEFT);
         Fetch<Object, Object> traineeUserFetch = ((Join<?, ?>) traineeFetch).fetch("user", JoinType.LEFT);
         Fetch<Object, Object> trainerUserFetch = ((Join<?, ?>) trainerFetch).fetch("user", JoinType.LEFT);
         Fetch<Object, Object> trainingTypeFetch = training.fetch("type", JoinType.LEFT);
 
         Predicate predicate = cb.conjunction();
 
-        if (traineeUsername != null && !traineeUsername.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("username"), traineeUsername));
+        if (StringUtils.isNotBlank(traineeUsername)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get(USERNAME_PARAM), traineeUsername));
         }
 
-        if (trainerUsername != null && !trainerUsername.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("username"), trainerUsername));
+        if (StringUtils.isNotBlank(trainerUsername)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get(USERNAME_PARAM), trainerUsername));
         }
 
         if (fromDate != null) {
-            predicate = cb.and(predicate, cb.greaterThanOrEqualTo(training.get("date"), fromDate));
+            predicate = cb.and(predicate, cb.greaterThanOrEqualTo(training.get(DATE_PARAM), fromDate));
         }
 
         if (toDate != null) {
-            predicate = cb.and(predicate, cb.lessThanOrEqualTo(training.get("date"), toDate));
+            predicate = cb.and(predicate, cb.lessThanOrEqualTo(training.get(DATE_PARAM), toDate));
         }
 
-        if (trainerFirstName != null && !trainerFirstName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("firstName"), trainerFirstName));
+        if (StringUtils.isNotBlank(trainerFirstName)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get(FIRST_NAME_PARAM), trainerFirstName));
         }
 
-        if (trainerLastName != null && !trainerLastName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get("lastName"), trainerLastName));
+        if (StringUtils.isNotBlank(trainerLastName)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainerUserFetch).get(LAST_NAME_PARAM), trainerLastName));
         }
 
-        if (traineeFirstName != null && !traineeFirstName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("firstName"), traineeFirstName));
+        if (StringUtils.isNotBlank(traineeFirstName)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get(FIRST_NAME_PARAM), traineeFirstName));
         }
 
-        if (traineeLastName != null && !traineeLastName.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get("lastName"), traineeLastName));
+        if (StringUtils.isNotBlank(traineeLastName)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) traineeUserFetch).get(LAST_NAME_PARAM), traineeLastName));
         }
 
-        if (trainingType != null && !trainingType.isEmpty()) {
-            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainingTypeFetch).get("name"), trainingType));
+        if (StringUtils.isNotBlank(trainingType)) {
+            predicate = cb.and(predicate, cb.equal(((Join<?, ?>) trainingTypeFetch).get(NAME_PARAM), trainingType));
         }
 
         cq.where(predicate);
 
         List<Training> trainings = session.createQuery(cq).getResultList();
-        log.debug("Filtered trainings found: " + trainings.size());
+        log.debug("Filtered trainings found: {}", trainings.size());
         return trainings;
     }
-
 }

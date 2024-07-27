@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,13 +34,11 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @Configuration
 @ComponentScan("com.kirillova.gymcrmsystem")
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class SpringConfig {
 
-    @Autowired
-    private ConfigurationProperties configProperties;
-
-    @Autowired
-    private ConfidentialProperties confidentialProperties;
+    private final ConfigurationProperties configProperties;
+    private final ConfidentialProperties confidentialProperties;
 
     @Bean
     public DataSource dataSource() {

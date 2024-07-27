@@ -2,7 +2,7 @@ package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.UserTo;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 
 import java.util.List;
 

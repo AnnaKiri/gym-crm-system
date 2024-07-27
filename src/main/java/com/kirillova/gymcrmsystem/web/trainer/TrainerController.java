@@ -15,8 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,19 +44,15 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping(value = TrainerController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainer Controller", description = "Managing gym trainers")
 public class TrainerController {
     static final String REST_URL = "/trainer";
 
-    @Autowired
-    private TrainerService trainerService;
-
-    @Autowired
-    private TraineeService traineeService;
-
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final TrainerService trainerService;
+    private final TraineeService traineeService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

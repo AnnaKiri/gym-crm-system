@@ -3,7 +3,7 @@ package com.kirillova.gymcrmsystem;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;

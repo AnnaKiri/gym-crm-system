@@ -6,7 +6,7 @@ import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.to.TraineeTo;
 import com.kirillova.gymcrmsystem.to.UserTo;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

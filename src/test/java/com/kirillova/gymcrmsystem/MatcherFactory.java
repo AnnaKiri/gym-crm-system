@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem;
 
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;

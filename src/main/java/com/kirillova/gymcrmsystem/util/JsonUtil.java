@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.web.json;
+package com.kirillova.gymcrmsystem.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -2,7 +2,7 @@ package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
-import com.kirillova.gymcrmsystem.web.json.JsonUtil;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
