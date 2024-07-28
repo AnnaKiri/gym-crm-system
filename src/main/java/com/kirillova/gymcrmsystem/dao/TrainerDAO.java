@@ -65,7 +65,6 @@ public class TrainerDAO {
             """;
     private static final String USERNAME_PARAM = "username";
 
-    @Transactional
     public Trainer save(Trainer trainer) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainer);
@@ -83,7 +82,6 @@ public class TrainerDAO {
                 .list();
     }
 
-    @Transactional
     public void update(Trainer updatedTrainer) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainer);

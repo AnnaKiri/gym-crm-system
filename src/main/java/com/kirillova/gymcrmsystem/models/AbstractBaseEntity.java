@@ -1,6 +1,5 @@
 package com.kirillova.gymcrmsystem.models;
 
-import com.kirillova.gymcrmsystem.Entity;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;

@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.util;
 
-import com.kirillova.gymcrmsystem.Entity;
+import com.kirillova.gymcrmsystem.models.Entity;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;

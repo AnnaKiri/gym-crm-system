@@ -31,7 +31,6 @@ public class UserDAO {
     private static final String FIRST_NAME_PARAM = "firstName";
     private static final String LAST_NAME_PARAM = "lastName";
 
-    @Transactional
     public User save(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.save(user);
@@ -41,7 +40,6 @@ public class UserDAO {
         return user;
     }
 
-    @Transactional
     public boolean changePassword(String username, String newPassword) {
         Session session = sessionFactory.getCurrentSession();
         int updatedEntities = session.createQuery(UPDATE_USER_PASSWORD_QUERY)
@@ -65,14 +63,12 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    @Transactional
     public void update(User updatedUser) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedUser);
         log.debug("User with id = {} updated", updatedUser.getId());
     }
 
-    @Transactional
     public boolean delete(String username) {
         Session session = sessionFactory.getCurrentSession();
         int deletedEntities = session.createQuery(DELETE_USER_BY_USERNAME_QUERY)
@@ -86,7 +82,6 @@ public class UserDAO {
         }
     }
 
-    @Transactional
     public boolean setActive(String username, boolean isActive) {
         Session session = sessionFactory.getCurrentSession();
         int updatedEntities = session.createQuery(UPDATE_USER_ACTIVE_STATUS_QUERY)

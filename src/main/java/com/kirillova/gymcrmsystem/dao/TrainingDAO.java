@@ -45,7 +45,6 @@ public class TrainingDAO {
     private static final String LAST_NAME_PARAM = "lastName";
     private static final String USERNAME_PARAM = "username";
 
-    @Transactional
     public Training save(Training training) {
         Session session = sessionFactory.getCurrentSession();
         session.save(training);
@@ -69,7 +68,6 @@ public class TrainingDAO {
                 .uniqueResult();
     }
 
-    @Transactional
     public List<Training> getTraineeTrainings(String traineeUsername, LocalDate fromDate,
                                               LocalDate toDate, String trainingType,
                                               String trainerFirstName, String trainerLastName) {
@@ -78,7 +76,6 @@ public class TrainingDAO {
                 trainerLastName, null, null);
     }
 
-    @Transactional
     public List<Training> getTrainerTrainings(String trainerUsername,
                                               LocalDate fromDate, LocalDate toDate,
                                               String traineeFirstName, String traineeLastName) {

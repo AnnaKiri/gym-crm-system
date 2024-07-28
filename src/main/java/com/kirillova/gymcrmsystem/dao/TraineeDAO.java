@@ -23,7 +23,6 @@ public class TraineeDAO {
     private static final String GET_TRAINEES_FOR_TRAINER_QUERY = "SELECT DISTINCT t FROM Training tr JOIN tr.trainee t JOIN FETCH t.user u JOIN tr.trainer trn WHERE trn.user.username = :username";
     private static final String USERNAME_PARAM = "username";
 
-    @Transactional
     public Trainee save(Trainee trainee) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainee);
@@ -33,7 +32,6 @@ public class TraineeDAO {
         return trainee;
     }
 
-    @Transactional
     public void update(Trainee updatedTrainee) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainee);

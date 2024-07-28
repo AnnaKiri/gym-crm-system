@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem;
+package com.kirillova.gymcrmsystem.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.Assert;

@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.to;
 
-import com.kirillova.gymcrmsystem.Entity;
+import com.kirillova.gymcrmsystem.models.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
