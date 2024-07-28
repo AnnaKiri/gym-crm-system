@@ -22,7 +22,7 @@ import java.util.List;
 @Tag(name = "Training Type Controller", description = "Managing training types")
 public class TrainingTypeController {
 
-    static final String REST_URL = "/training_type";
+    static final String REST_URL = "/training-types";
 
     private final TrainingTypeDAO trainingTypeDAO;
 

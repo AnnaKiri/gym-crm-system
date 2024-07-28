@@ -107,7 +107,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
 
     @Test
     void getFreeTrainersForTrainee() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free_trainers"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));

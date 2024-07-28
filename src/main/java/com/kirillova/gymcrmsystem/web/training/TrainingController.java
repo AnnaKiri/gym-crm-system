@@ -34,7 +34,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RequestMapping(value = TrainingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Training Controller", description = "Managing gym trainings")
 public class TrainingController {
-    static final String REST_URL = "/training";
+    static final String REST_URL = "/trainings";
 
     private final TrainingService trainingService;
     private final TraineeService traineeService;

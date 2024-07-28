@@ -51,7 +51,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RequestMapping(value = TraineeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainee Controller", description = "Managing gym trainees")
 public class TraineeController {
-    static final String REST_URL = "/trainee";
+    static final String REST_URL = "/trainees";
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;
@@ -133,7 +133,7 @@ public class TraineeController {
         traineeService.delete(username);
     }
 
-    @GetMapping("/{username}/free_trainers")
+    @GetMapping("/{username}/free-trainers")
     @Operation(summary = "Get free trainers", description = "Gets the list of trainers that are not assigned to the specified trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Free trainers retrieved successfully"),
