@@ -62,4 +62,11 @@ public class TraineeDAO {
                 .setParameter(USERNAME_PARAM, username)
                 .list();
     }
+
+    public void updateTrainerList(String username, Trainee trainee) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(trainee);
+        session.flush();
+        log.debug("Trainers list for trainee with username = {} updated", username);
+    }
 }

@@ -77,7 +77,7 @@ public class TrainerTestData {
     public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_3 = List.of(TRAINER_TO_1, TRAINER_TO_3, TRAINER_TO_4);
     public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_TO_2, TRAINER_TO_3);
 
-    public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization");
+    public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization", "traineeList");
     public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerTo.class, "traineeList", "specializationId");
 
     public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER_WITH_TRAINEE_LIST =

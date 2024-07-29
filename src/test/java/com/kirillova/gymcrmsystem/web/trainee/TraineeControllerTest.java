@@ -15,15 +15,21 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER_WITH_TRAINER_LIST;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeTo;
 import static com.kirillova.gymcrmsystem.TrainerTestData.FREE_TRAINERS_FOR_TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_LIST_FOR_TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
@@ -146,5 +152,18 @@ public class TraineeControllerTest extends AbstractSpringTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(traineeTo)))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+
+    @Test
+    void updateTrainerList() throws Exception {
+        List<String> trainerUsernames = List.of(USER_5_USERNAME);
+
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/change-trainers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(trainerUsernames)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(TRAINER_TO_MATCHER.contentJson(List.of(TRAINER_TO_1, TRAINER_TO_2, TRAINER_TO_4)));
     }
 }

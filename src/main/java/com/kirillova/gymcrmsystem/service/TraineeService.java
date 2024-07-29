@@ -111,4 +111,15 @@ public class TraineeService {
         log.debug("Get trainee with username = {} with user entity", username);
         return checkNotFoundWithUsername(traineeDAO.getWithUser(username), username);
     }
+
+    @Transactional
+    public void updateTrainerList(String username, List<String> trainers) {
+        log.debug("Update trainers list for trainee with username = {}", username);
+        Trainee updatedTrainee = checkNotFoundWithUsername(traineeDAO.get(username), username);
+        for (String trainerUsername : trainers) {
+            Trainer trainer = checkNotFoundWithUsername(trainerDAO.get(trainerUsername), username);
+            updatedTrainee.getTrainerList().add(trainer);
+        }
+        traineeDAO.updateTrainerList(username, updatedTrainee);
+    }
 }

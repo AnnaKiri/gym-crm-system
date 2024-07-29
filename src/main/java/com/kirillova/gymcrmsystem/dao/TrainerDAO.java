@@ -21,14 +21,12 @@ public class TrainerDAO {
     private final SessionFactory sessionFactory;
 
     private static final String GET_TRAINERS_FOR_TRAINEE_QUERY = """
-            SELECT DISTINCT trn 
-            FROM Training tr 
-            JOIN tr.trainer trn 
-            JOIN FETCH trn.user 
-            JOIN FETCH trn.specialization 
-            JOIN tr.trainee t 
-            JOIN t.user u 
-            WHERE u.username = :username
+            SELECT DISTINCT trn
+            FROM Trainee t
+            JOIN t.trainerList trn
+            JOIN FETCH trn.user
+            JOIN FETCH trn.specialization
+            WHERE t.user.username = :username
             """;
 
     private static final String GET_TRAINER_BY_USERNAME_QUERY = """
@@ -100,13 +98,9 @@ public class TrainerDAO {
         Session session = sessionFactory.getCurrentSession();
         log.debug("Get trainer with username = {} with user and specialization entities", username);
 
-        Trainer trainer = session.createQuery(GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY, Trainer.class)
+        return session.createQuery(GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY, Trainer.class)
                 .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
-        if (trainer != null) {
-            Hibernate.initialize(trainer.getSpecialization());
-        }
-        return trainer;
     }
 
     public List<Trainer> getFreeTrainersForTrainee(String username) {

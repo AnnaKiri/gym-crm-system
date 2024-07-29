@@ -6,8 +6,11 @@ import com.kirillova.gymcrmsystem.to.TraineeTo;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_3;
@@ -68,7 +71,7 @@ public class TraineeTestData {
             .isActive(USER_4.isActive())
             .build();
 
-    public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user");
+    public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user", "trainerList");
     public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeTo.class, "trainerList");
 
     public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER_WITH_TRAINER_LIST =
@@ -79,6 +82,7 @@ public class TraineeTestData {
                     });
 
     static {
+        TRAINEE_1.setTrainerList(new ArrayList<>(List.of(TRAINER_2, TRAINER_4)));
         TRAINEE_TO_1.setTrainerList(List.of(TRAINER_TO_2, TRAINER_TO_4));
         TRAINEE_TO_2.setTrainerList(List.of(TRAINER_TO_2, TRAINER_TO_3));
         TRAINEE_TO_3.setTrainerList(List.of(TRAINER_TO_2));

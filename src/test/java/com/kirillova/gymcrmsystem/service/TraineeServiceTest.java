@@ -29,16 +29,19 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -199,6 +202,30 @@ public class TraineeServiceTest {
             Assertions.assertEquals(expected.get(i).getTrainee().getId(), actual.get(i).getTrainee().getId());
             Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
             Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
+        }
+    }
+
+    @Test
+    void updateTrainerList() {
+        List<String> trainerUsernames = List.of(USER_5_USERNAME);
+
+        when(traineeDAO.get(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(trainerDAO.get(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        doNothing().when(traineeDAO).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+
+        traineeService.updateTrainerList(USER_1_USERNAME, trainerUsernames);
+
+        verify(traineeDAO, times(1)).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+
+        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
+        when(trainerDAO.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(expected);
+
+        List<Trainer> actual = trainerDAO.getTrainersForTrainee(USER_1_USERNAME);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
+            Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
         }
     }
 }

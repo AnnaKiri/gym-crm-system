@@ -2,7 +2,8 @@ DELETE FROM training_type;
 DELETE FROM trainee;
 DELETE FROM trainer;
 DELETE FROM users;
-DELETE FROM training_type;
+DELETE FROM trainee2trainer;
+DELETE FROM training;
 
 INSERT INTO users (first_name, last_name, username, password, is_active)
 VALUES ('Angelina', 'Jolie', 'Angelina.Jolie', 'password1', true),
@@ -42,3 +43,12 @@ VALUES (1, 4, 'Stretching', 4, '2024-01-01', 60),
        (4, 4, 'Stretching', 4, '2024-01-01', 60),
        (4, 1, 'Strength', 1, '2024-01-06', 60),
        (2, 3, 'Yoga', 3, '2024-01-05', 60);
+
+INSERT INTO trainee2trainer (trainee_id, trainer_id)
+VALUES (1, 4),
+       (1, 2),
+       (2, 2),
+       (2, 3),
+       (3, 2),
+       (4, 4),
+       (4, 1);

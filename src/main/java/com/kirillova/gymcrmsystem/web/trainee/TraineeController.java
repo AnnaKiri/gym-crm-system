@@ -174,4 +174,19 @@ public class TraineeController {
         log.debug(isActive ? "enable {}" : "disable {}", username);
         traineeService.setActive(username, isActive);
     }
+
+    @PutMapping(value = "/{username}/change-trainers", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    @Operation(summary = "Update trainers list", description = "Updates the trainers list of the specified trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainee updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Trainee not found")
+    })
+    public List<TrainerTo> updateTrainerList(@PathVariable String username, @RequestBody List<String> trainerUsernames) {
+        log.debug("Update trainers list for trainee with username = {}", username);
+        traineeService.updateTrainerList(username, trainerUsernames);
+        List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
+        return getTrainerToList(listTrainers);
+    }
 }

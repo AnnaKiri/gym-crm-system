@@ -2,9 +2,11 @@ package com.kirillova.gymcrmsystem.dao;
 
 import com.kirillova.gymcrmsystem.AbstractSpringTest;
 import com.kirillova.gymcrmsystem.models.Trainee;
+import com.kirillova.gymcrmsystem.models.Trainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
@@ -14,6 +16,12 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_MATCHER;
 import static com.kirillova.gymcrmsystem.TraineeTestData.checkTraineeUserId;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getNewTrainee;
 import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerSpecializationId;
+import static com.kirillova.gymcrmsystem.TrainerTestData.checkTrainerUserId;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
@@ -22,6 +30,9 @@ class TraineeDAOTest extends AbstractSpringTest {
 
     @Autowired
     private TraineeDAO traineeDAO;
+
+    @Autowired
+    private TrainerDAO trainerDAO;
 
     @Test
     void save() {
@@ -60,5 +71,20 @@ class TraineeDAOTest extends AbstractSpringTest {
         List<Trainee> expected = List.of(TRAINEE_1, TRAINEE_2, TRAINEE_3);
 
         TRAINEE_MATCHER.assertMatch(actual, expected);
+    }
+
+    @Test
+    void updateTrainerList() {
+        TRAINEE_1.getTrainerList().add(TRAINER_1);
+        traineeDAO.updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+
+        List<Trainer> actual = trainerDAO.getTrainersForTrainee(USER_1_USERNAME);
+        List<Trainer> expected = new ArrayList<>(List.of(TRAINER_1, TRAINER_2, TRAINER_4));
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            checkTrainerUserId(expected.get(i), actual.get(i));
+            checkTrainerSpecializationId(expected.get(i), actual.get(i));
+        }
     }
 }
