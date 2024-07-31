@@ -62,7 +62,7 @@ public class TraineeController {
     @Operation(summary = "Register a new trainee", description = "Creates a new trainee and associated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error")
+            @ApiResponse(responseCode = "400", description = "Validation error")
     })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TraineeTo traineeTo) {
         log.debug("Register a new trainee {}", traineeTo);
@@ -82,7 +82,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password changed successfully"),
             @ApiResponse(responseCode = "404", description = "Trainee not found"),
-            @ApiResponse(responseCode = "422", description = "Validation error")
+            @ApiResponse(responseCode = "400", description = "Validation error")
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
         log.debug("Change password for user {} with username={}", userTo, username);
@@ -110,7 +110,7 @@ public class TraineeController {
     @Operation(summary = "Update trainee details", description = "Updates the details of the specified trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trainee updated successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
     public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
@@ -175,7 +175,7 @@ public class TraineeController {
         traineeService.setActive(username, isActive);
     }
 
-    @PutMapping(value = "/{username}/change-trainers", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{username}/trainers", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     @Operation(summary = "Update trainers list", description = "Updates the trainers list of the specified trainee")

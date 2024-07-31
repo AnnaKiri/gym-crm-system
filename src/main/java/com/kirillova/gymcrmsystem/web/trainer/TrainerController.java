@@ -59,7 +59,7 @@ public class TrainerController {
     @Operation(summary = "Register a new trainer", description = "Creates a new trainer and associated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer created successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error")
+            @ApiResponse(responseCode = "400", description = "Validation error")
     })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
         log.debug("Register a new trainer {}", trainerTo);
@@ -77,7 +77,7 @@ public class TrainerController {
     @Operation(summary = "Change password", description = "Changes the password of the specified trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password changed successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
@@ -106,7 +106,7 @@ public class TrainerController {
     @Operation(summary = "Update trainer details", description = "Updates the details of the specified trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trainer updated successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
     public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {

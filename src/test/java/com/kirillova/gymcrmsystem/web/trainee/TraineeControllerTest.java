@@ -159,7 +159,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
     void updateTrainerList() throws Exception {
         List<String> trainerUsernames = List.of(USER_5_USERNAME);
 
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/change-trainers")
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/trainers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(trainerUsernames)))
                 .andExpect(status().isOk())

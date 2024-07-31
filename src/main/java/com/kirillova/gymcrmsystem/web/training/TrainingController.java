@@ -58,7 +58,7 @@ public class TrainingController {
     @Operation(summary = "Create a new training", description = "Creates a new training with the specified details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Training created successfully"),
-            @ApiResponse(responseCode = "422", description = "Validation error")
+            @ApiResponse(responseCode = "400", description = "Validation error")
     })
     public void create(@Valid @RequestBody TrainingTo trainingTo) {
         log.debug("Create a new training {}", trainingTo);
