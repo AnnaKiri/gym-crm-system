@@ -127,4 +127,12 @@ public class TrainerControllerTest extends BaseTest {
                 .content(JsonUtil.writeValue(trainerTo)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void setActiveAgain() throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_5_USERNAME)
+                .param("isActive", "true"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }

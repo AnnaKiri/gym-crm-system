@@ -166,4 +166,12 @@ public class TraineeControllerTest extends BaseTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER.contentJson(List.of(TRAINER_TO_1, TRAINER_TO_2, TRAINER_TO_4)));
     }
+
+    @Test
+    void setActiveAgain() throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
+                .param("isActive", "true"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }

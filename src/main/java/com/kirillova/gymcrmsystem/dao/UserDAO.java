@@ -23,6 +23,7 @@ public class UserDAO {
     private static final String GET_USER_BY_USERNAME_QUERY = "FROM User u WHERE u.username = :username";
     private static final String DELETE_USER_BY_USERNAME_QUERY = "DELETE FROM User u WHERE u.username = :username";
     private static final String UPDATE_USER_ACTIVE_STATUS_QUERY = "UPDATE User u SET u.isActive = :isActive WHERE u.username = :username";
+    private static final String GET_USER_ACTIVE_STATUS_QUERY = "SELECT u.isActive FROM User u WHERE u.username = :username";
     private static final String FIND_USERNAMES_BY_FIRST_NAME_AND_LAST_NAME_QUERY = "SELECT u.username FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName ORDER BY u.username";
     private static final String GET_USER_BY_USERNAME_AND_PASSWORD_QUERY = "FROM User u WHERE u.username = :username AND u.password = :password";
     private static final String USERNAME_PARAM = "username";
@@ -95,6 +96,18 @@ public class UserDAO {
         } else {
             throw new NotFoundException("Not found entity with " + username);
         }
+    }
+
+    public boolean getActive(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        Boolean isActive = session.createQuery(GET_USER_ACTIVE_STATUS_QUERY, Boolean.class)
+                .setParameter(USERNAME_PARAM, username)
+                .uniqueResult();
+
+        if (isActive == null) {
+            throw new NotFoundException("Not found entity with " + username);
+        }
+        return isActive;
     }
 
     public List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName) {

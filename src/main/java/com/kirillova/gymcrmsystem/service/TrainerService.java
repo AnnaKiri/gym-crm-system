@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
+import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
@@ -86,6 +87,11 @@ public class TrainerService {
     @Transactional
     public boolean setActive(String username, boolean isActive) {
         log.debug("Change active status for trainer with username = {}", username);
+        boolean currentStatus = userDAO.getActive(username);
+        if (currentStatus == isActive) {
+            throw new IllegalRequestDataException("User is already in the desired state");
+        }
+
         return userDAO.setActive(username, isActive);
     }
 
@@ -98,4 +104,5 @@ public class TrainerService {
         log.debug("Get trainer with username = {} with user and specialization entity", username);
         return checkNotFoundWithUsername(trainerDAO.getWithUserAndSpecialization(username), username);
     }
+
 }

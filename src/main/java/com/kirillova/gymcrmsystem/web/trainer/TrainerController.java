@@ -139,7 +139,8 @@ public class TrainerController {
     @Operation(summary = "Set trainer active status", description = "Sets the active status of the specified trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trainer status updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Trainer not found")
+            @ApiResponse(responseCode = "404", description = "Trainer not found"),
+            @ApiResponse(responseCode = "400", description = "Trainer is already in the desired state")
     })
     public void setActive(@PathVariable String username, @RequestParam boolean isActive) {
         log.debug(isActive ? "enable {}" : "disable {}", username);

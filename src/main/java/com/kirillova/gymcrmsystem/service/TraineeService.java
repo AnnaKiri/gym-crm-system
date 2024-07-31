@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
+import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -99,6 +100,11 @@ public class TraineeService {
     @Transactional
     public boolean setActive(String username, boolean isActive) {
         log.debug("Change active status for trainee with username = {}", username);
+        boolean currentStatus = userDAO.getActive(username);
+        if (currentStatus == isActive) {
+            throw new IllegalRequestDataException("User is already in the desired state");
+        }
+
         return userDAO.setActive(username, isActive);
     }
 

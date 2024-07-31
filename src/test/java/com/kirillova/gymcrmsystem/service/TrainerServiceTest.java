@@ -4,6 +4,7 @@ import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
+import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
@@ -161,6 +162,7 @@ class TrainerServiceTest {
     void active() {
         User user = TRAINER_1.getUser();
 
+        when(userDAO.getActive(user.getUsername())).thenReturn(true);
         when(userDAO.setActive(user.getUsername(), false)).thenReturn(true);
 
         Assertions.assertTrue(trainerService.setActive(user.getUsername(), false));
@@ -204,4 +206,15 @@ class TrainerServiceTest {
             Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
         }
     }
+
+    @Test
+    void setActiveAgain() {
+        User user = TRAINER_1.getUser();
+
+        when(userDAO.getActive(user.getUsername())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalRequestDataException.class, () -> trainerService.setActive(user.getUsername(), true));
+    }
+
+
 }
