@@ -151,7 +151,7 @@ public class TraineeControllerTest extends AbstractSpringTest {
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(traineeTo)))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isBadRequest());
     }
 
 

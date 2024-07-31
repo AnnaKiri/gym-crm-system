@@ -17,6 +17,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindException;
@@ -119,8 +120,14 @@ public class RestExceptionHandler {
                 )
                 .findAny().map(Map.Entry::getValue);
         if (optType.isPresent()) {
-            log.error(ERR_PFX + "Exception {} at request {}", ex, path);
-            return createProblemDetail(ex, path, optType.get(), ex.getMessage(), additionalParams);
+            ErrorType errorType = optType.get();
+            HttpStatus status = errorType.status;
+            if (status.is5xxServerError()) {
+                log.error(ERR_PFX + "Exception {} at request {}", ex, path);
+            } else if (status.is4xxClientError()) {
+                log.debug(ERR_PFX + "Exception {} at request {}", ex, path);
+            }
+            return createProblemDetail(ex, path, errorType, ex.getMessage(), additionalParams);
         } else {
             Throwable root = getRootCause(ex);
             log.error(ERR_PFX + "Exception " + root + " at request " + path, root);
