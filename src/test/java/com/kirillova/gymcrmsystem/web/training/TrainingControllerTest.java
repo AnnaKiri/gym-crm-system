@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.web.training;
 
-import com.kirillova.gymcrmsystem.AbstractSpringTest;
+import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TrainingTestData;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TrainingControllerTest extends AbstractSpringTest {
+public class TrainingControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Test

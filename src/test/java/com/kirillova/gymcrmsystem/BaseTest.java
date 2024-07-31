@@ -26,7 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
         ConfidentialProperties.class})
 @Transactional
 @WebAppConfiguration
-public abstract class AbstractSpringTest {
+public abstract class BaseTest {
 
     @Autowired
     private SessionFactory sessionFactory;

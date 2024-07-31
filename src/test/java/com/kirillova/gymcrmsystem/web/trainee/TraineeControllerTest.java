@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.web.trainee;
 
-import com.kirillova.gymcrmsystem.AbstractSpringTest;
+import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TraineeTestData;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.service.TraineeService;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TraineeControllerTest extends AbstractSpringTest {
+public class TraineeControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Autowired

@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.dao;
 
-import com.kirillova.gymcrmsystem.AbstractSpringTest;
+import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
 
-class TrainerDAOTest extends AbstractSpringTest {
+class TrainerDAOTest extends BaseTest {
 
     @Autowired
     private TrainerDAO trainerDAO;
