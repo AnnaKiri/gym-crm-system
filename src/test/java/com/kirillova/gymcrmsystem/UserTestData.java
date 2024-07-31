@@ -9,6 +9,7 @@ import java.util.List;
 public class UserTestData {
     public static final String USER_1_USERNAME = "Angelina.Jolie";
     public static final String USER_5_USERNAME = "Tom.Cruise";
+    public static final String NOT_FOUND_USERNAME = "Not.Found";
 
     public static final User USER_1 = new User(1, "Angelina", "Jolie", "Angelina.Jolie", "password1", true);
     public static final User USER_2 = new User(2, "Ryan", "Reynolds", "Ryan.Reynolds", "password2", true);

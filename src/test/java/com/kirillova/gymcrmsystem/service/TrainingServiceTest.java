@@ -1,8 +1,8 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.dao.TrainingDAO;
-import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.models.Training;
+import com.kirillova.gymcrmsystem.repository.TrainingRepository;
+import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,17 +30,17 @@ import static org.mockito.Mockito.when;
 class TrainingServiceTest {
 
     @Mock
-    private TrainingDAO trainingDAO;
+    private TrainingRepository trainingRepository;
 
     @Mock
-    private TrainingTypeDAO trainingTypeDAO;
+    private TrainingTypeRepository trainingTypeRepository;
 
     @InjectMocks
     private TrainingService trainingService;
 
     @Test
     void get() {
-        when(trainingDAO.get(TRAINING_1_ID)).thenReturn(TRAINING_1);
+        when(trainingRepository.getExisted(TRAINING_1_ID)).thenReturn(TRAINING_1);
 
         Training training = trainingService.get(TRAINING_1_ID);
 
@@ -52,18 +52,18 @@ class TrainingServiceTest {
 
     @Test
     void create() {
-        when(trainingDAO.save(any(Training.class))).thenAnswer(invocation -> {
+        when(trainingRepository.save(any(Training.class))).thenAnswer(invocation -> {
             Training training = invocation.getArgument(0);
             training.setId(TRAINING_1_ID + 8);
             return training;
         });
 
-        when(trainingTypeDAO.get(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
+        when(trainingTypeRepository.getExisted(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
 
         Training newTraining = getNewTraining();
         Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
-        verify(trainingDAO, times(1)).save(any(Training.class));
+        verify(trainingRepository, times(1)).save(any(Training.class));
 
         int trainingId = savedTraining.getId();
         newTraining.setId(trainingId);

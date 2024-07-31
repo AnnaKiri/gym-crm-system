@@ -24,13 +24,15 @@ public class TrainingControllerTest extends BaseTest {
         TrainingTo newTrainingTo = TrainingTestData.getNewTrainingTo();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithTypeId(newTrainingTo, newTrainingTo.getTypeId())))
+                .content(jsonWithTypeId(newTrainingTo, newTrainingTo.getTypeId()))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID)
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_1));
@@ -38,7 +40,8 @@ public class TrainingControllerTest extends BaseTest {
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999)
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

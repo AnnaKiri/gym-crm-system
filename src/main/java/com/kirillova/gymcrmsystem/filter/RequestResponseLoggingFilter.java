@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.BufferedReader;
@@ -24,7 +23,6 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
-@Component
 public class RequestResponseLoggingFilter extends OncePerRequestFilter {
 
     @Override

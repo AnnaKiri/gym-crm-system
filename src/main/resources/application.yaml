@@ -1,0 +1,42 @@
+spring:
+  config:
+    import: "classpath:application-confidential.yaml"
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_crm_system
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 20
+        jdbc.batch_size: 20
+
+  sql:
+    init:
+      schema-locations: classpath:db/initDB.sql
+      data-locations: classpath:db/populateDB.sql
+      mode: always
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    root: INFO
+    com.kirillova.gymcrmsystem: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /

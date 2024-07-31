@@ -65,17 +65,19 @@ public class TraineeControllerTest extends BaseTest {
         UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(userTo, newPassword)))
+                .content(jsonWithPassword(userTo, newPassword))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
 
-        clearSession();
+        entityManager.clear();
 
         Assertions.assertEquals(newPassword, traineeService.get(USER_1_USERNAME).getUser().getPassword());
     }
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME)
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_TO_1));
@@ -96,7 +98,8 @@ public class TraineeControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeTo)))
+                .content(JsonUtil.writeValue(traineeTo))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
@@ -104,7 +107,8 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME))
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -113,7 +117,8 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void getFreeTrainersForTrainee() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers")
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
@@ -121,7 +126,8 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void getTrainings() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings")
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINEE_1));
@@ -130,16 +136,20 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void setActive() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .param("isActive", "false"))
+                .param("isActive", "false")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isOk());
+
+        entityManager.clear();
 
         Assertions.assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
     }
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -150,7 +160,8 @@ public class TraineeControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeTo)))
+                .content(JsonUtil.writeValue(traineeTo))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -161,7 +172,8 @@ public class TraineeControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/trainers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(trainerUsernames)))
+                .content(JsonUtil.writeValue(trainerUsernames))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER.contentJson(List.of(TRAINER_TO_1, TRAINER_TO_2, TRAINER_TO_4)));
@@ -170,7 +182,8 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void setActiveAgain() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .param("isActive", "true"))
+                .param("isActive", "true")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

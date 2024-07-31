@@ -57,17 +57,19 @@ public class TrainerControllerTest extends BaseTest {
         UserTo userTo = UserTo.builder().username(USER_5_USERNAME).password(USER_5.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(userTo, newPassword)))
+                .content(jsonWithPassword(userTo, newPassword))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
 
-        clearSession();
+        entityManager.clear();
 
         Assertions.assertEquals(newPassword, trainerService.get(USER_5_USERNAME).getUser().getPassword());
     }
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_5_USERNAME))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_5_USERNAME)
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER_WITH_TRAINEE_LIST.contentJson(TRAINER_TO_1));
@@ -87,7 +89,8 @@ public class TrainerControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithSpecializationId(trainerTo, trainerTo.getSpecializationId())))
+                .content(jsonWithSpecializationId(trainerTo, trainerTo.getSpecializationId()))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_TO_MATCHER_WITH_TRAINEE_LIST.contentJson(trainerExpected));
@@ -95,7 +98,8 @@ public class TrainerControllerTest extends BaseTest {
 
     @Test
     void getTrainings() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_5_USERNAME + "/trainings"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_5_USERNAME + "/trainings")
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINER_1));
@@ -104,7 +108,8 @@ public class TrainerControllerTest extends BaseTest {
     @Test
     void setActive() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_5_USERNAME)
-                .param("isActive", "false"))
+                .param("isActive", "false")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -113,7 +118,8 @@ public class TrainerControllerTest extends BaseTest {
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found"))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -124,14 +130,16 @@ public class TrainerControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(trainerTo)))
+                .content(JsonUtil.writeValue(trainerTo))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void setActiveAgain() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_5_USERNAME)
-                .param("isActive", "true"))
+                .param("isActive", "true")
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

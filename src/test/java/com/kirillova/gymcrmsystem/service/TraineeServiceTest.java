@@ -1,21 +1,23 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.dao.TraineeDAO;
-import com.kirillova.gymcrmsystem.dao.TrainerDAO;
-import com.kirillova.gymcrmsystem.dao.TrainingDAO;
-import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.repository.TraineeRepository;
+import com.kirillova.gymcrmsystem.repository.TrainerRepository;
+import com.kirillova.gymcrmsystem.repository.TrainingRepository;
+import com.kirillova.gymcrmsystem.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -42,7 +44,6 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,35 +52,35 @@ import static org.mockito.Mockito.when;
 public class TraineeServiceTest {
 
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Mock
-    private TraineeDAO traineeDAO;
+    private TraineeRepository traineeRepository;
 
     @Mock
-    private TrainerDAO trainerDAO;
+    private TrainerRepository trainerRepository;
 
     @Mock
-    private TrainingDAO trainingDAO;
+    private TrainingRepository trainingRepository;
 
     @InjectMocks
     private TraineeService traineeService;
 
     @Test
     void create() {
-        when(userDAO.save(any(User.class))).thenAnswer(invocation -> {
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(USER_1.getId() + 8);
             return user;
         });
 
-        when(traineeDAO.save(any(Trainee.class))).thenAnswer(invocation -> {
+        when(traineeRepository.save(any(Trainee.class))).thenAnswer(invocation -> {
             Trainee trainee = invocation.getArgument(0);
             trainee.setId(TRAINEE_1_ID + 4);
             return trainee;
         });
 
-        when(userDAO.findUsernamesByFirstNameAndLastName(any(String.class), any(String.class))).thenAnswer(invocation -> {
+        when(userRepository.findUsernamesByFirstNameAndLastName(any(String.class), any(String.class))).thenAnswer(invocation -> {
             String firstName = invocation.getArgument(0);
             String lastName = invocation.getArgument(1);
             return USER_LIST.stream()
@@ -93,8 +94,8 @@ public class TraineeServiceTest {
         Trainee newTrainee = getNewTrainee();
         Trainee savedTrainee = traineeService.create(newUser.getFirstName(), newUser.getLastName(), newTrainee.getDateOfBirth(), newTrainee.getAddress());
 
-        verify(userDAO, times(1)).save(any(User.class));
-        verify(traineeDAO, times(1)).save(any(Trainee.class));
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
 
         int traineeId = savedTrainee.getId();
         newTrainee.setId(traineeId);
@@ -105,11 +106,9 @@ public class TraineeServiceTest {
 
     @Test
     void get() {
-        User user = TRAINEE_1.getUser();
+        when(traineeRepository.getExisted(USER_1_USERNAME)).thenReturn(TRAINEE_1);
 
-        when(traineeDAO.get(user.getUsername())).thenReturn(TRAINEE_1);
-
-        Trainee trainee = traineeService.get(user.getUsername());
+        Trainee trainee = traineeService.get(USER_1_USERNAME);
 
         TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
         checkTraineeUserId(TRAINEE_1, trainee);
@@ -117,15 +116,14 @@ public class TraineeServiceTest {
 
     @Test
     void delete() {
-        User user = TRAINEE_1.getUser();
-        String username = user.getUsername();
-        when(traineeDAO.get(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + username));
-        traineeService.delete(username);
+        when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
 
-        verify(userDAO, times(1)).delete(username);
+        traineeService.delete(USER_1_USERNAME);
 
+        verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);
 
-        assertThrows(NotFoundException.class, () -> traineeDAO.get(username));
+        when(traineeRepository.findByUsername(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + USER_1_USERNAME));
+        assertThrows(NotFoundException.class, () -> traineeRepository.findByUsername(USER_1_USERNAME));
     }
 
     @Test
@@ -133,15 +131,15 @@ public class TraineeServiceTest {
         Trainee trainee = getUpdatedTrainee();
         User user = trainee.getUser();
 
-        when(traineeDAO.get(user.getUsername())).thenReturn(trainee);
-        when(userDAO.get(user.getUsername())).thenReturn(user);
+        when(traineeRepository.getExisted(user.getUsername())).thenReturn(trainee);
+        when(userRepository.getExisted(user.getUsername())).thenReturn(user);
 
         traineeService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainee.getDateOfBirth(), trainee.getAddress(), user.isActive());
 
-        verify(userDAO, times(1)).update(user);
-        verify(traineeDAO, times(1)).update(trainee);
+        verify(userRepository, times(1)).save(user);
+        verify(traineeRepository, times(1)).save(trainee);
 
-        when(traineeDAO.get(user.getUsername())).thenReturn(trainee);
+        when(traineeService.get(user.getUsername())).thenReturn(trainee);
 
         Trainee traineeGet = traineeService.get(user.getUsername());
 
@@ -151,26 +149,25 @@ public class TraineeServiceTest {
 
     @Test
     void changePassword() {
-        User user = TRAINEE_1.getUser();
-
-        when(userDAO.changePassword(user.getUsername(), "newPassword")).thenReturn(true);
-        Assertions.assertTrue(traineeService.changePassword(user.getUsername(), "newPassword"));
+        when(userRepository.changePassword(USER_1_USERNAME, "newPassword")).thenReturn(1);
+        Assertions.assertTrue(traineeService.changePassword(USER_1_USERNAME, "newPassword"));
     }
 
     @Test
     void active() {
-        User user = TRAINEE_1.getUser();
+        when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(true);
+        when(userRepository.updateIsActiveByUsername(USER_1_USERNAME, false)).thenReturn(1);
 
-        when(userDAO.getActive(user.getUsername())).thenReturn(true);
-        when(userDAO.setActive(user.getUsername(), false)).thenReturn(true);
-
-        Assertions.assertTrue(traineeService.setActive(user.getUsername(), false));
+        Assertions.assertFalse(traineeService.setActive(USER_1_USERNAME, false));
     }
 
     @Test
     void getFreeTrainersForTrainee() {
         List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
-        when(trainerDAO.getFreeTrainersForTrainee(USER_1_USERNAME)).thenReturn(expected);
+
+        ArgumentCaptor<Specification<Trainer>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(trainerRepository.findAll(specCaptor.capture())).thenReturn(expected);
+
         List<Trainer> actual = traineeService.getFreeTrainersForTrainee(USER_1_USERNAME);
         TRAINER_MATCHER.assertMatch(actual, expected);
         for (int i = 0; i < expected.size(); i++) {
@@ -179,18 +176,12 @@ public class TraineeServiceTest {
         }
     }
 
-
     @Test
     void getTrainings() {
         List<Training> expected = List.of(TRAINING_2);
-        when(trainingDAO.getTraineeTrainings(
-                TRAINEE_1.getUser().getUsername(),
-                LocalDate.of(2023, 1, 1),
-                LocalDate.of(2024, 1, 15),
-                TRAINING_TYPE_2.getName(),
-                TRAINER_2.getUser().getFirstName(),
-                TRAINER_2.getUser().getLastName()))
-                .thenReturn(expected);
+
+        ArgumentCaptor<Specification<Training>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        when(trainingRepository.findAll(specCaptor.capture())).thenReturn(expected);
 
         List<Training> actual = traineeService.getTrainings(
                 TRAINEE_1.getUser().getUsername(),
@@ -212,18 +203,18 @@ public class TraineeServiceTest {
     void updateTrainerList() {
         List<String> trainerUsernames = List.of(USER_5_USERNAME);
 
-        when(traineeDAO.get(USER_1_USERNAME)).thenReturn(TRAINEE_1);
-        when(trainerDAO.get(USER_5_USERNAME)).thenReturn(TRAINER_1);
-        doNothing().when(traineeDAO).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+        when(traineeRepository.getExisted(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(trainerRepository.getExisted(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        when(traineeRepository.save(TRAINEE_1)).thenReturn(TRAINEE_1);
 
         traineeService.updateTrainerList(USER_1_USERNAME, trainerUsernames);
 
-        verify(traineeDAO, times(1)).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+        verify(traineeRepository, times(1)).save(TRAINEE_1);
 
         List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
-        when(trainerDAO.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(expected);
+        when(trainerRepository.findTrainersByTraineeUsername(USER_1_USERNAME)).thenReturn(expected);
 
-        List<Trainer> actual = trainerDAO.getTrainersForTrainee(USER_1_USERNAME);
+        List<Trainer> actual = trainerRepository.findTrainersByTraineeUsername(USER_1_USERNAME);
 
         TRAINER_MATCHER.assertMatch(actual, expected);
         for (int i = 0; i < expected.size(); i++) {
@@ -234,10 +225,7 @@ public class TraineeServiceTest {
 
     @Test
     void setActiveAgain() {
-        User user = TRAINEE_1.getUser();
-
-        when(userDAO.getActive(user.getUsername())).thenReturn(true);
-
-        Assertions.assertThrows(IllegalRequestDataException.class, () -> traineeService.setActive(user.getUsername(), true));
+        when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(true);
+        Assertions.assertThrows(IllegalRequestDataException.class, () -> traineeService.setActive(USER_1_USERNAME, true));
     }
 }
