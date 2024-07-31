@@ -1,12 +1,10 @@
 package com.kirillova.gymcrmsystem.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.configuration.SpringDocDataRestConfiguration;
 import org.springdoc.core.configuration.SpringDocFunctionCatalogConfiguration;
@@ -45,20 +43,11 @@ import org.springframework.context.annotation.Import;
         SwaggerUiOAuthProperties.class,
         SpringDocUIConfiguration.class
 })
-@SecuritySchemes({
-        @SecurityScheme(
-                name = "username",
-                type = SecuritySchemeType.APIKEY,
-                in = SecuritySchemeIn.HEADER,
-                paramName = "username"
-        ),
-        @SecurityScheme(
-                name = "password",
-                type = SecuritySchemeType.APIKEY,
-                in = SecuritySchemeIn.HEADER,
-                paramName = "password"
-        )
-})
+@SecurityScheme(
+        name = "basicAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic"
+)
 @OpenAPIDefinition(
         info = @Info(
                 title = "REST API documentation",
@@ -72,10 +61,7 @@ import org.springframework.context.annotation.Import;
                         - Keanu.Reeves / password4</p>
                         """
         ),
-        security = {
-                @SecurityRequirement(name = "username"),
-                @SecurityRequirement(name = "password")
-        }
+        security = @SecurityRequirement(name = "basicAuth")
 )
 public class OpenApiConfig {
 

@@ -12,6 +12,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Base64;
 
 @Component
 @Slf4j
@@ -32,21 +33,33 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         boolean swaggerUri = pathMatcher.match("/v3/api-docs/**", path) ||
                 pathMatcher.match("/swagger-ui.html", path) ||
                 pathMatcher.match("/swagger-ui/**", path);
-        boolean registrationUri = (pathMatcher.match("/trainer", path) || pathMatcher.match("/trainee", path)) && method.equalsIgnoreCase("POST");
+        boolean registrationUri = (pathMatcher.match("/trainers", path) || pathMatcher.match("/trainees", path)) && method.equalsIgnoreCase("POST");
         boolean allowedUri = swaggerUri || registrationUri;
 
         if (!allowedUri) {
-            String username = request.getHeader("username");
-            String password = request.getHeader("password");
+            String authHeader = request.getHeader("Authorization");
 
-            if (authenticationService.getAuthenticatedUser(username, password) == null) {
+            if (authHeader != null && authHeader.startsWith("Basic ")) {
+                String base64Credentials = authHeader.substring(6);
+                String credentials = new String(Base64.getDecoder().decode(base64Credentials));
+                String[] values = credentials.split(":", 2);
+
+                String username = values[0];
+                String password = values[1];
+
+                if (authenticationService.getAuthenticatedUser(username, password) == null) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Unauthorized. User with this credentials doesn't exist");
+                    log.info("Failed authentication with username = {}", username);
+                    return;
+                }
+
+                log.info("Successful authentication with username = {}", username);
+            } else {
+                response.setHeader("WWW-Authenticate", "Basic realm=\"Access to the site\"");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Unauthorized. User with this credentials doesn't exist");
-                log.info("Failed authentication with username = {}", username);
                 return;
             }
-
-            log.info("Successful authentication with username = {}", username);
         }
 
         filterChain.doFilter(request, response);
