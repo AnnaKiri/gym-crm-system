@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem.dao;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
@@ -19,71 +20,98 @@ public class TrainerDAO {
 
     private final SessionFactory sessionFactory;
 
-    @Transactional
+    private static final String GET_TRAINERS_FOR_TRAINEE_QUERY = """
+            SELECT DISTINCT trn
+            FROM Trainee t
+            JOIN t.trainerList trn
+            JOIN FETCH trn.user
+            JOIN FETCH trn.specialization
+            WHERE t.user.username = :username
+            """;
+
+    private static final String GET_TRAINER_BY_USERNAME_QUERY = """
+            SELECT t 
+            FROM Trainer t 
+            JOIN User u ON t.user.id = u.id 
+            WHERE u.username = :username
+            """;
+
+    private static final String GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY = """
+            SELECT t 
+            FROM Trainer t 
+            JOIN FETCH t.user u 
+            LEFT JOIN FETCH t.specialization s 
+            WHERE u.username = :username
+            """;
+
+    private static final String GET_FREE_TRAINERS_FOR_TRAINEE_QUERY = """
+            SELECT DISTINCT trainer 
+            FROM Trainer trainer 
+            JOIN FETCH trainer.user 
+            JOIN FETCH trainer.specialization 
+            LEFT JOIN Training training ON training.trainer.id = trainer.id 
+            LEFT JOIN training.trainee trainee 
+            LEFT JOIN trainee.user user 
+            WHERE trainer.id NOT IN (
+                SELECT trainer.id 
+                FROM Trainer trainer 
+                JOIN Training training ON training.trainer.id = trainer.id 
+                JOIN training.trainee trainee 
+                JOIN trainee.user user 
+                WHERE user.username = :username AND user.isActive = true
+            )
+            """;
+    private static final String USERNAME_PARAM = "username";
+
     public Trainer save(Trainer trainer) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainer);
         session.flush();
         session.refresh(trainer);
-        log.debug("New trainer with id = " + trainer.getId() + " saved");
+        log.debug("New trainer with id = {} saved", trainer.getId());
         return trainer;
     }
 
-    @Transactional
+    public List<Trainer> getTrainersForTrainee(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainers list for trainee with username = {}", username);
+        return session.createQuery(GET_TRAINERS_FOR_TRAINEE_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
+                .list();
+    }
+
     public void update(Trainer updatedTrainer) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainer);
-        log.debug("Trainer with id = " + updatedTrainer.getId() + " updated");
+        log.debug("Trainer with id = {} updated", updatedTrainer.getId());
     }
 
-    public Trainer get(int trainerId) {
+    public Trainer get(String username) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainer with id = " + trainerId);
-        return session.get(Trainer.class, trainerId);
-    }
-
-    public Trainer getByUserId(int userId) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainer with userid = " + userId);
-        return session.createQuery("FROM Trainer t WHERE t.user.id = :userId", Trainer.class)
-                .setParameter("userId", userId)
+        log.debug("Get trainer with username = {}", username);
+        return session.createQuery(GET_TRAINER_BY_USERNAME_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
     }
 
-    public List<Trainer> getFreeTrainersForUsername(String traineeUsername) {
+    public Trainer getWithUserAndSpecialization(String username) {
         Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainers list that not assigned to trainee with username = " + traineeUsername);
+        log.debug("Get trainer with username = {} with user and specialization entities", username);
 
-        String hql = "SELECT DISTINCT trainer " +
-                "FROM Trainer trainer " +
-                "JOIN Training training ON training.trainer.id = trainer.id " +
-                "JOIN training.trainee trainee " +
-                "JOIN trainee.user user " +
-                "WHERE trainer.id NOT IN (" +
-                "    SELECT trainer.id " +
-                "    FROM Trainer trainer " +
-                "    JOIN Training training ON training.trainer.id = trainer.id " +
-                "    JOIN training.trainee trainee " +
-                "    JOIN trainee.user user " +
-                "    WHERE user.username = :username" +
-                ")";
+        return session.createQuery(GET_TRAINER_WITH_USER_AND_SPECIALIZATION_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
+                .uniqueResult();
+    }
 
-        List<Trainer> freeTrainers = session.createQuery(hql, Trainer.class)
-                .setParameter("username", traineeUsername)
+    public List<Trainer> getFreeTrainersForTrainee(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainers list that not assigned to trainee with username = {}", username);
+
+        List<Trainer> freeTrainers = session.createQuery(GET_FREE_TRAINERS_FOR_TRAINEE_QUERY, Trainer.class)
+                .setParameter(USERNAME_PARAM, username)
                 .list();
 
         freeTrainers.sort(Comparator.comparingLong(Trainer::getId));
         return freeTrainers;
-    }
-
-    public List<Trainer> getTrainersForTrainee(int traineeId) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainers list for trainee with id = " + traineeId);
-        return session.createQuery("SELECT DISTINCT t " +
-                        "FROM Trainer t " +
-                        "JOIN Training tr ON tr.trainer.id = t.id " +
-                        "WHERE tr.trainee.id = :traineeId", Trainer.class)
-                .setParameter("traineeId", traineeId)
-                .list();
     }
 }

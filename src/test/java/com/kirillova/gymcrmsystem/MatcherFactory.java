@@ -1,5 +1,11 @@
 package com.kirillova.gymcrmsystem;
 
+import com.kirillova.gymcrmsystem.util.JsonUtil;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -34,6 +40,10 @@ public class MatcherFactory {
             this.iterableAssertion = iterableAssertion;
         }
 
+        private static String getContent(MvcResult result) throws UnsupportedEncodingException {
+            return result.getResponse().getContentAsString();
+        }
+
         public void assertMatch(T actual, T expected) {
             assertion.accept(actual, expected);
         }
@@ -45,6 +55,23 @@ public class MatcherFactory {
 
         public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
             iterableAssertion.accept(actual, expected);
+        }
+
+        public ResultMatcher contentJson(T expected) {
+            return result -> assertMatch(JsonUtil.readValue(getContent(result), clazz), expected);
+        }
+
+        @SafeVarargs
+        public final ResultMatcher contentJson(T... expected) {
+            return contentJson(List.of(expected));
+        }
+
+        public ResultMatcher contentJson(Iterable<T> expected) {
+            return result -> assertMatch(JsonUtil.readValues(getContent(result), clazz), expected);
+        }
+
+        public T readFromJson(ResultActions action) throws UnsupportedEncodingException {
+            return JsonUtil.readValue(getContent(action.andReturn()), clazz);
         }
     }
 }

@@ -1,21 +1,20 @@
 package com.kirillova.gymcrmsystem.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,12 +26,9 @@ import java.util.List;
 public class Trainee extends AbstractBaseEntity {
 
     @Column(name = "date_of_birth", nullable = false)
-    @NotNull
     private LocalDate dateOfBirth;
 
     @Column(name = "address", nullable = false)
-    @NotBlank
-    @Size(min = 5, max = 128)
     private String address;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -42,6 +38,11 @@ public class Trainee extends AbstractBaseEntity {
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "trainee2trainer",
+            joinColumns = @JoinColumn(name = "trainee_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
     private List<Trainer> trainerList;
 
     public Trainee(Trainee trainee) {

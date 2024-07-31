@@ -1,15 +1,15 @@
 package com.kirillova.gymcrmsystem.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import org.hibernate.annotations.Proxy;
 
 @Entity
 @Table(name = "users")
@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "password", callSuper = true)
+@Proxy(lazy = false) // Отключаем использование прокси для этой сущности
 public class User extends AbstractBaseEntity {
 
     @Column(name = "first_name", nullable = false)
@@ -36,10 +37,10 @@ public class User extends AbstractBaseEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 50)
-    protected String password;
+    private String password;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "bool default true")
-    protected boolean isActive;
+    private boolean isActive;
 
     public User(User user) {
         this(user.id, user.firstName, user.lastName, user.username, user.password, user.isActive);

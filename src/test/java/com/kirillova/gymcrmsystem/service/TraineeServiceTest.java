@@ -4,6 +4,8 @@ import com.kirillova.gymcrmsystem.dao.TraineeDAO;
 import com.kirillova.gymcrmsystem.dao.TrainerDAO;
 import com.kirillova.gymcrmsystem.dao.TrainingDAO;
 import com.kirillova.gymcrmsystem.dao.UserDAO;
+import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -34,10 +36,13 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_1_ID;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +69,7 @@ public class TraineeServiceTest {
     void create() {
         when(userDAO.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
-            user.setId(USER_1_ID);
+            user.setId(USER_1.getId() + 8);
             return user;
         });
 
@@ -100,9 +105,11 @@ public class TraineeServiceTest {
 
     @Test
     void get() {
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
+        User user = TRAINEE_1.getUser();
 
-        Trainee trainee = traineeService.get(TRAINEE_1_ID);
+        when(traineeDAO.get(user.getUsername())).thenReturn(TRAINEE_1);
+
+        Trainee trainee = traineeService.get(user.getUsername());
 
         TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
         checkTraineeUserId(TRAINEE_1, trainee);
@@ -110,15 +117,15 @@ public class TraineeServiceTest {
 
     @Test
     void delete() {
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
+        User user = TRAINEE_1.getUser();
+        String username = user.getUsername();
+        when(traineeDAO.get(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + username));
+        traineeService.delete(username);
 
-        traineeService.delete(TRAINEE_1_ID);
+        verify(userDAO, times(1)).delete(username);
 
-        verify(traineeDAO, times(1)).get(TRAINEE_1_ID);
-        verify(userDAO, times(1)).delete(USER_1_ID);
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(null);
 
-        Assertions.assertNull(traineeService.get(TRAINEE_1_ID));
+        assertThrows(NotFoundException.class, () -> traineeDAO.get(username));
     }
 
     @Test
@@ -126,67 +133,45 @@ public class TraineeServiceTest {
         Trainee trainee = getUpdatedTrainee();
         User user = trainee.getUser();
 
-        when(traineeDAO.get(trainee.getId())).thenReturn(trainee);
-        when(userDAO.get(user.getId())).thenReturn(user);
+        when(traineeDAO.get(user.getUsername())).thenReturn(trainee);
+        when(userDAO.get(user.getUsername())).thenReturn(user);
 
-        traineeService.update(trainee.getId(), user.getFirstName(), user.getLastName(), trainee.getDateOfBirth(), trainee.getAddress(), user.isActive());
+        traineeService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainee.getDateOfBirth(), trainee.getAddress(), user.isActive());
 
         verify(userDAO, times(1)).update(user);
         verify(traineeDAO, times(1)).update(trainee);
 
-        when(traineeDAO.get(trainee.getId())).thenReturn(trainee);
+        when(traineeDAO.get(user.getUsername())).thenReturn(trainee);
 
-        Trainee traineeGet = traineeService.get(TRAINEE_1_ID);
+        Trainee traineeGet = traineeService.get(user.getUsername());
 
         TRAINEE_MATCHER.assertMatch(traineeGet, trainee);
         checkTraineeUserId(trainee, traineeGet);
     }
 
     @Test
-    void getByUsername() {
-        User user = TRAINEE_1.getUser();
-
-        when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
-        when(traineeDAO.getByUserId(user.getId())).thenReturn(TRAINEE_1);
-
-        Trainee trainee = traineeService.getByUsername(user.getUsername());
-
-        TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
-        checkTraineeUserId(TRAINEE_1, trainee);
-    }
-
-    @Test
     void changePassword() {
         User user = TRAINEE_1.getUser();
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
-        when(userDAO.changePassword(user.getId(), "newPassword")).thenReturn(true);
-        Assertions.assertTrue(traineeService.changePassword(TRAINEE_1_ID, "newPassword"));
+
+        when(userDAO.changePassword(user.getUsername(), "newPassword")).thenReturn(true);
+        Assertions.assertTrue(traineeService.changePassword(user.getUsername(), "newPassword"));
     }
 
     @Test
     void active() {
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
-        when(userDAO.active(TRAINEE_1.getUser().getId(), false)).thenReturn(true);
-        Assertions.assertTrue(traineeService.active(TRAINEE_1_ID, false));
-    }
+        User user = TRAINEE_1.getUser();
 
-    @Test
-    void deleteByUsername() {
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
+        when(userDAO.getActive(user.getUsername())).thenReturn(true);
+        when(userDAO.setActive(user.getUsername(), false)).thenReturn(true);
 
-        traineeService.deleteByUsername(USER_1.getUsername());
-
-        verify(userDAO, times(1)).deleteByUsername(USER_1.getUsername());
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(null);
-
-        Assertions.assertNull(traineeService.get(TRAINEE_1_ID));
+        Assertions.assertTrue(traineeService.setActive(user.getUsername(), false));
     }
 
     @Test
     void getFreeTrainersForTrainee() {
         List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_3);
-        when(trainerDAO.getFreeTrainersForUsername(USER_1.getUsername())).thenReturn(expected);
-        List<Trainer> actual = traineeService.getFreeTrainersForTrainee(USER_1.getUsername());
+        when(trainerDAO.getFreeTrainersForTrainee(USER_1_USERNAME)).thenReturn(expected);
+        List<Trainer> actual = traineeService.getFreeTrainersForTrainee(USER_1_USERNAME);
         TRAINER_MATCHER.assertMatch(actual, expected);
         for (int i = 0; i < expected.size(); i++) {
             Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
@@ -194,18 +179,6 @@ public class TraineeServiceTest {
         }
     }
 
-    @Test
-    void getWithTrainers() {
-        when(traineeDAO.get(TRAINEE_1_ID)).thenReturn(TRAINEE_1);
-        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
-        when(trainerDAO.getTrainersForTrainee(TRAINEE_1_ID)).thenReturn(expected);
-        List<Trainer> actual = traineeService.getWithTrainers(TRAINEE_1_ID).getTrainerList();
-        TRAINER_MATCHER.assertMatch(actual, expected);
-        for (int i = 0; i < expected.size(); i++) {
-            Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
-            Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
-        }
-    }
 
     @Test
     void getTrainings() {
@@ -233,5 +206,38 @@ public class TraineeServiceTest {
             Assertions.assertEquals(expected.get(i).getTrainer().getId(), actual.get(i).getTrainer().getId());
             Assertions.assertEquals(expected.get(i).getType().getId(), actual.get(i).getType().getId());
         }
+    }
+
+    @Test
+    void updateTrainerList() {
+        List<String> trainerUsernames = List.of(USER_5_USERNAME);
+
+        when(traineeDAO.get(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(trainerDAO.get(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        doNothing().when(traineeDAO).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+
+        traineeService.updateTrainerList(USER_1_USERNAME, trainerUsernames);
+
+        verify(traineeDAO, times(1)).updateTrainerList(USER_1_USERNAME, TRAINEE_1);
+
+        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
+        when(trainerDAO.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(expected);
+
+        List<Trainer> actual = trainerDAO.getTrainersForTrainee(USER_1_USERNAME);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertEquals(expected.get(i).getUser().getId(), actual.get(i).getUser().getId());
+            Assertions.assertEquals(expected.get(i).getSpecialization().getId(), actual.get(i).getSpecialization().getId());
+        }
+    }
+
+    @Test
+    void setActiveAgain() {
+        User user = TRAINEE_1.getUser();
+
+        when(userDAO.getActive(user.getUsername())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalRequestDataException.class, () -> traineeService.setActive(user.getUsername(), true));
     }
 }

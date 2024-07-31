@@ -1,18 +1,20 @@
 package com.kirillova.gymcrmsystem.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "trainer")
@@ -21,7 +23,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Trainer extends AbstractBaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialization_id", nullable = false)
     @NotNull
     private TrainingType specialization;
@@ -31,6 +33,9 @@ public class Trainer extends AbstractBaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private User user;
+
+    @ManyToMany(mappedBy = "trainerList", fetch = FetchType.LAZY)
+    private List<Trainee> traineeList;
 
     public Trainer(Trainer trainer) {
         this(trainer.id, trainer.specialization, trainer.user);

@@ -1,9 +1,12 @@
 package com.kirillova.gymcrmsystem;
 
 import com.kirillova.gymcrmsystem.models.Training;
+import com.kirillova.gymcrmsystem.to.TrainingTo;
+import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_2;
@@ -28,12 +31,111 @@ public class TrainingTestData {
     public static final Training TRAINING_5 = new Training(5, TRAINEE_3, TRAINER_2, "Strength", TRAINING_TYPE_1, LocalDate.of(2024, 1, 5), 60);
     public static final Training TRAINING_6 = new Training(6, TRAINEE_4, TRAINER_4, "Stretching", TRAINING_TYPE_4, LocalDate.of(2024, 1, 1), 60);
     public static final Training TRAINING_7 = new Training(7, TRAINEE_4, TRAINER_1, "Strength", TRAINING_TYPE_1, LocalDate.of(2024, 1, 6), 60);
-    public static final Training TRAINING_8 = new Training(8, TRAINEE_2, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+
+    public static final TrainingTo TRAINING_TO_1 = TrainingTo.builder()
+            .id(1)
+            .name(TRAINING_1.getName())
+            .type(TRAINING_1.getType())
+            .typeId(TRAINING_1.getType().getId())
+            .date(TRAINING_1.getDate())
+            .duration(TRAINING_1.getDuration())
+            .traineeUsername(TRAINEE_1.getUser().getUsername())
+            .trainerUsername(TRAINER_4.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_2 = TrainingTo.builder()
+            .id(2)
+            .name(TRAINING_2.getName())
+            .type(TRAINING_2.getType())
+            .typeId(TRAINING_2.getType().getId())
+            .date(TRAINING_2.getDate())
+            .duration(TRAINING_2.getDuration())
+            .traineeUsername(TRAINEE_1.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_3 = TrainingTo.builder()
+            .id(3)
+            .name(TRAINING_3.getName())
+            .type(TRAINING_3.getType())
+            .typeId(TRAINING_3.getType().getId())
+            .date(TRAINING_3.getDate())
+            .duration(TRAINING_3.getDuration())
+            .traineeUsername(TRAINEE_2.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_4 = TrainingTo.builder()
+            .id(4)
+            .name(TRAINING_4.getName())
+            .type(TRAINING_4.getType())
+            .typeId(TRAINING_4.getType().getId())
+            .date(TRAINING_4.getDate())
+            .duration(TRAINING_4.getDuration())
+            .traineeUsername(TRAINEE_2.getUser().getUsername())
+            .trainerUsername(TRAINER_3.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_5 = TrainingTo.builder()
+            .id(5)
+            .name(TRAINING_5.getName())
+            .type(TRAINING_5.getType())
+            .typeId(TRAINING_5.getType().getId())
+            .date(TRAINING_5.getDate())
+            .duration(TRAINING_5.getDuration())
+            .traineeUsername(TRAINEE_3.getUser().getUsername())
+            .trainerUsername(TRAINER_2.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_6 = TrainingTo.builder()
+            .id(6)
+            .name(TRAINING_6.getName())
+            .type(TRAINING_6.getType())
+            .typeId(TRAINING_6.getType().getId())
+            .date(TRAINING_6.getDate())
+            .duration(TRAINING_6.getDuration())
+            .traineeUsername(TRAINEE_4.getUser().getUsername())
+            .trainerUsername(TRAINER_4.getUser().getUsername())
+            .build();
+
+    public static final TrainingTo TRAINING_TO_7 = TrainingTo.builder()
+            .id(7)
+            .name(TRAINING_7.getName())
+            .type(TRAINING_7.getType())
+            .typeId(TRAINING_7.getType().getId())
+            .date(TRAINING_7.getDate())
+            .duration(TRAINING_7.getDuration())
+            .traineeUsername(TRAINEE_4.getUser().getUsername())
+            .trainerUsername(TRAINER_1.getUser().getUsername())
+            .build();
+
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_1 = List.of(TRAINING_TO_1, TRAINING_TO_2);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_2 = List.of(TRAINING_TO_3, TRAINING_TO_4);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_3 = List.of(TRAINING_TO_5);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINEE_4 = List.of(TRAINING_TO_6, TRAINING_TO_7);
+
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_1 = List.of(TRAINING_TO_7);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_2 = List.of(TRAINING_TO_2, TRAINING_TO_3, TRAINING_TO_5);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_3 = List.of(TRAINING_TO_4);
+    public static final List<TrainingTo> TRAINING_TO_LIST_FOR_TRAINER_4 = List.of(TRAINING_TO_1, TRAINING_TO_6);
 
     public static final MatcherFactory.Matcher<Training> TRAINING_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Training.class, "trainee", "trainer", "type");
+    public static final MatcherFactory.Matcher<TrainingTo> TRAINING_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainingTo.class, "typeId");
 
     public static Training getNewTraining() {
         return new Training(null, TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3, LocalDate.of(2024, 1, 5), 60);
+    }
+
+    public static TrainingTo getNewTrainingTo() {
+        return TrainingTo.builder().
+                name("Yoga").
+                type(TRAINING_TYPE_3).
+                typeId(TRAINING_TYPE_3.getId()).
+                date(LocalDate.of(2024, 1, 5)).
+                duration(60).
+                traineeUsername(TRAINEE_3.getUser().getUsername()).
+                trainerUsername(TRAINER_3.getUser().getUsername()).
+                build();
     }
 
     public static void checkTrainingTraineeId(Training expected, Training actual) {
@@ -46,5 +148,9 @@ public class TrainingTestData {
 
     public static void checkTrainingTypeId(Training expected, Training actual) {
         Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
+    }
+
+    public static String jsonWithTypeId(TrainingTo trainingTo, int typeId) {
+        return JsonUtil.writeAdditionProps(trainingTo, "typeId", typeId);
     }
 }

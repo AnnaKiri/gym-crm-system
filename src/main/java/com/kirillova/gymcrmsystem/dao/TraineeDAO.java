@@ -8,6 +8,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -16,42 +18,55 @@ public class TraineeDAO {
 
     private final SessionFactory sessionFactory;
 
-    @Transactional
+    private static final String GET_TRAINEE_BY_USERNAME_QUERY = "SELECT t FROM Trainee t JOIN User u ON t.user.id = u.id WHERE u.username = :username";
+    private static final String GET_TRAINEE_WITH_USER_BY_USERNAME_QUERY = "SELECT t FROM Trainee t JOIN FETCH t.user u WHERE u.username = :username";
+    private static final String GET_TRAINEES_FOR_TRAINER_QUERY = "SELECT DISTINCT t FROM Training tr JOIN tr.trainee t JOIN FETCH t.user u JOIN tr.trainer trn WHERE trn.user.username = :username";
+    private static final String USERNAME_PARAM = "username";
+
     public Trainee save(Trainee trainee) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainee);
         session.flush();
         session.refresh(trainee);
-        log.debug("New trainee with id = " + trainee.getId() + " saved");
+        log.debug("New trainee with id = {} saved", trainee.getId());
         return trainee;
     }
 
-    @Transactional
     public void update(Trainee updatedTrainee) {
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedTrainee);
-        log.debug("Trainee with id = " + updatedTrainee.getId() + " updated");
+        session.flush();
+        log.debug("Trainee with id = {} updated", updatedTrainee.getId());
     }
 
-    @Transactional
-    public void delete(int traineeId) {
+    public Trainee get(String username) {
         Session session = sessionFactory.getCurrentSession();
-        session.remove(session.get(Trainee.class, traineeId));
-        log.debug("Trainee with id = " + traineeId + " deleted");
-    }
-
-    public Trainee get(int traineeId) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainee with id = " + traineeId);
-        return session.get(Trainee.class, traineeId);
-    }
-
-    public Trainee getByUserId(int userId) {
-        Session session = sessionFactory.getCurrentSession();
-        log.debug("Get trainee with userid = " + userId);
-        return session.createQuery("FROM Trainee t WHERE t.user.id = :userId", Trainee.class)
-                .setParameter("userId", userId)
+        log.debug("Get trainee with username = {}", username);
+        return session.createQuery(GET_TRAINEE_BY_USERNAME_QUERY, Trainee.class)
+                .setParameter(USERNAME_PARAM, username)
                 .uniqueResult();
     }
-}
 
+    public Trainee getWithUser(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainee with username = {} with user entity", username);
+        return session.createQuery(GET_TRAINEE_WITH_USER_BY_USERNAME_QUERY, Trainee.class)
+                .setParameter(USERNAME_PARAM, username)
+                .uniqueResult();
+    }
+
+    public List<Trainee> getTraineesForTrainer(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        log.debug("Get trainees list for trainer with username = {}", username);
+        return session.createQuery(GET_TRAINEES_FOR_TRAINER_QUERY, Trainee.class)
+                .setParameter(USERNAME_PARAM, username)
+                .list();
+    }
+
+    public void updateTrainerList(String username, Trainee trainee) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(trainee);
+        session.flush();
+        log.debug("Trainers list for trainee with username = {} updated", username);
+    }
+}
