@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.filter;
 
+import com.kirillova.gymcrmsystem.health.StatusHealthIndicator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletException;
@@ -40,6 +41,12 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
 
         String responseBody = responseWrapper.getCaptureAsString();
         int status = response.getStatus();
+
+        if (status == 500) {
+            StatusHealthIndicator.informStatusBad();
+        } else {
+            StatusHealthIndicator.informStatusOk();
+        }
 
         log.info("Response: Status: {}; Response Body: {}", status, responseBody);
 
