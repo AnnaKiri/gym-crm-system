@@ -44,6 +44,8 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,7 +102,7 @@ class TrainerServiceTest {
 
     @Test
     void create() {
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+        when(userRepository.prepareAndSaveWithPassword(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(USER_1.getId() + 8);
             return user;
@@ -126,9 +128,9 @@ class TrainerServiceTest {
 
         User newUser = getNewUser();
         Trainer newTrainer = getNewTrainer();
-        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization().getId());
+        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization().getId(), newTrainer.getUser().getPassword());
 
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).prepareAndSaveWithPassword(any(User.class));
         verify(trainerRepository, times(1)).save(any(Trainer.class));
 
         int trainerId = savedTrainer.getId();
@@ -152,7 +154,7 @@ class TrainerServiceTest {
 
     @Test
     void changePassword() {
-        when(userRepository.changePassword(USER_5_USERNAME, "newPassword")).thenReturn(1);
+        when(userRepository.changePassword(eq(USER_5_USERNAME), anyString())).thenReturn(1);
         Assertions.assertTrue(trainerService.changePassword(USER_5_USERNAME, "newPassword"));
     }
 

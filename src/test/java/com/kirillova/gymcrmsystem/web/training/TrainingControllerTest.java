@@ -11,6 +11,8 @@ import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.jsonWithTypeId;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_3;
 import static com.kirillova.gymcrmsystem.web.training.TrainingController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,14 +27,14 @@ public class TrainingControllerTest extends BaseTest {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId()))
-                .header("Authorization", getAuthorizationHeader()))
+                .header("Authorization", "Bearer " + tokens.get(USER_3.getUsername())))
                 .andExpect(status().isOk());
     }
 
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID)
-                .header("Authorization", getAuthorizationHeader()))
+                .header("Authorization", "Bearer " + tokens.get(USER_1_USERNAME)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_1));
@@ -41,7 +43,7 @@ public class TrainingControllerTest extends BaseTest {
     @Test
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999)
-                .header("Authorization", getAuthorizationHeader()))
+                .header("Authorization", "Bearer " + tokens.get(USER_1_USERNAME)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

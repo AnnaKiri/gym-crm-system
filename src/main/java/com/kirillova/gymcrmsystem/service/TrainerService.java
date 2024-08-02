@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.kirillova.gymcrmsystem.config.SecurityConfig.PASSWORD_ENCODER;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class TrainerService {
     private final TrainingTypeRepository trainingTypeRepository;
 
     @Transactional
-    public Trainer create(String firstName, String lastName, Integer specializationId) {
+    public Trainer create(String firstName, String lastName, Integer specializationId, String password) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
@@ -41,10 +43,10 @@ public class TrainerService {
                 UserUtil.generateUsername(
                         firstName, lastName,
                         userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
-        newUser.setPassword(UserUtil.generatePassword());
+        newUser.setPassword(password);
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
-        newUser = userRepository.save(newUser);
+        newUser = userRepository.prepareAndSaveWithPassword(newUser);
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
@@ -57,7 +59,7 @@ public class TrainerService {
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainer with username = {}", username);
-        int updatedEntities = userRepository.changePassword(username, newPassword);
+        int updatedEntities = userRepository.changePassword(username, PASSWORD_ENCODER.encode(newPassword));
 
         if (updatedEntities > 0) {
             log.debug("Changed password for user with username = {}", username);

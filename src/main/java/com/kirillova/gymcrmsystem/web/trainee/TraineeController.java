@@ -4,17 +4,20 @@ import com.kirillova.gymcrmsystem.dto.TraineeDto;
 import com.kirillova.gymcrmsystem.dto.TrainerDto;
 import com.kirillova.gymcrmsystem.dto.TrainingDto;
 import com.kirillova.gymcrmsystem.dto.UserDto;
+import com.kirillova.gymcrmsystem.error.AuthenticationException;
 import com.kirillova.gymcrmsystem.metrics.RegisterMetrics;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
+import com.kirillova.gymcrmsystem.util.UserUtil;
+import com.kirillova.gymcrmsystem.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,12 +56,12 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TraineeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainee Controller", description = "Managing gym trainees")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TraineeController {
     static final String REST_URL = "/trainees";
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;
-    private final AuthenticationService authenticationService;
     private final RegisterMetrics registerMetrics;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -67,17 +71,20 @@ public class TraineeController {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
+    @SecurityRequirement(name = "")
     public ResponseEntity<UserDto> register(@Valid @RequestBody TraineeDto traineeDto) {
         long start = System.nanoTime();
         log.debug("Register a new trainee {}", traineeDto);
         registerMetrics.incrementRequestCount();
 
         checkNew(traineeDto);
+        String password = UserUtil.generatePassword();
         Trainee newTrainee = traineeService.create(
                 traineeDto.getFirstName(),
                 traineeDto.getLastName(),
                 traineeDto.getBirthday(),
-                traineeDto.getAddress());
+                traineeDto.getAddress(),
+                password);
         User newUser = newTrainee.getUser();
         UserDto userTo = new UserDto(
                 newUser.getId(),
@@ -101,9 +108,11 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username) {
+    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username, @AuthenticationPrincipal AuthUser authUser) {
         log.debug("Change password for user {} with username={}", userDto, username);
-        authenticationService.checkAuthenticatedUser(username, userDto.getPassword());
+        if (!username.equals(authUser.getUser().getUsername())) {
+            throw new AuthenticationException("You can't change password for user " + username);
+        }
         traineeService.changePassword(username, userDto.getNewPassword());
     }
 

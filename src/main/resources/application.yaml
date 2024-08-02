@@ -5,6 +5,7 @@ spring:
       - "classpath:dev/application-dev.yaml"
       - "classpath:stg/application-stg.yaml"
       - "classpath:prod/application-prod.yaml"
+      - "classpath:jwt-config.yaml"
 
   datasource:
     driver-class-name: org.postgresql.Driver

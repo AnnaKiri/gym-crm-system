@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.kirillova.gymcrmsystem.config.SecurityConfig.PASSWORD_ENCODER;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class TraineeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Trainee create(String firstName, String lastName, LocalDate birthday, String address) {
+    public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {
         log.debug("Create new user");
         User newUser = new User();
         newUser.setFirstName(firstName);
@@ -44,10 +46,10 @@ public class TraineeService {
                 UserUtil.generateUsername(
                         firstName, lastName,
                         userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
-        newUser.setPassword(UserUtil.generatePassword());
+        newUser.setPassword(password);
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
-        newUser = userRepository.save(newUser);
+        newUser = userRepository.prepareAndSaveWithPassword(newUser);
 
         log.debug("Create new trainee");
         Trainee trainee = new Trainee();
@@ -61,7 +63,7 @@ public class TraineeService {
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainee with username = {}", username);
-        int updatedEntities = userRepository.changePassword(username, newPassword);
+        int updatedEntities = userRepository.changePassword(username, PASSWORD_ENCODER.encode(newPassword));
 
         if (updatedEntities > 0) {
             log.debug("Changed password for user with username = {}", username);

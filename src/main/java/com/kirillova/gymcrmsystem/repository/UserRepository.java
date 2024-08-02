@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kirillova.gymcrmsystem.config.SecurityConfig.PASSWORD_ENCODER;
+
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -30,9 +32,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u.isActive FROM User u WHERE u.username = :username")
     Boolean findIsActiveByUsername(@Param("username") String username);
 
-    @Query("FROM User u WHERE u.username = :username AND u.password = :password")
-    User getByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
-
     @Query("SELECT u.username FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName ORDER BY u.username")
     List<String> findUsernamesByFirstNameAndLastName(String firstName, String lastName);
 
@@ -41,5 +40,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     default User getUserIfExists(String username) {
         return findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
+    }
+
+    default User prepareAndSaveWithPassword(User user) {
+        user.setPassword(PASSWORD_ENCODER.encode(user.getPassword()));
+        return save(user);
     }
 }

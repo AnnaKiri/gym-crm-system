@@ -10,6 +10,7 @@ import com.kirillova.gymcrmsystem.service.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TrainingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Training Controller", description = "Managing gym trainings")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TrainingController {
     static final String REST_URL = "/trainings";
 
