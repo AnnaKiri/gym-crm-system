@@ -12,7 +12,6 @@ import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
-import io.micrometer.core.annotation.Counted;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -68,7 +67,6 @@ public class TraineeController {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    @Counted(value = "trainee_register_count", description = "Trainee register count")
     public ResponseEntity<UserDto> register(@Valid @RequestBody TraineeDto traineeDto) {
         long start = System.nanoTime();
         log.debug("Register a new trainee {}", traineeDto);
