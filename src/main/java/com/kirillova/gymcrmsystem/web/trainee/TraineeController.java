@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.web.trainee;
 
+import com.kirillova.gymcrmsystem.metrics.RegisterMetrics;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -11,6 +12,7 @@ import com.kirillova.gymcrmsystem.to.TraineeTo;
 import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.to.TrainingTo;
 import com.kirillova.gymcrmsystem.to.UserTo;
+import io.micrometer.core.annotation.Counted;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,6 +41,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.kirillova.gymcrmsystem.util.TraineeUtil.createToWithTrainerToList;
 import static com.kirillova.gymcrmsystem.util.TrainerUtil.getTrainerToList;
@@ -56,6 +59,7 @@ public class TraineeController {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final AuthenticationService authenticationService;
+    private final RegisterMetrics registerMetrics;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -64,14 +68,20 @@ public class TraineeController {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
+    @Counted(value = "trainee_register_count", description = "Trainee register count")
     public ResponseEntity<UserTo> register(@Valid @RequestBody TraineeTo traineeTo) {
+        long start = System.nanoTime();
         log.debug("Register a new trainee {}", traineeTo);
+        registerMetrics.incrementRequestCount();
+
         checkNew(traineeTo);
         Trainee newTrainee = traineeService.create(traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress());
         User newUser = newTrainee.getUser();
         UserTo userTo = new UserTo(newUser.getId(), newUser.getUsername(), newUser.getPassword());
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
+
+        registerMetrics.recordExecutionTimeTrainee(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 

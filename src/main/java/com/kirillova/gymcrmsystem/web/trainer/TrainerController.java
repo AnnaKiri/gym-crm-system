@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.web.trainer;
 
+import com.kirillova.gymcrmsystem.metrics.RegisterMetrics;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -37,6 +38,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.kirillova.gymcrmsystem.util.TrainerUtil.createToWithTraineeToList;
 import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingToList;
@@ -53,6 +55,7 @@ public class TrainerController {
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final AuthenticationService authenticationService;
+    private final RegisterMetrics registerMetrics;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -62,13 +65,19 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
     public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
+        long start = System.nanoTime();
+
         log.debug("Register a new trainer {}", trainerTo);
+        registerMetrics.incrementRequestCount();
+
         checkNew(trainerTo);
         Trainer newTrainer = trainerService.create(trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId());
         User newUser = newTrainer.getUser();
         UserTo userTo = new UserTo(newUser.getId(), newUser.getUsername(), newUser.getPassword());
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
+
+        registerMetrics.recordExecutionTimeTrainer(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
