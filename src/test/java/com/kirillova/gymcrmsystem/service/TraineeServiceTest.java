@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_1_ID;
@@ -32,14 +33,15 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTrainee;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -181,7 +183,7 @@ public class TraineeServiceTest {
         List<Training> expected = List.of(TRAINING_2);
 
         ArgumentCaptor<Specification<Training>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-        when(trainingRepository.findAll(specCaptor.capture())).thenReturn(expected);
+        when(trainingRepository.findAllWithDetails(specCaptor.capture())).thenReturn(expected);
 
         List<Training> actual = traineeService.getTrainings(
                 TRAINEE_1.getUser().getUsername(),
@@ -201,9 +203,9 @@ public class TraineeServiceTest {
 
     @Test
     void updateTrainerList() {
-        List<String> trainerUsernames = List.of(USER_5_USERNAME);
+        List<String> trainerUsernames = List.of(USER_5.getUsername(), USER_6.getUsername());
 
-        when(traineeRepository.getExisted(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(traineeRepository.findByUsernameWithTrainerList(USER_1_USERNAME)).thenReturn(Optional.of(TRAINEE_1));
         when(trainerRepository.getExisted(USER_5_USERNAME)).thenReturn(TRAINER_1);
         when(traineeRepository.save(TRAINEE_1)).thenReturn(TRAINEE_1);
 
@@ -211,7 +213,7 @@ public class TraineeServiceTest {
 
         verify(traineeRepository, times(1)).save(TRAINEE_1);
 
-        List<Trainer> expected = Arrays.asList(TRAINER_2, TRAINER_4);
+        List<Trainer> expected = Arrays.asList(TRAINER_1, TRAINER_2);
         when(trainerRepository.findTrainersByTraineeUsername(USER_1_USERNAME)).thenReturn(expected);
 
         List<Trainer> actual = trainerRepository.findTrainersByTraineeUsername(USER_1_USERNAME);

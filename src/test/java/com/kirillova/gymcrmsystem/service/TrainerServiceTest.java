@@ -169,7 +169,7 @@ class TrainerServiceTest {
         List<Training> expected = List.of(TRAINING_5);
 
         ArgumentCaptor<Specification<Training>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-        when(trainingRepository.findAll(specCaptor.capture())).thenReturn(expected);
+        when(trainingRepository.findAllWithDetails(specCaptor.capture())).thenReturn(expected);
 
         List<Training> actual = trainerService.getTrainings(
                 TRAINER_1.getUser().getUsername(),
@@ -178,7 +178,7 @@ class TrainerServiceTest {
                 TRAINEE_3.getUser().getFirstName(),
                 TRAINEE_3.getUser().getLastName());
 
-        TRAINING_MATCHER.assertMatch(expected, actual);
+        TRAINING_MATCHER.assertMatch(actual, expected);
         for (int i = 0; i < expected.size(); i++) {
             checkTrainingTraineeId(expected.get(i), actual.get(i));
             checkTrainingTrainerId(expected.get(i), actual.get(i));

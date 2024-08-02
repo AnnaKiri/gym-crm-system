@@ -23,13 +23,13 @@ import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeDto;
 import static com.kirillova.gymcrmsystem.TrainerTestData.FREE_TRAINERS_FOR_TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_2;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_4;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINEE_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_6;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
@@ -168,7 +168,7 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void updateTrainerList() throws Exception {
-        List<String> trainerUsernames = List.of(USER_5_USERNAME);
+        List<String> trainerUsernames = List.of(USER_5.getUsername(), USER_6.getUsername());
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/trainers")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -176,7 +176,7 @@ public class TraineeControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_DTO_MATCHER.contentJson(List.of(TRAINER_DTO_1, TRAINER_DTO_2, TRAINER_DTO_4)));
+                .andExpect(TRAINER_DTO_MATCHER.contentJson(List.of(TRAINER_DTO_1, TRAINER_DTO_2)));
     }
 
     @Test
