@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.to;
+package com.kirillova.gymcrmsystem.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +20,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class TraineeTo extends BaseTo {
+public class TraineeDto extends BaseDto {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
@@ -43,5 +43,5 @@ public class TraineeTo extends BaseTo {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<TrainerTo> trainerList;
+    private List<TrainerDto> trainerList;
 }

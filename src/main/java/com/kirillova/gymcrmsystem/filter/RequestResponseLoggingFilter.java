@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.BufferedReader;
@@ -42,7 +43,7 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         String responseBody = responseWrapper.getCaptureAsString();
         int status = response.getStatus();
 
-        if (status == 500) {
+        if (HttpStatus.valueOf(status).is5xxServerError()) {
             StatusHealthIndicator.informStatusBad();
         } else {
             StatusHealthIndicator.informStatusOk();

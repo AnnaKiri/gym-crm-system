@@ -1,9 +1,9 @@
 package com.kirillova.gymcrmsystem.util;
 
+import com.kirillova.gymcrmsystem.dto.TrainingDto;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
-import com.kirillova.gymcrmsystem.to.TrainingTo;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -12,13 +12,13 @@ import java.util.List;
 @UtilityClass
 public class TrainingUtil {
 
-    public static List<TrainingTo> getTrainingToList(List<Training> trainingList) {
-        List<TrainingTo> trainingToList = new ArrayList<>();
+    public static List<TrainingDto> getTrainingDtoList(List<Training> trainingList) {
+        List<TrainingDto> trainingDtoList = new ArrayList<>();
 
         for (Training training : trainingList) {
             Trainee trainee = training.getTrainee();
             Trainer trainer = training.getTrainer();
-            TrainingTo trainingTo = TrainingTo.builder().
+            TrainingDto trainingDto = TrainingDto.builder().
                     id(training.getId()).
                     name(training.getName()).
                     date(training.getDate()).
@@ -29,13 +29,13 @@ public class TrainingUtil {
                     trainerUsername(trainer.getUser().getUsername()).
                     build();
 
-            trainingToList.add(trainingTo);
+            trainingDtoList.add(trainingDto);
         }
-        return trainingToList;
+        return trainingDtoList;
     }
 
-    public static TrainingTo createTo(Training training) {
-        return TrainingTo.builder().
+    public static TrainingDto createDto(Training training) {
+        return TrainingDto.builder().
                 id(training.getId()).
                 name(training.getName()).
                 date(training.getDate()).

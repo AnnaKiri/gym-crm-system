@@ -1,8 +1,8 @@
 package com.kirillova.gymcrmsystem;
 
+import com.kirillova.gymcrmsystem.dto.TraineeDto;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.to.TraineeTo;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
@@ -11,10 +11,10 @@ import java.util.List;
 
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_4;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_2;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_3;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_4;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_3;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_4;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_2;
@@ -31,7 +31,7 @@ public class TraineeTestData {
     public static final Trainee TRAINEE_3 = new Trainee(3, LocalDate.of(1976, 9, 15), "some address", USER_3);
     public static final Trainee TRAINEE_4 = new Trainee(4, LocalDate.of(1964, 9, 2), "some address", USER_4);
 
-    public static final TraineeTo TRAINEE_TO_1 = TraineeTo.builder()
+    public static final TraineeDto TRAINEE_DTO_1 = TraineeDto.builder()
             .id(1)
             .username(USER_1.getUsername())
             .firstName(USER_1.getFirstName())
@@ -41,7 +41,7 @@ public class TraineeTestData {
             .isActive(USER_1.isActive())
             .build();
 
-    public static final TraineeTo TRAINEE_TO_2 = TraineeTo.builder()
+    public static final TraineeDto TRAINEE_DTO_2 = TraineeDto.builder()
             .id(2)
             .username(USER_2.getUsername())
             .firstName(USER_2.getFirstName())
@@ -51,7 +51,7 @@ public class TraineeTestData {
             .isActive(USER_2.isActive())
             .build();
 
-    public static final TraineeTo TRAINEE_TO_3 = TraineeTo.builder()
+    public static final TraineeDto TRAINEE_DTO_3 = TraineeDto.builder()
             .id(3)
             .username(USER_3.getUsername())
             .firstName(USER_3.getFirstName())
@@ -61,7 +61,7 @@ public class TraineeTestData {
             .isActive(USER_3.isActive())
             .build();
 
-    public static final TraineeTo TRAINEE_TO_4 = TraineeTo.builder()
+    public static final TraineeDto TRAINEE_DTO_4 = TraineeDto.builder()
             .id(4)
             .username(USER_4.getUsername())
             .firstName(USER_4.getFirstName())
@@ -72,10 +72,10 @@ public class TraineeTestData {
             .build();
 
     public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user", "trainerList");
-    public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeTo.class, "trainerList");
+    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeDto.class, "trainerList");
 
-    public static final MatcherFactory.Matcher<TraineeTo> TRAINEE_TO_MATCHER_WITH_TRAINER_LIST =
-            MatcherFactory.usingAssertions(TraineeTo.class,
+    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST =
+            MatcherFactory.usingAssertions(TraineeDto.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
@@ -83,18 +83,18 @@ public class TraineeTestData {
 
     static {
         TRAINEE_1.setTrainerList(new ArrayList<>(List.of(TRAINER_2, TRAINER_4)));
-        TRAINEE_TO_1.setTrainerList(List.of(TRAINER_TO_2, TRAINER_TO_4));
-        TRAINEE_TO_2.setTrainerList(List.of(TRAINER_TO_2, TRAINER_TO_3));
-        TRAINEE_TO_3.setTrainerList(List.of(TRAINER_TO_2));
-        TRAINEE_TO_4.setTrainerList(List.of(TRAINER_TO_1, TRAINER_TO_4));
+        TRAINEE_DTO_1.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_4));
+        TRAINEE_DTO_2.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_3));
+        TRAINEE_DTO_3.setTrainerList(List.of(TRAINER_DTO_2));
+        TRAINEE_DTO_4.setTrainerList(List.of(TRAINER_DTO_1, TRAINER_DTO_4));
     }
 
     public static Trainee getNewTrainee() {
         return new Trainee(null, LocalDate.of(1969, 11, 4), "some new address", USER_9);
     }
 
-    public static TraineeTo getNewTraineeTo() {
-        return TraineeTo.builder()
+    public static TraineeDto getNewTraineeDto() {
+        return TraineeDto.builder()
                 .firstName("FirstName")
                 .lastName("LastName")
                 .birthday(LocalDate.of(1980, 8, 15))
@@ -107,10 +107,10 @@ public class TraineeTestData {
         return new Trainee(1, LocalDate.of(1970, 12, 1), "updated address", USER_1);
     }
 
-    public static TraineeTo getUpdatedTraineeTo() {
+    public static TraineeDto getUpdatedTraineeDto() {
         User updatedUser = UserTestData.getUpdatedUser();
         Trainee updatedTrainee = getUpdatedTrainee();
-        return TraineeTo.builder()
+        return TraineeDto.builder()
                 .id(updatedTrainee.id())
                 .firstName(updatedUser.getFirstName())
                 .lastName(updatedUser.getLastName())

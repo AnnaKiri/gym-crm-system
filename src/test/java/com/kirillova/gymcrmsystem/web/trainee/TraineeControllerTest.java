@@ -2,10 +2,10 @@ package com.kirillova.gymcrmsystem.web.trainee;
 
 import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TraineeTestData;
+import com.kirillova.gymcrmsystem.dto.TraineeDto;
+import com.kirillova.gymcrmsystem.dto.UserDto;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.service.TraineeService;
-import com.kirillova.gymcrmsystem.to.TraineeTo;
-import com.kirillova.gymcrmsystem.to.UserTo;
 import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,20 +17,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_MATCHER_WITH_TRAINER_LIST;
-import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeTo;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST;
+import static com.kirillova.gymcrmsystem.TraineeTestData.getUpdatedTraineeDto;
 import static com.kirillova.gymcrmsystem.TrainerTestData.FREE_TRAINERS_FOR_TRAINEE_1;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_2;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_4;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_MATCHER;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_LIST_FOR_TRAINEE_1;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_2;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_4;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINEE_1;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainee.TraineeController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,14 +47,14 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     @DirtiesContext
     void register() throws Exception {
-        TraineeTo newTraineeTo = TraineeTestData.getNewTraineeTo();
+        TraineeDto newTraineeDto = TraineeTestData.getNewTraineeDto();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newTraineeTo)))
+                .content(JsonUtil.writeValue(newTraineeDto)))
                 .andExpect(status().isCreated());
 
-        UserTo created = USER_TO_MATCHER.readFromJson(action);
-        String expectedUsername = newTraineeTo.getFirstName() + "." + newTraineeTo.getLastName();
+        UserDto created = USER_DTO_MATCHER.readFromJson(action);
+        String expectedUsername = newTraineeDto.getFirstName() + "." + newTraineeDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
         Assertions.assertEquals(USER_1.getId() + 9, created.getId());
     }
@@ -62,10 +62,10 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void changePassword() throws Exception {
         String newPassword = "1234567890";
-        UserTo userTo = UserTo.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
+        UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(userTo, newPassword))
+                .content(jsonWithPassword(userDto, newPassword))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
 
@@ -80,15 +80,15 @@ public class TraineeControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_TO_1));
+                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_DTO_1));
     }
 
     @Test
     void update() throws Exception {
-        TraineeTo traineeExpected = getUpdatedTraineeTo();
-        traineeExpected.setTrainerList(TRAINEE_TO_1.getTrainerList());
+        TraineeDto traineeExpected = getUpdatedTraineeDto();
+        traineeExpected.setTrainerList(TRAINEE_DTO_1.getTrainerList());
 
-        TraineeTo traineeTo = TraineeTo.builder()
+        TraineeDto traineeDto = TraineeDto.builder()
                 .firstName(traineeExpected.getFirstName())
                 .lastName(traineeExpected.getLastName())
                 .birthday(traineeExpected.getBirthday())
@@ -98,11 +98,11 @@ public class TraineeControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeTo))
+                .content(JsonUtil.writeValue(traineeDto))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_TO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
+                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class TraineeControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_TO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
+                .andExpect(TRAINER_DTO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class TraineeControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINEE_1));
+                .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_LIST_FOR_TRAINEE_1));
     }
 
     @Test
@@ -156,11 +156,11 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void updateInvalid() throws Exception {
-        TraineeTo traineeTo = TraineeTo.builder().build();
+        TraineeDto traineeDto = TraineeDto.builder().build();
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeTo))
+                .content(JsonUtil.writeValue(traineeDto))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isBadRequest());
     }
@@ -176,7 +176,7 @@ public class TraineeControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_TO_MATCHER.contentJson(List.of(TRAINER_TO_1, TRAINER_TO_2, TRAINER_TO_4)));
+                .andExpect(TRAINER_DTO_MATCHER.contentJson(List.of(TRAINER_DTO_1, TRAINER_DTO_2, TRAINER_DTO_4)));
     }
 
     @Test
@@ -185,6 +185,6 @@ public class TraineeControllerTest extends BaseTest {
                 .param("isActive", "true")
                 .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
     }
 }

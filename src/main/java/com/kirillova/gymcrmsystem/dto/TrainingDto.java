@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.to;
+package com.kirillova.gymcrmsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kirillova.gymcrmsystem.models.TrainingType;
@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class TrainingTo extends BaseTo {
+public class TrainingDto extends BaseDto {
 
     @Size(min = 2, max = 128)
     @NotBlank

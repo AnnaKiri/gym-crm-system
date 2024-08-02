@@ -1,10 +1,10 @@
 package com.kirillova.gymcrmsystem.util;
 
+import com.kirillova.gymcrmsystem.dto.TraineeDto;
+import com.kirillova.gymcrmsystem.dto.TrainerDto;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.to.TraineeTo;
-import com.kirillova.gymcrmsystem.to.TrainerTo;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -13,12 +13,12 @@ import java.util.List;
 @UtilityClass
 public class TraineeUtil {
 
-    public static TraineeTo createToWithTrainerToList(Trainee updatedTrainee, List<Trainer> trainerList) {
+    public static TraineeDto createDtoWithTrainerDtoList(Trainee updatedTrainee, List<Trainer> trainerList) {
         User receivedUser = updatedTrainee.getUser();
 
-        List<TrainerTo> trainerToList = TrainerUtil.getTrainerToList(trainerList);
+        List<TrainerDto> trainerDtoList = TrainerUtil.getTrainerDtoList(trainerList);
 
-        return TraineeTo.builder().
+        return TraineeDto.builder().
                 id(updatedTrainee.getId()).
                 username(receivedUser.getUsername()).
                 firstName(receivedUser.getFirstName()).
@@ -26,17 +26,17 @@ public class TraineeUtil {
                 birthday(updatedTrainee.getDateOfBirth()).
                 address(updatedTrainee.getAddress()).
                 isActive(receivedUser.isActive()).
-                trainerList(trainerToList).
+                trainerList(trainerDtoList).
                 build();
     }
 
-    public static List<TraineeTo> getTraineeToList(List<Trainee> traineeList) {
-        List<TraineeTo> traineeToList = new ArrayList<>();
+    public static List<TraineeDto> getTraineeDtoList(List<Trainee> traineeList) {
+        List<TraineeDto> traineeDtoList = new ArrayList<>();
 
         for (Trainee trainee : traineeList) {
             User traineesUser = trainee.getUser();
 
-            TraineeTo traineeTo = TraineeTo.builder().
+            TraineeDto traineeDto = TraineeDto.builder().
                     id(trainee.getId()).
                     username(traineesUser.getUsername()).
                     firstName(traineesUser.getFirstName()).
@@ -46,21 +46,21 @@ public class TraineeUtil {
                     isActive(traineesUser.isActive()).
                     build();
 
-            traineeToList.add(traineeTo);
+            traineeDtoList.add(traineeDto);
         }
-        return traineeToList;
+        return traineeDtoList;
     }
 
-    public static Trainee createNewFromTo(TraineeTo traineeTo) {
+    public static Trainee createNewFromDto(TraineeDto traineeDto) {
         User newUser = new User();
-        newUser.setFirstName(traineeTo.getFirstName());
-        newUser.setLastName(traineeTo.getLastName());
-        newUser.setUsername(traineeTo.getFirstName() + "." + traineeTo.getLastName());
+        newUser.setFirstName(traineeDto.getFirstName());
+        newUser.setLastName(traineeDto.getLastName());
+        newUser.setUsername(traineeDto.getFirstName() + "." + traineeDto.getLastName());
         newUser.setActive(true);
 
         Trainee trainee = new Trainee();
-        trainee.setAddress(traineeTo.getAddress());
-        trainee.setDateOfBirth(traineeTo.getBirthday());
+        trainee.setAddress(traineeDto.getAddress());
+        trainee.setDateOfBirth(traineeDto.getBirthday());
         trainee.setUser(newUser);
         return trainee;
     }

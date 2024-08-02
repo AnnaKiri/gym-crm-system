@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.to;
+package com.kirillova.gymcrmsystem.dto;
 
 import com.kirillova.gymcrmsystem.models.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public abstract class BaseTo implements Entity {
+public abstract class BaseDto implements Entity {
 
     @Schema(hidden = true)
     protected Integer id;

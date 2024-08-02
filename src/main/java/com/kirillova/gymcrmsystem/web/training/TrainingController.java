@@ -1,12 +1,12 @@
 package com.kirillova.gymcrmsystem.web.training;
 
+import com.kirillova.gymcrmsystem.dto.TrainingDto;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
 import com.kirillova.gymcrmsystem.service.TrainingService;
-import com.kirillova.gymcrmsystem.to.TrainingTo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.kirillova.gymcrmsystem.util.TrainingUtil.createTo;
+import static com.kirillova.gymcrmsystem.util.TrainingUtil.createDto;
 import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
@@ -46,10 +46,10 @@ public class TrainingController {
             @ApiResponse(responseCode = "200", description = "Training details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
-    public TrainingTo get(@PathVariable int id) {
+    public TrainingDto get(@PathVariable int id) {
         log.debug("Get the training with id={}", id);
         Training training = trainingService.getFull(id);
-        return createTo(training);
+        return createDto(training);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -60,11 +60,11 @@ public class TrainingController {
             @ApiResponse(responseCode = "200", description = "Training created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    public void create(@Valid @RequestBody TrainingTo trainingTo) {
-        log.debug("Create a new training {}", trainingTo);
-        checkNew(trainingTo);
-        Trainee trainee = traineeService.get(trainingTo.getTraineeUsername());
-        Trainer trainer = trainerService.get(trainingTo.getTrainerUsername());
-        trainingService.create(trainee, trainer, trainingTo.getName(), trainingTo.getTypeId(), trainingTo.getDate(), trainingTo.getDuration());
+    public void create(@Valid @RequestBody TrainingDto trainingDto) {
+        log.debug("Create a new training {}", trainingDto);
+        checkNew(trainingDto);
+        Trainee trainee = traineeService.get(trainingDto.getTraineeUsername());
+        Trainer trainer = trainerService.get(trainingDto.getTrainerUsername());
+        trainingService.create(trainee, trainer, trainingDto.getName(), trainingDto.getTypeId(), trainingDto.getDate(), trainingDto.getDuration());
     }
 }

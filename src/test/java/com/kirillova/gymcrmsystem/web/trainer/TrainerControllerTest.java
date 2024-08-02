@@ -2,9 +2,9 @@ package com.kirillova.gymcrmsystem.web.trainer;
 
 import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TrainerTestData;
+import com.kirillova.gymcrmsystem.dto.TrainerDto;
+import com.kirillova.gymcrmsystem.dto.UserDto;
 import com.kirillova.gymcrmsystem.service.TrainerService;
-import com.kirillova.gymcrmsystem.to.TrainerTo;
-import com.kirillova.gymcrmsystem.to.UserTo;
 import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,16 +14,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_1;
-import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_TO_MATCHER_WITH_TRAINEE_LIST;
-import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainerTo;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_1;
+import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST;
+import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainerDto;
 import static com.kirillova.gymcrmsystem.TrainerTestData.jsonWithSpecializationId;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_LIST_FOR_TRAINER_1;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINER_1;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.UserTestData.jsonWithPassword;
 import static com.kirillova.gymcrmsystem.web.trainer.TrainerController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,14 +39,14 @@ public class TrainerControllerTest extends BaseTest {
     @Test
     @DirtiesContext
     void register() throws Exception {
-        TrainerTo newTrainerTo = TrainerTestData.getNewTrainerTo();
+        TrainerDto newTrainerDto = TrainerTestData.getNewTrainerDto();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithSpecializationId(newTrainerTo, newTrainerTo.getSpecializationId())))
+                .content(jsonWithSpecializationId(newTrainerDto, newTrainerDto.getSpecializationId())))
                 .andExpect(status().isCreated());
 
-        UserTo created = USER_TO_MATCHER.readFromJson(action);
-        String expectedUsername = newTrainerTo.getFirstName() + "." + newTrainerTo.getLastName();
+        UserDto created = USER_DTO_MATCHER.readFromJson(action);
+        String expectedUsername = newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
         Assertions.assertEquals(USER_1.getId() + 9, created.getId());
     }
@@ -54,10 +54,10 @@ public class TrainerControllerTest extends BaseTest {
     @Test
     void changePassword() throws Exception {
         String newPassword = "1234567890";
-        UserTo userTo = UserTo.builder().username(USER_5_USERNAME).password(USER_5.getPassword()).build();
+        UserDto userDto = UserDto.builder().username(USER_5_USERNAME).password(USER_5.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5.getUsername() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(userTo, newPassword))
+                .content(jsonWithPassword(userDto, newPassword))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
 
@@ -72,15 +72,15 @@ public class TrainerControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_TO_MATCHER_WITH_TRAINEE_LIST.contentJson(TRAINER_TO_1));
+                .andExpect(TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST.contentJson(TRAINER_DTO_1));
     }
 
     @Test
     void update() throws Exception {
-        TrainerTo trainerExpected = getUpdatedTrainerTo();
-        trainerExpected.setTraineeList(TRAINER_TO_1.getTraineeList());
+        TrainerDto trainerExpected = getUpdatedTrainerDto();
+        trainerExpected.setTraineeList(TRAINER_DTO_1.getTraineeList());
 
-        TrainerTo trainerTo = TrainerTo.builder()
+        TrainerDto trainerDto = TrainerDto.builder()
                 .firstName(trainerExpected.getFirstName())
                 .lastName(trainerExpected.getLastName())
                 .specializationId(trainerExpected.getSpecializationId())
@@ -89,11 +89,11 @@ public class TrainerControllerTest extends BaseTest {
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithSpecializationId(trainerTo, trainerTo.getSpecializationId()))
+                .content(jsonWithSpecializationId(trainerDto, trainerDto.getSpecializationId()))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_TO_MATCHER_WITH_TRAINEE_LIST.contentJson(trainerExpected));
+                .andExpect(TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST.contentJson(trainerExpected));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TrainerControllerTest extends BaseTest {
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_LIST_FOR_TRAINER_1));
+                .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_LIST_FOR_TRAINER_1));
     }
 
     @Test
@@ -126,11 +126,11 @@ public class TrainerControllerTest extends BaseTest {
 
     @Test
     void updateInvalid() throws Exception {
-        TrainerTo trainerTo = TrainerTo.builder().build();
+        TrainerDto trainerDto = TrainerDto.builder().build();
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5_USERNAME)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(trainerTo))
+                .content(JsonUtil.writeValue(trainerDto))
                 .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isBadRequest());
     }
@@ -141,6 +141,6 @@ public class TrainerControllerTest extends BaseTest {
                 .param("isActive", "true")
                 .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
     }
 }

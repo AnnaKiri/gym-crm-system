@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.to;
+package com.kirillova.gymcrmsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class UserTo extends BaseTo {
+public class UserDto extends BaseDto {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
@@ -32,7 +32,7 @@ public class UserTo extends BaseTo {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String newPassword;
 
-    public UserTo(Integer id, String username, String password) {
+    public UserDto(Integer id, String username, String password) {
         super.setId(id);
         this.username = username;
         this.password = password;

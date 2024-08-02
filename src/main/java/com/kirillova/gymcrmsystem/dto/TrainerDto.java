@@ -1,4 +1,4 @@
-package com.kirillova.gymcrmsystem.to;
+package com.kirillova.gymcrmsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kirillova.gymcrmsystem.models.TrainingType;
@@ -21,7 +21,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class TrainerTo extends BaseTo {
+public class TrainerDto extends BaseDto {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
@@ -40,7 +40,7 @@ public class TrainerTo extends BaseTo {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<TraineeTo> traineeList;
+    private List<TraineeDto> traineeList;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private TrainingType specialization;
