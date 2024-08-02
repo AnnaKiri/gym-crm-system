@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-public interface TrainingRepository extends JpaRepository<Training, Integer>, JpaSpecificationExecutor<Training> {
+public interface TrainingRepository extends JpaRepository<Training, Integer>, JpaSpecificationExecutor<Training>, CustomTrainingRepository {
 
     @Query("SELECT tr FROM Training tr JOIN FETCH tr.trainee t JOIN FETCH t.user tu JOIN FETCH tr.trainer r JOIN FETCH r.user ru JOIN FETCH tr.type tp WHERE tr.id = :id")
     Optional<Training> getFullTrainingById(@Param("id") int id);

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface TrainerRepository extends JpaRepository<Trainer, Integer>, JpaSpecificationExecutor<Trainer> {
 
-    @Query("SELECT DISTINCT trn FROM Trainee t JOIN t.trainerList trn JOIN FETCH trn.user JOIN FETCH trn.specialization WHERE t.user.username = :username")
+    @Query("SELECT t.trainerList FROM Trainee t WHERE t.user.username = :username")
     List<Trainer> findTrainersByTraineeUsername(@Param("username") String username);
 
     @Query("SELECT t FROM Trainer t JOIN FETCH t.user u LEFT JOIN FETCH t.specialization s  WHERE u.username = :username")

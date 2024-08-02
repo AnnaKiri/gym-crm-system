@@ -20,7 +20,7 @@ import org.hibernate.annotations.Proxy;
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "password", callSuper = true)
-@Proxy(lazy = false) // Отключаем использование прокси для этой сущности
+@Proxy(lazy = false)
 public class User extends AbstractBaseEntity {
 
     @Column(name = "first_name", nullable = false)

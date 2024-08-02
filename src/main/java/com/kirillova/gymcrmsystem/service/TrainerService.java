@@ -14,6 +14,7 @@ import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,7 +88,8 @@ public class TrainerService {
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = {}", username);
-        return trainingRepository.findAll(TrainingSpecifications.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName));
+        Specification<Training> spec = TrainingSpecifications.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+        return trainingRepository.findAllWithDetails(spec);
     }
 
     @Transactional

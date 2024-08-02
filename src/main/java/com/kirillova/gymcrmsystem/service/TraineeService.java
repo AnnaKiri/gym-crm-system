@@ -16,6 +16,7 @@ import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,7 +115,8 @@ public class TraineeService {
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = {}", username);
 
-        return trainingRepository.findAll(TrainingSpecifications.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName));
+        Specification<Training> spec = TrainingSpecifications.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+        return trainingRepository.findAllWithDetails(spec);
     }
 
     @Transactional
@@ -148,7 +150,8 @@ public class TraineeService {
     @Transactional
     public void updateTrainerList(String username, List<String> trainers) {
         log.debug("Update trainers list for trainee with username = {}", username);
-        Trainee updatedTrainee = traineeRepository.getExisted(username);
+        Trainee updatedTrainee = traineeRepository.findByUsernameWithTrainerList(username).orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
+        updatedTrainee.getTrainerList().clear();
         for (String trainerUsername : trainers) {
             Trainer trainer = trainerRepository.getExisted(trainerUsername);
             updatedTrainee.getTrainerList().add(trainer);
