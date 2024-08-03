@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS training;
 DROP TABLE IF EXISTS trainee2trainer;
 DROP TABLE IF EXISTS trainee;
 DROP TABLE IF EXISTS trainer;
+DROP TABLE IF EXISTS login_attempt;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS training_type;
 
@@ -25,8 +26,8 @@ CREATE TABLE training_type
 CREATE TABLE trainee
 (
     id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    date_of_birth    DATE                                            ,
-    address          VARCHAR                                         ,
+    date_of_birth    DATE                                      ,
+    address          VARCHAR                                   ,
     user_id          BIGINT                            NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
@@ -61,4 +62,13 @@ CREATE TABLE trainee2trainer
     trainer_id     BIGINT                           NOT NULL,
     FOREIGN KEY (trainee_id) REFERENCES trainee (id) ON DELETE CASCADE,
     FOREIGN KEY (trainer_id) REFERENCES trainer (id) ON DELETE CASCADE
+);
+
+CREATE TABLE login_attempt
+(
+    id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    username         VARCHAR                            NOT NULL,
+    attempts         INTEGER                            NOT NULL,
+    blocked_until    TIMESTAMP                                  ,
+    FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
 );
