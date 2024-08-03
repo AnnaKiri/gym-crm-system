@@ -19,6 +19,7 @@ public class BruteForceProtectionService {
     private final LoginAttemptRepository loginAttemptRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void resetBlock(String username) {
         loginAttemptRepository.deleteByUsername(username);
     }

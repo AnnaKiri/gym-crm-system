@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS trainer;
 DROP TABLE IF EXISTS login_attempt;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS training_type;
+DROP TABLE IF EXISTS invalid_token;
 
 CREATE TABLE users
 (
@@ -71,4 +72,11 @@ CREATE TABLE login_attempt
     attempts         INTEGER                            NOT NULL,
     blocked_until    TIMESTAMP                                  ,
     FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
+);
+
+CREATE TABLE invalid_token
+(
+    id               BIGINT  PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    token            VARCHAR                            NOT NULL,
+    invalidated_at   TIMESTAMP                          NOT NULL
 );

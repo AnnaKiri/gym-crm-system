@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.config;
 
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.repository.InvalidTokenRepository;
 import com.kirillova.gymcrmsystem.repository.UserRepository;
 import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.security.JWTTokenFilter;
@@ -51,16 +52,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager, UserDetailsService userDetailsService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, InvalidTokenRepository invalidTokenRepository) throws Exception {
         http.authenticationManager(authenticationManager)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/trainees").anonymous()
                         .requestMatchers(HttpMethod.POST, "/trainers").anonymous()
-                        .requestMatchers(HttpMethod.POST, "/login").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").anonymous()
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JWTTokenFilter(jwtProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenFilter(jwtProvider, userDetailsService, invalidTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
