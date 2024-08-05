@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.web.trainer;
 
+import com.kirillova.gymcrmsystem.dto.LoginRequestDto;
 import com.kirillova.gymcrmsystem.dto.TrainerDto;
 import com.kirillova.gymcrmsystem.dto.TrainingDto;
 import com.kirillova.gymcrmsystem.dto.UserDto;
@@ -69,7 +70,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
     @SecurityRequirement(name = "")
-    public ResponseEntity<UserDto> register(@Valid @RequestBody TrainerDto trainerDto) {
+    public ResponseEntity<LoginRequestDto> register(@Valid @RequestBody TrainerDto trainerDto) {
         long start = System.nanoTime();
 
         log.debug("Register a new trainer {}", trainerDto);
@@ -83,17 +84,16 @@ public class TrainerController {
                 trainerDto.getSpecializationId(),
                 password);
         User newUser = newTrainer.getUser();
-        UserDto userTo = new UserDto(
-                newUser.getId(),
+        LoginRequestDto loginRequestDto = new LoginRequestDto(
                 newUser.getUsername(),
-                newUser.getPassword());
+                password);
         URI uriOfNewResource = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path(REST_URL + "/{username}")
-                .buildAndExpand(userTo.getUsername()).toUri();
+                .buildAndExpand(loginRequestDto.getUsername()).toUri();
 
         registerMetrics.recordExecutionTimeTrainer(System.nanoTime() - start, TimeUnit.NANOSECONDS);
-        return ResponseEntity.created(uriOfNewResource).body(userTo);
+        return ResponseEntity.created(uriOfNewResource).body(loginRequestDto);
     }
 
     @PutMapping(value = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)

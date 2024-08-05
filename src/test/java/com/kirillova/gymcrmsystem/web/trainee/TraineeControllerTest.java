@@ -57,7 +57,6 @@ public class TraineeControllerTest extends BaseTest {
         UserDto created = USER_DTO_MATCHER.readFromJson(action);
         String expectedUsername = newTraineeDto.getFirstName() + "." + newTraineeDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
-        Assertions.assertEquals(USER_1.getId() + 9, created.getId());
     }
 
     @Test

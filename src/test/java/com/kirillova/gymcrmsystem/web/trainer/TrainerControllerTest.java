@@ -20,7 +20,6 @@ import static com.kirillova.gymcrmsystem.TrainerTestData.getUpdatedTrainerDto;
 import static com.kirillova.gymcrmsystem.TrainerTestData.jsonWithSpecializationId;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
-import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_DTO_MATCHER;
@@ -49,7 +48,6 @@ public class TrainerControllerTest extends BaseTest {
         UserDto created = USER_DTO_MATCHER.readFromJson(action);
         String expectedUsername = newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
-        Assertions.assertEquals(USER_1.getId() + 9, created.getId());
     }
 
     @Test
