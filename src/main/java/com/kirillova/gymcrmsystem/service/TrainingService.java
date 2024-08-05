@@ -23,12 +23,15 @@ public class TrainingService {
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
-        return trainingRepository.getExisted(id);
+        return trainingRepository.getTrainingIfExists(id);
     }
 
     public Training getFull(int id) {
         log.debug("Get full training with trainingId = {}", id);
-        return trainingRepository.getFullTrainingById(id).orElseThrow(() -> new NotFoundException("Entity with id=" + id + " not found"));
+        return trainingRepository
+                .getFullTrainingById(id)
+                .orElseThrow(() -> new NotFoundException("Entity with id=" + id + " not found"));
+
     }
 
     public Training create(Trainee trainee, Trainer trainer, String name, Integer typeId, LocalDate date, int duration) {
@@ -37,7 +40,7 @@ public class TrainingService {
         training.setTrainee(trainee);
         training.setTrainer(trainer);
         training.setName(name);
-        training.setType(trainingTypeRepository.getExisted(typeId));
+        training.setType(trainingTypeRepository.getTrainingTypeIfExists(typeId));
         training.setDate(date);
         training.setDuration(duration);
         ValidationUtil.validate(training);

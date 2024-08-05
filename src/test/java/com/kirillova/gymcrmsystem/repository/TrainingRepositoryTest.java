@@ -29,14 +29,14 @@ public class TrainingRepositoryTest extends BaseTest {
     }
 
     @Test
-    void getExisted() {
-        Training retrievedTraining = trainingRepository.getExisted(TRAINING_1_ID);
+    void getTrainingIfExistsWithWrongId() {
+        Training retrievedTraining = trainingRepository.getTrainingIfExists(TRAINING_1_ID);
         TRAINING_MATCHER.assertMatch(retrievedTraining, TRAINING_1);
     }
 
     @Test
-    void getExistedNotFound() {
+    void getTrainingIfExistsNotFound() {
         Assertions.assertThrows(NotFoundException.class,
-                () -> trainingRepository.getExisted(TRAINING_1_ID + 10));
+                () -> trainingRepository.getTrainingIfExists(TRAINING_1_ID + 10));
     }
 }

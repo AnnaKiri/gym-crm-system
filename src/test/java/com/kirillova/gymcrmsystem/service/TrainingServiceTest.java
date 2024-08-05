@@ -40,7 +40,7 @@ class TrainingServiceTest {
 
     @Test
     void get() {
-        when(trainingRepository.getExisted(TRAINING_1_ID)).thenReturn(TRAINING_1);
+        when(trainingRepository.getTrainingIfExists(TRAINING_1_ID)).thenReturn(TRAINING_1);
 
         Training training = trainingService.get(TRAINING_1_ID);
 
@@ -58,7 +58,7 @@ class TrainingServiceTest {
             return training;
         });
 
-        when(trainingTypeRepository.getExisted(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
+        when(trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
 
         Training newTraining = getNewTraining();
         Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);

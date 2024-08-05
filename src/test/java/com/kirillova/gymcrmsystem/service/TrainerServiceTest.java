@@ -68,7 +68,7 @@ class TrainerServiceTest {
 
     @Test
     void get() {
-        when(trainerRepository.getExisted(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        when(trainerRepository.getTrainerIfExists(USER_5_USERNAME)).thenReturn(TRAINER_1);
 
         Trainer trainer = trainerService.get(USER_5.getUsername());
 
@@ -82,9 +82,9 @@ class TrainerServiceTest {
         Trainer trainer = getUpdatedTrainer();
         User user = trainer.getUser();
 
-        when(trainerRepository.getExisted(user.getUsername())).thenReturn(trainer);
-        when(userRepository.getExisted(user.getUsername())).thenReturn(user);
-        when(trainingTypeRepository.getExisted(trainer.getSpecialization().getId())).thenReturn(trainer.getSpecialization());
+        when(trainerRepository.getTrainerIfExists(user.getUsername())).thenReturn(trainer);
+        when(userRepository.getUserIfExists(user.getUsername())).thenReturn(user);
+        when(trainingTypeRepository.getTrainingTypeIfExists(trainer.getSpecialization().getId())).thenReturn(trainer.getSpecialization());
 
         trainerService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainer.getSpecialization().getId(), user.isActive());
 
@@ -122,7 +122,7 @@ class TrainerServiceTest {
                     .toList();
         });
 
-        when(trainingTypeRepository.getExisted(any(Integer.class))).thenAnswer(invocation -> TRAINING_TYPE_4);
+        when(trainingTypeRepository.getTrainingTypeIfExists(any(Integer.class))).thenAnswer(invocation -> TRAINING_TYPE_4);
 
         User newUser = getNewUser();
         Trainer newTrainer = getNewTrainer();
@@ -141,7 +141,7 @@ class TrainerServiceTest {
 
     @Test
     void getByUsername() {
-        when(trainerRepository.getExisted(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        when(trainerRepository.getTrainerIfExists(USER_5_USERNAME)).thenReturn(TRAINER_1);
 
         Trainer trainer = trainerService.get(USER_5_USERNAME);
 

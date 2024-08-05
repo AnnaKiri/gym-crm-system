@@ -14,10 +14,9 @@ import org.springframework.context.annotation.Configuration;
 public class FilterConfig {
 
     private final AuthenticationService authenticationService;
-    ;
 
     @Bean
-    public FilterRegistrationBean<TransactionIdFilter> filter1() {
+    public FilterRegistrationBean<TransactionIdFilter> transactionFilter() {
         FilterRegistrationBean<TransactionIdFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new TransactionIdFilter());
         registrationBean.addUrlPatterns("/*");
@@ -26,7 +25,7 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<RequestResponseLoggingFilter> filter2() {
+    public FilterRegistrationBean<RequestResponseLoggingFilter> loggingFilter() {
         FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new RequestResponseLoggingFilter());
         registrationBean.addUrlPatterns("/*");
@@ -35,7 +34,7 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<AuthenticationFilter> filter3() {
+    public FilterRegistrationBean<AuthenticationFilter> authFilter() {
         FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new AuthenticationFilter(authenticationService));
         registrationBean.addUrlPatterns("/*");

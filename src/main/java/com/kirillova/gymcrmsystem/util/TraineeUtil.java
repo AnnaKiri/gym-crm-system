@@ -18,16 +18,16 @@ public class TraineeUtil {
 
         List<TrainerDto> trainerDtoList = TrainerUtil.getTrainerDtoList(trainerList);
 
-        return TraineeDto.builder().
-                id(updatedTrainee.getId()).
-                username(receivedUser.getUsername()).
-                firstName(receivedUser.getFirstName()).
-                lastName(receivedUser.getLastName()).
-                birthday(updatedTrainee.getDateOfBirth()).
-                address(updatedTrainee.getAddress()).
-                isActive(receivedUser.isActive()).
-                trainerList(trainerDtoList).
-                build();
+        return TraineeDto.builder()
+                .id(updatedTrainee.getId())
+                .username(receivedUser.getUsername())
+                .firstName(receivedUser.getFirstName())
+                .lastName(receivedUser.getLastName())
+                .birthday(updatedTrainee.getDateOfBirth())
+                .address(updatedTrainee.getAddress())
+                .isActive(receivedUser.isActive())
+                .trainerList(trainerDtoList)
+                .build();
     }
 
     public static List<TraineeDto> getTraineeDtoList(List<Trainee> traineeList) {
@@ -36,15 +36,15 @@ public class TraineeUtil {
         for (Trainee trainee : traineeList) {
             User traineesUser = trainee.getUser();
 
-            TraineeDto traineeDto = TraineeDto.builder().
-                    id(trainee.getId()).
-                    username(traineesUser.getUsername()).
-                    firstName(traineesUser.getFirstName()).
-                    lastName(traineesUser.getLastName()).
-                    birthday(trainee.getDateOfBirth()).
-                    address(trainee.getAddress()).
-                    isActive(traineesUser.isActive()).
-                    build();
+            TraineeDto traineeDto = TraineeDto.builder()
+                    .id(trainee.getId())
+                    .username(traineesUser.getUsername())
+                    .firstName(traineesUser.getFirstName())
+                    .lastName(traineesUser.getLastName())
+                    .birthday(trainee.getDateOfBirth())
+                    .address(trainee.getAddress())
+                    .isActive(traineesUser.isActive())
+                    .build();
 
             traineeDtoList.add(traineeDto);
         }

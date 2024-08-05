@@ -23,7 +23,8 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer>, JpaS
     @Query("SELECT t FROM Trainer t JOIN t.user u WHERE u.username = :username")
     Optional<Trainer> findByUsername(@Param("username") String username);
 
-    default Trainer getExisted(String username) {
-        return findByUsername(username).orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
+    default Trainer getTrainerIfExists(String username) {
+        return findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
     }
 }

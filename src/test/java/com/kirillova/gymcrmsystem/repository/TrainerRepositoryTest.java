@@ -51,14 +51,14 @@ public class TrainerRepositoryTest extends BaseTest {
     }
 
     @Test
-    void getExisted() {
-        Trainer retrievedTrainer = trainerRepository.getExisted(USER_5_USERNAME);
+    void getTrainerIfExists() {
+        Trainer retrievedTrainer = trainerRepository.getTrainerIfExists(USER_5_USERNAME);
         TRAINER_MATCHER.assertMatch(retrievedTrainer, TRAINER_1);
     }
 
     @Test
-    void getExistedNotFound() {
+    void getTraineeIfExistsWithWrongUsername() {
         Assertions.assertThrows(NotFoundException.class,
-                () -> trainerRepository.getExisted(NOT_FOUND_USERNAME));
+                () -> trainerRepository.getTrainerIfExists(NOT_FOUND_USERNAME));
     }
 }

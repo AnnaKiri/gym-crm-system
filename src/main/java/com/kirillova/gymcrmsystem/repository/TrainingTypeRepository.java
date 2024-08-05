@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public interface TrainingTypeRepository extends JpaRepository<TrainingType, Integer> {
 
-    default TrainingType getExisted(int id) {
-        return findById(id).orElseThrow(() -> new NotFoundException("Training type id=" + id + " does not exist"));
+    default TrainingType getTrainingTypeIfExists(int id) {
+        return findById(id)
+                .orElseThrow(() -> new NotFoundException("Training type id=" + id + " does not exist"));
     }
 }

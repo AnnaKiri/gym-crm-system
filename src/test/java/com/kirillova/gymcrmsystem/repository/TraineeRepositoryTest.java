@@ -46,14 +46,14 @@ public class TraineeRepositoryTest extends BaseTest {
     }
 
     @Test
-    void getExisted() {
-        Trainee retrievedTrainee = traineeRepository.getExisted(USER_1_USERNAME);
+    void getTraineeIfExists() {
+        Trainee retrievedTrainee = traineeRepository.getTraineeIfExists(USER_1_USERNAME);
         TRAINEE_MATCHER.assertMatch(retrievedTrainee, TRAINEE_1);
     }
 
     @Test
-    void getExistedNotFound() {
+    void getTraineeIfExistsWithWrongUsername() {
         Assertions.assertThrows(NotFoundException.class,
-                () -> traineeRepository.getExisted(NOT_FOUND_USERNAME));
+                () -> traineeRepository.getTraineeIfExists(NOT_FOUND_USERNAME));
     }
 }

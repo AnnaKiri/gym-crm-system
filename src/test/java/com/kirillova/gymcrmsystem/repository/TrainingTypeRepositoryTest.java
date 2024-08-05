@@ -17,14 +17,14 @@ public class TrainingTypeRepositoryTest extends BaseTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Test
-    void getExisted() {
-        TrainingType retrievedTrainingType = trainingTypeRepository.getExisted(TRAINING_TYPE_1_ID);
+    void getTrainingTypeIfExistsWithWrongId() {
+        TrainingType retrievedTrainingType = trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_1_ID);
         TRAINING_TYPE_MATCHER.assertMatch(retrievedTrainingType, TRAINING_TYPE_1);
     }
 
     @Test
-    void getExistedNotFound() {
+    void getTrainingTypeIfExistsNotFound() {
         Assertions.assertThrows(NotFoundException.class,
-                () -> trainingTypeRepository.getExisted(TRAINING_TYPE_1_ID + 10));
+                () -> trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_1_ID + 10));
     }
 }

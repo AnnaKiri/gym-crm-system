@@ -18,36 +18,36 @@ public class TrainerUtil {
 
         List<TraineeDto> traineeDtoList = TraineeUtil.getTraineeDtoList(traineeList);
 
-        return TrainerDto.builder().
-                id(updatedTrainer.getId()).
-                username(receivedUser.getUsername()).
-                firstName(receivedUser.getFirstName()).
-                lastName(receivedUser.getLastName()).
-                specialization(updatedTrainer.getSpecialization()).
-                specializationId(updatedTrainer.getSpecialization().getId()).
-                isActive(receivedUser.isActive()).
-                traineeList(traineeDtoList).
-                build();
+        return TrainerDto.builder()
+                .id(updatedTrainer.getId())
+                .username(receivedUser.getUsername())
+                .firstName(receivedUser.getFirstName())
+                .lastName(receivedUser.getLastName())
+                .specialization(updatedTrainer.getSpecialization())
+                .specializationId(updatedTrainer.getSpecialization().getId())
+                .isActive(receivedUser.isActive())
+                .traineeList(traineeDtoList)
+                .build();
     }
 
     public static List<TrainerDto> getTrainerDtoList(List<Trainer> trainerList) {
-        List<TrainerDto> trainerDtosoList = new ArrayList<>();
+        List<TrainerDto> trainerDtoList = new ArrayList<>();
 
         for (Trainer trainer : trainerList) {
             User trainersUser = trainer.getUser();
 
-            TrainerDto trainerDto = TrainerDto.builder().
-                    id(trainer.getId()).
-                    username(trainersUser.getUsername()).
-                    firstName(trainersUser.getFirstName()).
-                    lastName(trainersUser.getLastName()).
-                    specialization(trainer.getSpecialization()).
-                    specializationId(trainer.getSpecialization().getId()).
-                    isActive(trainersUser.isActive()).
-                    build();
+            TrainerDto trainerDto = TrainerDto.builder()
+                    .id(trainer.getId())
+                    .username(trainersUser.getUsername())
+                    .firstName(trainersUser.getFirstName())
+                    .lastName(trainersUser.getLastName())
+                    .specialization(trainer.getSpecialization())
+                    .specializationId(trainer.getSpecialization().getId())
+                    .isActive(trainersUser.isActive())
+                    .build();
 
-            trainerDtosoList.add(trainerDto);
+            trainerDtoList.add(trainerDto);
         }
-        return trainerDtosoList;
+        return trainerDtoList;
     }
 }

@@ -38,7 +38,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByUsername(String username);
 
-    default User getExisted(String username) {
-        return findByUsername(username).orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
+    default User getUserIfExists(String username) {
+        return findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
     }
 }

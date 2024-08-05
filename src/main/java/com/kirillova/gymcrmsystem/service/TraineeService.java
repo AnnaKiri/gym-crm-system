@@ -40,7 +40,10 @@ public class TraineeService {
         User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
+        newUser.setUsername(
+                UserUtil.generateUsername(
+                        firstName, lastName,
+                        userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
@@ -76,8 +79,8 @@ public class TraineeService {
     @Transactional
     public void update(String username, String firstName, String lastName, LocalDate birthday, String address, boolean isActive) {
         log.debug("Update trainee with username = {}", username);
-        Trainee updatedTrainee = traineeRepository.getExisted(username);
-        User updatedUser = userRepository.getExisted(username);
+        Trainee updatedTrainee = traineeRepository.getTraineeIfExists(username);
+        User updatedUser = userRepository.getUserIfExists(username);
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
@@ -115,7 +118,8 @@ public class TraineeService {
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
         log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = {}", username);
 
-        Specification<Training> spec = TrainingSpecifications.getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
+        Specification<Training> spec = TrainingSpecifications
+                .getTraineeTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
         return trainingRepository.findAllWithDetails(spec);
     }
 
@@ -139,21 +143,25 @@ public class TraineeService {
 
     public Trainee get(String username) {
         log.debug("Get trainee with username = {}", username);
-        return traineeRepository.getExisted(username);
+        return traineeRepository.getTraineeIfExists(username);
     }
 
     public Trainee getWithUser(String username) {
         log.debug("Get trainee with username = {} with user entity", username);
-        return traineeRepository.getWithUser(username).orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
+        return traineeRepository
+                .getWithUser(username)
+                .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
     }
 
     @Transactional
     public void updateTrainerList(String username, List<String> trainers) {
         log.debug("Update trainers list for trainee with username = {}", username);
-        Trainee updatedTrainee = traineeRepository.findByUsernameWithTrainerList(username).orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
+        Trainee updatedTrainee = traineeRepository
+                .findByUsernameWithTrainerList(username)
+                .orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
         updatedTrainee.getTrainerList().clear();
         for (String trainerUsername : trainers) {
-            Trainer trainer = trainerRepository.getExisted(trainerUsername);
+            Trainer trainer = trainerRepository.getTrainerIfExists(trainerUsername);
             updatedTrainee.getTrainerList().add(trainer);
         }
         traineeRepository.save(updatedTrainee);

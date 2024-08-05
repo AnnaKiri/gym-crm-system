@@ -71,11 +71,19 @@ public class TrainerController {
         registerMetrics.incrementRequestCount();
 
         checkNew(trainerDto);
-        Trainer newTrainer = trainerService.create(trainerDto.getFirstName(), trainerDto.getLastName(), trainerDto.getSpecializationId());
+        Trainer newTrainer = trainerService.create(
+                trainerDto.getFirstName(),
+                trainerDto.getLastName(),
+                trainerDto.getSpecializationId());
         User newUser = newTrainer.getUser();
-        UserDto userTo = new UserDto(newUser.getId(), newUser.getUsername(), newUser.getPassword());
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
+        UserDto userTo = new UserDto(
+                newUser.getId(),
+                newUser.getUsername(),
+                newUser.getPassword());
+        URI uriOfNewResource = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path(REST_URL + "/{username}")
+                .buildAndExpand(userTo.getUsername()).toUri();
 
         registerMetrics.recordExecutionTimeTrainer(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         return ResponseEntity.created(uriOfNewResource).body(userTo);
@@ -120,7 +128,12 @@ public class TrainerController {
     })
     public TrainerDto update(@PathVariable String username, @Valid @RequestBody TrainerDto trainerDto) {
         log.debug("Update the trainer with username {}", username);
-        trainerService.update(username, trainerDto.getFirstName(), trainerDto.getLastName(), trainerDto.getSpecializationId(), trainerDto.getIsActive());
+        trainerService.update(
+                username,
+                trainerDto.getFirstName(),
+                trainerDto.getLastName(),
+                trainerDto.getSpecializationId(),
+                trainerDto.getIsActive());
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
         return createDtoWithTraineeToList(receivedTrainer, traineeList);
@@ -139,7 +152,12 @@ public class TrainerController {
             @RequestParam @Nullable String traineeFirstName,
             @RequestParam @Nullable String traineeLastName) {
         log.debug("Get Trainings by trainer username {} for dates({} - {}) trainee {} {}", username, fromDate, toDate, traineeFirstName, traineeLastName);
-        List<Training> trainings = trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+        List<Training> trainings = trainerService.getTrainings(
+                username,
+                fromDate,
+                toDate,
+                traineeFirstName,
+                traineeLastName);
         return getTrainingDtoList(trainings);
     }
 

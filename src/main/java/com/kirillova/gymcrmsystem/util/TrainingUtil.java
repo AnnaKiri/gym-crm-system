@@ -18,16 +18,16 @@ public class TrainingUtil {
         for (Training training : trainingList) {
             Trainee trainee = training.getTrainee();
             Trainer trainer = training.getTrainer();
-            TrainingDto trainingDto = TrainingDto.builder().
-                    id(training.getId()).
-                    name(training.getName()).
-                    date(training.getDate()).
-                    type(training.getType()).
-                    typeId(training.getType().getId()).
-                    duration(training.getDuration()).
-                    traineeUsername(trainee.getUser().getUsername()).
-                    trainerUsername(trainer.getUser().getUsername()).
-                    build();
+            TrainingDto trainingDto = TrainingDto.builder()
+                    .id(training.getId())
+                    .name(training.getName())
+                    .date(training.getDate())
+                    .type(training.getType())
+                    .typeId(training.getType().getId())
+                    .duration(training.getDuration())
+                    .traineeUsername(trainee.getUser().getUsername())
+                    .trainerUsername(trainer.getUser().getUsername())
+                    .build();
 
             trainingDtoList.add(trainingDto);
         }
@@ -35,16 +35,16 @@ public class TrainingUtil {
     }
 
     public static TrainingDto createDto(Training training) {
-        return TrainingDto.builder().
-                id(training.getId()).
-                name(training.getName()).
-                date(training.getDate()).
-                type(training.getType()).
-                typeId(training.getType().getId()).
-                duration(training.getDuration()).
-                traineeUsername(training.getTrainee().getUser().getUsername()).
-                trainerUsername(training.getTrainer().getUser().getUsername()).
-                build();
+        return TrainingDto.builder()
+                .id(training.getId())
+                .name(training.getName())
+                .date(training.getDate())
+                .type(training.getType())
+                .typeId(training.getType().getId())
+                .duration(training.getDuration())
+                .traineeUsername(training.getTrainee().getUser().getUsername())
+                .trainerUsername(training.getTrainer().getUser().getUsername())
+                .build();
 
     }
 }

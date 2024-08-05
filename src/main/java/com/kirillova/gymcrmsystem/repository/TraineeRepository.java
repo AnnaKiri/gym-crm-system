@@ -26,7 +26,8 @@ public interface TraineeRepository extends JpaRepository<Trainee, Integer>, JpaS
     @Query("SELECT t FROM Trainee t LEFT JOIN FETCH t.trainerList WHERE t.user.username = :username")
     Optional<Trainee> findByUsernameWithTrainerList(@Param("username") String username);
 
-    default Trainee getExisted(String username) {
-        return findByUsername(username).orElseThrow(() -> new NotFoundException("Trainee with username=" + username + " not found"));
+    default Trainee getTraineeIfExists(String username) {
+        return findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Trainee with username=" + username + " not found"));
     }
 }

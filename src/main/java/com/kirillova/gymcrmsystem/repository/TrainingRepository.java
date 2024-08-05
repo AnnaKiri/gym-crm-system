@@ -16,7 +16,8 @@ public interface TrainingRepository extends JpaRepository<Training, Integer>, Jp
     @Query("SELECT tr FROM Training tr JOIN FETCH tr.trainee t JOIN FETCH t.user tu JOIN FETCH tr.trainer r JOIN FETCH r.user ru JOIN FETCH tr.type tp WHERE tr.id = :id")
     Optional<Training> getFullTrainingById(@Param("id") int id);
 
-    default Training getExisted(int id) {
-        return findById(id).orElseThrow(() -> new NotFoundException("Training with id=" + id + " not found"));
+    default Training getTrainingIfExists(int id) {
+        return findById(id)
+                .orElseThrow(() -> new NotFoundException("Training with id=" + id + " not found"));
     }
 }

@@ -37,6 +37,7 @@ import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
+import static com.kirillova.gymcrmsystem.UserTestData.NOT_FOUND_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_1_USERNAME;
 import static com.kirillova.gymcrmsystem.UserTestData.USER_5;
@@ -108,7 +109,7 @@ public class TraineeServiceTest {
 
     @Test
     void get() {
-        when(traineeRepository.getExisted(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(traineeRepository.getTraineeIfExists(USER_1_USERNAME)).thenReturn(TRAINEE_1);
 
         Trainee trainee = traineeService.get(USER_1_USERNAME);
 
@@ -129,12 +130,19 @@ public class TraineeServiceTest {
     }
 
     @Test
+    void deleteTraineeWithWrongUsername() {
+        when(userRepository.deleteByUsername(NOT_FOUND_USERNAME)).thenReturn(0);
+        assertThrows(NotFoundException.class, () -> traineeService.delete(NOT_FOUND_USERNAME));
+
+    }
+
+    @Test
     void update() {
         Trainee trainee = getUpdatedTrainee();
         User user = trainee.getUser();
 
-        when(traineeRepository.getExisted(user.getUsername())).thenReturn(trainee);
-        when(userRepository.getExisted(user.getUsername())).thenReturn(user);
+        when(traineeRepository.getTraineeIfExists(user.getUsername())).thenReturn(trainee);
+        when(userRepository.getUserIfExists(user.getUsername())).thenReturn(user);
 
         traineeService.update(user.getUsername(), user.getFirstName(), user.getLastName(), trainee.getDateOfBirth(), trainee.getAddress(), user.isActive());
 
@@ -206,7 +214,7 @@ public class TraineeServiceTest {
         List<String> trainerUsernames = List.of(USER_5.getUsername(), USER_6.getUsername());
 
         when(traineeRepository.findByUsernameWithTrainerList(USER_1_USERNAME)).thenReturn(Optional.of(TRAINEE_1));
-        when(trainerRepository.getExisted(USER_5_USERNAME)).thenReturn(TRAINER_1);
+        when(trainerRepository.getTrainerIfExists(USER_5_USERNAME)).thenReturn(TRAINER_1);
         when(traineeRepository.save(TRAINEE_1)).thenReturn(TRAINEE_1);
 
         traineeService.updateTrainerList(USER_1_USERNAME, trainerUsernames);

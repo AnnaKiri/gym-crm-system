@@ -37,7 +37,10 @@ public class TrainerService {
         User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
+        newUser.setUsername(
+                UserUtil.generateUsername(
+                        firstName, lastName,
+                        userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
@@ -45,7 +48,7 @@ public class TrainerService {
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
-        trainer.setSpecialization(trainingTypeRepository.getExisted(specializationId));
+        trainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         trainer.setUser(newUser);
         ValidationUtil.validate(trainer);
         return trainerRepository.save(trainer);
@@ -72,8 +75,8 @@ public class TrainerService {
     @Transactional
     public void update(String username, String firstName, String lastName, Integer specializationId, boolean isActive) {
         log.debug("Update trainer with username = {}", username);
-        Trainer updatedTrainer = trainerRepository.getExisted(username);
-        User updatedUser = userRepository.getExisted(username);
+        Trainer updatedTrainer = trainerRepository.getTrainerIfExists(username);
+        User updatedUser = userRepository.getUserIfExists(username);
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
@@ -81,14 +84,15 @@ public class TrainerService {
         ValidationUtil.validate(updatedUser);
         userRepository.save(updatedUser);
 
-        updatedTrainer.setSpecialization(trainingTypeRepository.getExisted(specializationId));
+        updatedTrainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         ValidationUtil.validate(updatedTrainer);
         trainerRepository.save(updatedTrainer);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = {}", username);
-        Specification<Training> spec = TrainingSpecifications.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+        Specification<Training> spec = TrainingSpecifications
+                .getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
         return trainingRepository.findAllWithDetails(spec);
     }
 
@@ -112,12 +116,14 @@ public class TrainerService {
 
     public Trainer get(String username) {
         log.debug("Get trainer with username = {}", username);
-        return trainerRepository.getExisted(username);
+        return trainerRepository.getTrainerIfExists(username);
     }
 
     public Trainer getWithUserAndSpecialization(String username) {
         log.debug("Get trainer with username = {} with user and specialization entity", username);
-        return trainerRepository.getWithUserAndSpecialization(username).orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
+        return trainerRepository
+                .getWithUserAndSpecialization(username)
+                .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
     }
 
 }

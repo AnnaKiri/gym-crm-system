@@ -73,14 +73,14 @@ public class UserRepositoryTest extends BaseTest {
     }
 
     @Test
-    void getExisted() {
-        User retrievedUser = userRepository.getExisted(USER_1_USERNAME);
+    void getUserIfExistsWithWrongUsername() {
+        User retrievedUser = userRepository.getUserIfExists(USER_1_USERNAME);
         USER_MATCHER.assertMatch(retrievedUser, USER_1);
     }
 
     @Test
-    void getExistedNotFound() {
+    void getUserIfExistsNotFound() {
         Assertions.assertThrows(NotFoundException.class,
-                () -> userRepository.getExisted(NOT_FOUND_USERNAME));
+                () -> userRepository.getUserIfExists(NOT_FOUND_USERNAME));
     }
 }

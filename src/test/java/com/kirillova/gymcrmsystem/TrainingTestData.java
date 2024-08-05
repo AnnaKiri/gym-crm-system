@@ -127,15 +127,15 @@ public class TrainingTestData {
     }
 
     public static TrainingDto getNewTrainingDto() {
-        return TrainingDto.builder().
-                name("Yoga").
-                type(TRAINING_TYPE_3).
-                typeId(TRAINING_TYPE_3.getId()).
-                date(LocalDate.of(2024, 1, 5)).
-                duration(60).
-                traineeUsername(TRAINEE_3.getUser().getUsername()).
-                trainerUsername(TRAINER_3.getUser().getUsername()).
-                build();
+        return TrainingDto.builder()
+                .name("Yoga")
+                .type(TRAINING_TYPE_3)
+                .typeId(TRAINING_TYPE_3.getId())
+                .date(LocalDate.of(2024, 1, 5))
+                .duration(60)
+                .traineeUsername(TRAINEE_3.getUser().getUsername())
+                .trainerUsername(TRAINER_3.getUser().getUsername())
+                .build();
     }
 
     public static void checkTrainingTraineeId(Training expected, Training actual) {

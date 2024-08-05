@@ -65,6 +65,12 @@ public class TrainingController {
         checkNew(trainingDto);
         Trainee trainee = traineeService.get(trainingDto.getTraineeUsername());
         Trainer trainer = trainerService.get(trainingDto.getTrainerUsername());
-        trainingService.create(trainee, trainer, trainingDto.getName(), trainingDto.getTypeId(), trainingDto.getDate(), trainingDto.getDuration());
+        trainingService.create(
+                trainee,
+                trainer,
+                trainingDto.getName(),
+                trainingDto.getTypeId(),
+                trainingDto.getDate(),
+                trainingDto.getDuration());
     }
 }
