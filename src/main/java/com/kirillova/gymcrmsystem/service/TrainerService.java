@@ -1,34 +1,35 @@
 package com.kirillova.gymcrmsystem.service;
 
-import com.kirillova.gymcrmsystem.dao.TrainerDAO;
-import com.kirillova.gymcrmsystem.dao.TrainingDAO;
-import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
-import com.kirillova.gymcrmsystem.dao.UserDAO;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.models.User;
+import com.kirillova.gymcrmsystem.repository.TrainerRepository;
+import com.kirillova.gymcrmsystem.repository.TrainingRepository;
+import com.kirillova.gymcrmsystem.repository.TrainingSpecifications;
+import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
+import com.kirillova.gymcrmsystem.repository.UserRepository;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNotFoundWithUsername;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TrainerService {
 
-    private final TrainerDAO trainerDAO;
-    private final TrainingDAO trainingDAO;
-    private final UserDAO userDAO;
-    private final TrainingTypeDAO trainingTypeDAO;
+    private final TrainerRepository trainerRepository;
+    private final TrainingRepository trainingRepository;
+    private final UserRepository userRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
 
     @Transactional
     public Trainer create(String firstName, String lastName, Integer specializationId) {
@@ -36,73 +37,93 @@ public class TrainerService {
         User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setUsername(UserUtil.generateUsername(firstName, lastName, userDAO.findUsernamesByFirstNameAndLastName(firstName, lastName)));
+        newUser.setUsername(
+                UserUtil.generateUsername(
+                        firstName, lastName,
+                        userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
         newUser.setPassword(UserUtil.generatePassword());
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
-        newUser = userDAO.save(newUser);
+        newUser = userRepository.save(newUser);
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
-        trainer.setSpecialization(trainingTypeDAO.get(specializationId));
+        trainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         trainer.setUser(newUser);
         ValidationUtil.validate(trainer);
-        return trainerDAO.save(trainer);
+        return trainerRepository.save(trainer);
     }
 
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainer with username = {}", username);
-        ValidationUtil.validatePassword(newPassword);
-        return userDAO.changePassword(username, newPassword);
+        int updatedEntities = userRepository.changePassword(username, newPassword);
+
+        if (updatedEntities > 0) {
+            log.debug("Changed password for user with username = {}", username);
+            return true;
+        } else {
+            throw new NotFoundException("Not found entity with " + username);
+        }
     }
 
     public List<Trainer> getTrainersForTrainee(String username) {
         log.debug("Get trainers list for trainee with username = {}", username);
-        return trainerDAO.getTrainersForTrainee(username);
+        return trainerRepository.findTrainersByTraineeUsername(username);
     }
 
     @Transactional
     public void update(String username, String firstName, String lastName, Integer specializationId, boolean isActive) {
         log.debug("Update trainer with username = {}", username);
-        Trainer updatedTrainer = checkNotFoundWithUsername(trainerDAO.get(username), username);
-        User updatedUser = checkNotFoundWithUsername(userDAO.get(username), username);
+        Trainer updatedTrainer = trainerRepository.getTrainerIfExists(username);
+        User updatedUser = userRepository.getUserIfExists(username);
 
         updatedUser.setFirstName(firstName);
         updatedUser.setLastName(lastName);
         updatedUser.setActive(isActive);
         ValidationUtil.validate(updatedUser);
-        userDAO.update(updatedUser);
+        userRepository.save(updatedUser);
 
-        updatedTrainer.setSpecialization(trainingTypeDAO.get(specializationId));
+        updatedTrainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         ValidationUtil.validate(updatedTrainer);
-        trainerDAO.update(updatedTrainer);
+        trainerRepository.save(updatedTrainer);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {
         log.debug("Get Trainings List by trainer username and criteria (from date, to date, trainee name) for trainer with username = {}", username);
-        return trainingDAO.getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+        Specification<Training> spec = TrainingSpecifications
+                .getTrainerTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
+        return trainingRepository.findAllWithDetails(spec);
     }
 
     @Transactional
     public boolean setActive(String username, boolean isActive) {
         log.debug("Change active status for trainer with username = {}", username);
-        boolean currentStatus = userDAO.getActive(username);
+        boolean currentStatus = userRepository.findIsActiveByUsername(username);
         if (currentStatus == isActive) {
             throw new IllegalRequestDataException("User is already in the desired state");
         }
 
-        return userDAO.setActive(username, isActive);
+        int updatedEntities = userRepository.updateIsActiveByUsername(username, isActive);
+
+        if (updatedEntities > 0) {
+            log.debug("Status was changed for user with username = {}", username);
+            return isActive;
+        } else {
+            throw new NotFoundException("Not found entity with " + username);
+        }
     }
 
     public Trainer get(String username) {
         log.debug("Get trainer with username = {}", username);
-        return checkNotFoundWithUsername(trainerDAO.get(username), username);
+        return trainerRepository.getTrainerIfExists(username);
     }
 
     public Trainer getWithUserAndSpecialization(String username) {
         log.debug("Get trainer with username = {} with user and specialization entity", username);
-        return checkNotFoundWithUsername(trainerDAO.getWithUserAndSpecialization(username), username);
+        return trainerRepository
+                .getWithUserAndSpecialization(username)
+                .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
     }
 
 }

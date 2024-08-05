@@ -2,14 +2,14 @@ package com.kirillova.gymcrmsystem.web.training;
 
 import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TrainingTestData;
-import com.kirillova.gymcrmsystem.to.TrainingTo;
+import com.kirillova.gymcrmsystem.dto.TrainingDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1_ID;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_1;
-import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_TO_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_1;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTestData.jsonWithTypeId;
 import static com.kirillova.gymcrmsystem.web.training.TrainingController.REST_URL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,24 +21,27 @@ public class TrainingControllerTest extends BaseTest {
 
     @Test
     void create() throws Exception {
-        TrainingTo newTrainingTo = TrainingTestData.getNewTrainingTo();
+        TrainingDto newTrainingDto = TrainingTestData.getNewTrainingDto();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithTypeId(newTrainingTo, newTrainingTo.getTypeId())))
+                .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId()))
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID)
+                .header("Authorization", getAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINING_TO_MATCHER.contentJson(TRAINING_TO_1));
+                .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_1));
     }
 
     @Test
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999))
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999)
+                .header("Authorization", getAuthorizationHeader()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

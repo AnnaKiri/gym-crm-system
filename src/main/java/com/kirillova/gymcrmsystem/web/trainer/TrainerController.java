@@ -1,5 +1,9 @@
 package com.kirillova.gymcrmsystem.web.trainer;
 
+import com.kirillova.gymcrmsystem.dto.TrainerDto;
+import com.kirillova.gymcrmsystem.dto.TrainingDto;
+import com.kirillova.gymcrmsystem.dto.UserDto;
+import com.kirillova.gymcrmsystem.metrics.RegisterMetrics;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -7,9 +11,6 @@ import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
-import com.kirillova.gymcrmsystem.to.TrainerTo;
-import com.kirillova.gymcrmsystem.to.TrainingTo;
-import com.kirillova.gymcrmsystem.to.UserTo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,9 +38,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import static com.kirillova.gymcrmsystem.util.TrainerUtil.createToWithTraineeToList;
-import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingToList;
+import static com.kirillova.gymcrmsystem.util.TrainerUtil.createDtoWithTraineeToList;
+import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingDtoList;
 import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
@@ -53,6 +55,7 @@ public class TrainerController {
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final AuthenticationService authenticationService;
+    private final RegisterMetrics registerMetrics;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,14 +64,28 @@ public class TrainerController {
             @ApiResponse(responseCode = "201", description = "Trainer created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    public ResponseEntity<UserTo> register(@Valid @RequestBody TrainerTo trainerTo) {
-        log.debug("Register a new trainer {}", trainerTo);
-        checkNew(trainerTo);
-        Trainer newTrainer = trainerService.create(trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId());
+    public ResponseEntity<UserDto> register(@Valid @RequestBody TrainerDto trainerDto) {
+        long start = System.nanoTime();
+
+        log.debug("Register a new trainer {}", trainerDto);
+        registerMetrics.incrementRequestCount();
+
+        checkNew(trainerDto);
+        Trainer newTrainer = trainerService.create(
+                trainerDto.getFirstName(),
+                trainerDto.getLastName(),
+                trainerDto.getSpecializationId());
         User newUser = newTrainer.getUser();
-        UserTo userTo = new UserTo(newUser.getId(), newUser.getUsername(), newUser.getPassword());
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
+        UserDto userTo = new UserDto(
+                newUser.getId(),
+                newUser.getUsername(),
+                newUser.getPassword());
+        URI uriOfNewResource = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path(REST_URL + "/{username}")
+                .buildAndExpand(userTo.getUsername()).toUri();
+
+        registerMetrics.recordExecutionTimeTrainer(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
@@ -80,10 +97,10 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
-        log.debug("Change password for user {} with username={}", userTo, username);
-        authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
-        trainerService.changePassword(username, userTo.getNewPassword());
+    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username) {
+        log.debug("Change password for user {} with username={}", userDto, username);
+        authenticationService.checkAuthenticatedUser(username, userDto.getPassword());
+        trainerService.changePassword(username, userDto.getNewPassword());
     }
 
     @GetMapping("/{username}")
@@ -93,11 +110,11 @@ public class TrainerController {
             @ApiResponse(responseCode = "200", description = "Trainer details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public TrainerTo get(@PathVariable String username) {
+    public TrainerDto get(@PathVariable String username) {
         log.debug("Get the trainer with username={}", username);
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
-        return createToWithTraineeToList(receivedTrainer, traineeList);
+        return createDtoWithTraineeToList(receivedTrainer, traineeList);
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -109,12 +126,17 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public TrainerTo update(@PathVariable String username, @Valid @RequestBody TrainerTo trainerTo) {
+    public TrainerDto update(@PathVariable String username, @Valid @RequestBody TrainerDto trainerDto) {
         log.debug("Update the trainer with username {}", username);
-        trainerService.update(username, trainerTo.getFirstName(), trainerTo.getLastName(), trainerTo.getSpecializationId(), trainerTo.getIsActive());
+        trainerService.update(
+                username,
+                trainerDto.getFirstName(),
+                trainerDto.getLastName(),
+                trainerDto.getSpecializationId(),
+                trainerDto.getIsActive());
         Trainer receivedTrainer = trainerService.getWithUserAndSpecialization(username);
         List<Trainee> traineeList = traineeService.getTraineesForTrainer(username);
-        return createToWithTraineeToList(receivedTrainer, traineeList);
+        return createDtoWithTraineeToList(receivedTrainer, traineeList);
     }
 
     @GetMapping("/{username}/trainings")
@@ -123,15 +145,20 @@ public class TrainerController {
             @ApiResponse(responseCode = "200", description = "Trainings retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public List<TrainingTo> getTrainings(
+    public List<TrainingDto> getTrainings(
             @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
             @RequestParam @Nullable LocalDate toDate,
             @RequestParam @Nullable String traineeFirstName,
             @RequestParam @Nullable String traineeLastName) {
         log.debug("Get Trainings by trainer username {} for dates({} - {}) trainee {} {}", username, fromDate, toDate, traineeFirstName, traineeLastName);
-        List<Training> trainings = trainerService.getTrainings(username, fromDate, toDate, traineeFirstName, traineeLastName);
-        return getTrainingToList(trainings);
+        List<Training> trainings = trainerService.getTrainings(
+                username,
+                fromDate,
+                toDate,
+                traineeFirstName,
+                traineeLastName);
+        return getTrainingDtoList(trainings);
     }
 
     @PatchMapping("/{username}")

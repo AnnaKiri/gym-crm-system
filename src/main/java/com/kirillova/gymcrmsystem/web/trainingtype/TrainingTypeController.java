@@ -1,7 +1,7 @@
 package com.kirillova.gymcrmsystem.web.trainingtype;
 
-import com.kirillova.gymcrmsystem.dao.TrainingTypeDAO;
 import com.kirillova.gymcrmsystem.models.TrainingType;
+import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,7 +24,7 @@ public class TrainingTypeController {
 
     static final String REST_URL = "/training-types";
 
-    private final TrainingTypeDAO trainingTypeDAO;
+    private final TrainingTypeRepository trainingTypeRepository;
 
     @GetMapping
     @Operation(summary = "Get training types", description = "Gets the list of all training types")
@@ -33,6 +33,6 @@ public class TrainingTypeController {
     })
     public List<TrainingType> get() {
         log.debug("Get training types");
-        return trainingTypeDAO.getAll();
+        return trainingTypeRepository.findAll();
     }
 }

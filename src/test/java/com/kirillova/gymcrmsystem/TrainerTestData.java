@@ -1,17 +1,17 @@
 package com.kirillova.gymcrmsystem;
 
+import com.kirillova.gymcrmsystem.dto.TrainerDto;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.User;
-import com.kirillova.gymcrmsystem.to.TrainerTo;
 import com.kirillova.gymcrmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_1;
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_2;
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_3;
-import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_TO_4;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_1;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_2;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_3;
+import static com.kirillova.gymcrmsystem.TraineeTestData.TRAINEE_DTO_4;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_1_ID;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
@@ -32,7 +32,7 @@ public class TrainerTestData {
     public static final Trainer TRAINER_3 = new Trainer(3, TRAINING_TYPE_3, USER_7);
     public static final Trainer TRAINER_4 = new Trainer(4, TRAINING_TYPE_4, USER_8);
 
-    public static final TrainerTo TRAINER_TO_1 = TrainerTo.builder()
+    public static final TrainerDto TRAINER_DTO_1 = TrainerDto.builder()
             .id(1)
             .username(USER_5.getUsername())
             .firstName(USER_5.getFirstName())
@@ -42,7 +42,7 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID)
             .build();
 
-    public static final TrainerTo TRAINER_TO_2 = TrainerTo.builder()
+    public static final TrainerDto TRAINER_DTO_2 = TrainerDto.builder()
             .id(2)
             .username(USER_6.getUsername())
             .firstName(USER_6.getFirstName())
@@ -52,7 +52,7 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID + 1)
             .build();
 
-    public static final TrainerTo TRAINER_TO_3 = TrainerTo.builder()
+    public static final TrainerDto TRAINER_DTO_3 = TrainerDto.builder()
             .id(3)
             .username(USER_7.getUsername())
             .firstName(USER_7.getFirstName())
@@ -62,7 +62,7 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID + 2)
             .build();
 
-    public static final TrainerTo TRAINER_TO_4 = TrainerTo.builder()
+    public static final TrainerDto TRAINER_DTO_4 = TrainerDto.builder()
             .id(4)
             .username(USER_8.getUsername())
             .firstName(USER_8.getFirstName())
@@ -72,26 +72,26 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID + 3)
             .build();
 
-    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_TO_1, TRAINER_TO_3);
-    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_2 = List.of(TRAINER_TO_1, TRAINER_TO_4);
-    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_3 = List.of(TRAINER_TO_1, TRAINER_TO_3, TRAINER_TO_4);
-    public static final List<TrainerTo> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_TO_2, TRAINER_TO_3);
+    public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_DTO_1, TRAINER_DTO_3);
+    public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_2 = List.of(TRAINER_DTO_1, TRAINER_DTO_4);
+    public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_3 = List.of(TRAINER_DTO_1, TRAINER_DTO_3, TRAINER_DTO_4);
+    public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_DTO_2, TRAINER_DTO_3);
 
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization", "traineeList");
-    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerTo.class, "traineeList", "specializationId");
+    public static final MatcherFactory.Matcher<TrainerDto> TRAINER_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerDto.class, "traineeList", "specializationId");
 
-    public static final MatcherFactory.Matcher<TrainerTo> TRAINER_TO_MATCHER_WITH_TRAINEE_LIST =
-            MatcherFactory.usingAssertions(TrainerTo.class,
+    public static final MatcherFactory.Matcher<TrainerDto> TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST =
+            MatcherFactory.usingAssertions(TrainerDto.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList", "specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
 
     static {
-        TRAINER_TO_1.setTraineeList(List.of(TRAINEE_TO_4));
-        TRAINER_TO_2.setTraineeList(List.of(TRAINEE_TO_1, TRAINEE_TO_2, TRAINEE_TO_3));
-        TRAINER_TO_3.setTraineeList(List.of(TRAINEE_TO_2));
-        TRAINER_TO_4.setTraineeList(List.of(TRAINEE_TO_1, TRAINEE_TO_4));
+        TRAINER_DTO_1.setTraineeList(List.of(TRAINEE_DTO_4));
+        TRAINER_DTO_2.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_2, TRAINEE_DTO_3));
+        TRAINER_DTO_3.setTraineeList(List.of(TRAINEE_DTO_2));
+        TRAINER_DTO_4.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_4));
     }
 
     public static Trainer getNewTrainer() {
@@ -102,8 +102,8 @@ public class TrainerTestData {
         return new Trainer(1, TRAINING_TYPE_4, USER_5);
     }
 
-    public static TrainerTo getNewTrainerTo() {
-        return TrainerTo.builder()
+    public static TrainerDto getNewTrainerDto() {
+        return TrainerDto.builder()
                 .firstName("FirstName")
                 .lastName("LastName")
                 .specializationId(TRAINING_TYPE_4.getId())
@@ -111,10 +111,10 @@ public class TrainerTestData {
                 .build();
     }
 
-    public static TrainerTo getUpdatedTrainerTo() {
+    public static TrainerDto getUpdatedTrainerDto() {
         User updatedUser = UserTestData.getUpdatedUser();
         Trainer updatedTrainer = getUpdatedTrainer();
-        return TrainerTo.builder()
+        return TrainerDto.builder()
                 .id(updatedTrainer.id())
                 .firstName(updatedUser.getFirstName())
                 .lastName(updatedUser.getLastName())
@@ -133,7 +133,7 @@ public class TrainerTestData {
         Assertions.assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
     }
 
-    public static String jsonWithSpecializationId(TrainerTo trainerTo, int specializationId) {
+    public static String jsonWithSpecializationId(TrainerDto trainerTo, int specializationId) {
         return JsonUtil.writeAdditionProps(trainerTo, "specializationId", specializationId);
     }
 }

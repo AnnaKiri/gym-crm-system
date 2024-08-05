@@ -1,5 +1,10 @@
 package com.kirillova.gymcrmsystem.web.trainee;
 
+import com.kirillova.gymcrmsystem.dto.TraineeDto;
+import com.kirillova.gymcrmsystem.dto.TrainerDto;
+import com.kirillova.gymcrmsystem.dto.TrainingDto;
+import com.kirillova.gymcrmsystem.dto.UserDto;
+import com.kirillova.gymcrmsystem.metrics.RegisterMetrics;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -7,10 +12,6 @@ import com.kirillova.gymcrmsystem.models.User;
 import com.kirillova.gymcrmsystem.service.AuthenticationService;
 import com.kirillova.gymcrmsystem.service.TraineeService;
 import com.kirillova.gymcrmsystem.service.TrainerService;
-import com.kirillova.gymcrmsystem.to.TraineeTo;
-import com.kirillova.gymcrmsystem.to.TrainerTo;
-import com.kirillova.gymcrmsystem.to.TrainingTo;
-import com.kirillova.gymcrmsystem.to.UserTo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,10 +40,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import static com.kirillova.gymcrmsystem.util.TraineeUtil.createToWithTrainerToList;
-import static com.kirillova.gymcrmsystem.util.TrainerUtil.getTrainerToList;
-import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingToList;
+import static com.kirillova.gymcrmsystem.util.TraineeUtil.createDtoWithTrainerDtoList;
+import static com.kirillova.gymcrmsystem.util.TrainerUtil.getTrainerDtoList;
+import static com.kirillova.gymcrmsystem.util.TrainingUtil.getTrainingDtoList;
 import static com.kirillova.gymcrmsystem.util.ValidationUtil.checkNew;
 
 @RestController
@@ -56,6 +58,7 @@ public class TraineeController {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final AuthenticationService authenticationService;
+    private final RegisterMetrics registerMetrics;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -64,14 +67,28 @@ public class TraineeController {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    public ResponseEntity<UserTo> register(@Valid @RequestBody TraineeTo traineeTo) {
-        log.debug("Register a new trainee {}", traineeTo);
-        checkNew(traineeTo);
-        Trainee newTrainee = traineeService.create(traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress());
+    public ResponseEntity<UserDto> register(@Valid @RequestBody TraineeDto traineeDto) {
+        long start = System.nanoTime();
+        log.debug("Register a new trainee {}", traineeDto);
+        registerMetrics.incrementRequestCount();
+
+        checkNew(traineeDto);
+        Trainee newTrainee = traineeService.create(
+                traineeDto.getFirstName(),
+                traineeDto.getLastName(),
+                traineeDto.getBirthday(),
+                traineeDto.getAddress());
         User newUser = newTrainee.getUser();
-        UserTo userTo = new UserTo(newUser.getId(), newUser.getUsername(), newUser.getPassword());
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{username}").buildAndExpand(userTo.getUsername()).toUri();
+        UserDto userTo = new UserDto(
+                newUser.getId(),
+                newUser.getUsername(),
+                newUser.getPassword());
+        URI uriOfNewResource = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path(REST_URL + "/{username}")
+                .buildAndExpand(userTo.getUsername()).toUri();
+
+        registerMetrics.recordExecutionTimeTrainee(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         return ResponseEntity.created(uriOfNewResource).body(userTo);
     }
 
@@ -84,10 +101,10 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "Trainee not found"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    public void changePassword(@Valid @RequestBody UserTo userTo, @PathVariable String username) {
-        log.debug("Change password for user {} with username={}", userTo, username);
-        authenticationService.checkAuthenticatedUser(username, userTo.getPassword());
-        traineeService.changePassword(username, userTo.getNewPassword());
+    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username) {
+        log.debug("Change password for user {} with username={}", userDto, username);
+        authenticationService.checkAuthenticatedUser(username, userDto.getPassword());
+        traineeService.changePassword(username, userDto.getNewPassword());
     }
 
     @GetMapping("/{username}")
@@ -97,11 +114,11 @@ public class TraineeController {
             @ApiResponse(responseCode = "200", description = "Trainee details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
-    public TraineeTo get(@PathVariable String username) {
+    public TraineeDto get(@PathVariable String username) {
         log.debug("Get the trainee with username={}", username);
         Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
-        return createToWithTrainerToList(receivedTrainee, listTrainers);
+        return createDtoWithTrainerDtoList(receivedTrainee, listTrainers);
     }
 
     @PutMapping(value = "/{username}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -113,12 +130,18 @@ public class TraineeController {
             @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
-    public TraineeTo update(@PathVariable String username, @Valid @RequestBody TraineeTo traineeTo) {
+    public TraineeDto update(@PathVariable String username, @Valid @RequestBody TraineeDto traineeDto) {
         log.debug("Update the trainee with username={}", username);
-        traineeService.update(username, traineeTo.getFirstName(), traineeTo.getLastName(), traineeTo.getBirthday(), traineeTo.getAddress(), traineeTo.getIsActive());
+        traineeService.update(
+                username,
+                traineeDto.getFirstName(),
+                traineeDto.getLastName(),
+                traineeDto.getBirthday(),
+                traineeDto.getAddress(),
+                traineeDto.getIsActive());
         Trainee receivedTrainee = traineeService.getWithUser(username);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
-        return createToWithTrainerToList(receivedTrainee, listTrainers);
+        return createDtoWithTrainerDtoList(receivedTrainee, listTrainers);
     }
 
     @DeleteMapping("/{username}")
@@ -139,10 +162,10 @@ public class TraineeController {
             @ApiResponse(responseCode = "200", description = "Free trainers retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
-    public List<TrainerTo> getFreeTrainersForTrainee(@PathVariable String username) {
+    public List<TrainerDto> getFreeTrainersForTrainee(@PathVariable String username) {
         log.debug("Get trainers list that not assigned on trainee with username={}", username);
         List<Trainer> trainers = traineeService.getFreeTrainersForTrainee(username);
-        return getTrainerToList(trainers);
+        return getTrainerDtoList(trainers);
     }
 
     @GetMapping("/{username}/trainings")
@@ -151,7 +174,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "200", description = "Trainings retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
-    public List<TrainingTo> getTrainings(
+    public List<TrainingDto> getTrainings(
             @PathVariable String username,
             @RequestParam @Nullable LocalDate fromDate,
             @RequestParam @Nullable LocalDate toDate,
@@ -159,8 +182,14 @@ public class TraineeController {
             @RequestParam @Nullable String trainerFirstName,
             @RequestParam @Nullable String trainerLastName) {
         log.debug("Get Trainings by trainee username {} for dates({} - {}) trainingType{} trainer {} {}", username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
-        List<Training> trainings = traineeService.getTrainings(username, fromDate, toDate, trainingType, trainerFirstName, trainerLastName);
-        return getTrainingToList(trainings);
+        List<Training> trainings = traineeService.getTrainings(
+                username,
+                fromDate,
+                toDate,
+                trainingType,
+                trainerFirstName,
+                trainerLastName);
+        return getTrainingDtoList(trainings);
     }
 
     @PatchMapping("/{username}")
@@ -184,10 +213,10 @@ public class TraineeController {
             @ApiResponse(responseCode = "200", description = "Trainee updated successfully"),
             @ApiResponse(responseCode = "404", description = "Trainee not found")
     })
-    public List<TrainerTo> updateTrainerList(@PathVariable String username, @RequestBody List<String> trainerUsernames) {
+    public List<TrainerDto> updateTrainerList(@PathVariable String username, @RequestBody List<String> trainerUsernames) {
         log.debug("Update trainers list for trainee with username = {}", username);
         traineeService.updateTrainerList(username, trainerUsernames);
         List<Trainer> listTrainers = trainerService.getTrainersForTrainee(username);
-        return getTrainerToList(listTrainers);
+        return getTrainerDtoList(listTrainers);
     }
 }
