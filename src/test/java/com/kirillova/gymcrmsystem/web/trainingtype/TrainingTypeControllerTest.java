@@ -2,6 +2,7 @@ package com.kirillova.gymcrmsystem.web.trainingtype;
 
 import com.kirillova.gymcrmsystem.BaseTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -18,7 +19,7 @@ public class TrainingTypeControllerTest extends BaseTest {
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL)
-                .header("Authorization", "Bearer " + tokens.get(USER_1_USERNAME)))
+                .header(HttpHeaders.AUTHORIZATION, BEARER_WITH_SPACE + tokens.get(USER_1_USERNAME)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_TYPE_MATCHER.contentJson(TRAINING_TYPE_LIST));

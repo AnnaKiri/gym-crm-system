@@ -1,5 +1,6 @@
 package com.kirillova.gymcrmsystem.web;
 
+import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
@@ -7,8 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collections;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Optional;
 
 public class AuthUser extends org.springframework.security.core.userdetails.User {
 
@@ -20,16 +20,15 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
         this.user = user;
     }
 
-    public static AuthUser safeGet() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return null;
-        }
-        return (auth.getPrincipal() instanceof AuthUser au) ? au : null;
+    public static Optional<AuthUser> safeGet() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(Authentication::getPrincipal)
+                .filter(AuthUser.class::isInstance)
+                .map(AuthUser.class::cast);
     }
 
     public static AuthUser get() {
-        return requireNonNull(safeGet(), "No authorized user found");
+        return safeGet().orElseThrow(() -> new NotFoundException("No authorized user found"));
     }
 
     public static int authId() {

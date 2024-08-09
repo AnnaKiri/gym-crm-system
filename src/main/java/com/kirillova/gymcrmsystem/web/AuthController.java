@@ -2,10 +2,9 @@ package com.kirillova.gymcrmsystem.web;
 
 import com.kirillova.gymcrmsystem.dto.AuthResponseDto;
 import com.kirillova.gymcrmsystem.dto.LoginRequestDto;
-import com.kirillova.gymcrmsystem.models.InvalidToken;
-import com.kirillova.gymcrmsystem.repository.InvalidTokenRepository;
 import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.service.BruteForceProtectionService;
+import com.kirillova.gymcrmsystem.service.TokenService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +29,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
     private final BruteForceProtectionService bruteForceProtectionService;
-    private final InvalidTokenRepository invalidTokenRepository;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     @Transactional
@@ -67,7 +64,7 @@ public class AuthController {
     public String logout(@Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
-            invalidTokenRepository.save(new InvalidToken(token, LocalDateTime.now()));
+            tokenService.invalidateToken(token, jwtProvider.getExpirationTimeSeconds(token));
             SecurityContextHolder.clearContext();
             return "Logged out successfully";
         }

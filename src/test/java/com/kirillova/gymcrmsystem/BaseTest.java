@@ -33,6 +33,7 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_9;
 @Transactional
 @ActiveProfiles("local")
 public abstract class BaseTest {
+    protected static final String BEARER_WITH_SPACE = "Bearer ";
 
     @Autowired
     private MockMvc mockMvc;

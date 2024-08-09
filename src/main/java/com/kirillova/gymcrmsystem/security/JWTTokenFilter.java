@@ -1,6 +1,6 @@
 package com.kirillova.gymcrmsystem.security;
 
-import com.kirillova.gymcrmsystem.repository.InvalidTokenRepository;
+import com.kirillova.gymcrmsystem.service.TokenService;
 import com.kirillova.gymcrmsystem.web.AuthUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
 
     private final JWTProvider jwtProvider;
     private final UserDetailsService userDetailsService;
-    private final InvalidTokenRepository invalidTokenRepository;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -29,7 +29,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (invalidTokenRepository.existsByToken(token)) {
+            if (tokenService.isTokenInvalid(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token is invalidated");
                 return;

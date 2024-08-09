@@ -52,4 +52,14 @@ public class JWTProvider {
                 .getBody();
         return claims.getSubject();
     }
+
+    public long getExpirationTimeSeconds(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Date expirationDate = claims.getExpiration();
+        return (expirationDate.getTime() - new Date().getTime()) / 1000;
+    }
 }
