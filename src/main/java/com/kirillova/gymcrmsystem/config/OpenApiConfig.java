@@ -11,9 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SecurityScheme(
-        name = "basicAuth",
+        name = "Bearer Authentication",
         type = SecuritySchemeType.HTTP,
-        scheme = "basic"
+        scheme = "bearer",
+        bearerFormat = "JWT"
 )
 @OpenAPIDefinition(
         info = @Info(
@@ -22,13 +23,11 @@ import org.springframework.context.annotation.Configuration;
                 description = """
                         Gym CRM System application
                         <p><b>Test credentials:</b><br>
-                        - Angelina.Jolie / password1<br>
-                        - Ryan.Reynolds / password2<br>
-                        - Tom.Hardy / password3<br>
-                        - Keanu.Reeves / password4</p>
+                        - Trainee: Angelina.Jolie / password1<br>
+                        - Trainer: Brad.Pitt / password6</p>
                         """
         ),
-        security = @SecurityRequirement(name = "basicAuth")
+        security = @SecurityRequirement(name = "Bearer Authentication")
 )
 public class OpenApiConfig {
 

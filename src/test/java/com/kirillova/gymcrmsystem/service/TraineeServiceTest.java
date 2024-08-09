@@ -47,6 +47,8 @@ import static com.kirillova.gymcrmsystem.UserTestData.USER_LIST;
 import static com.kirillova.gymcrmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,7 +73,7 @@ public class TraineeServiceTest {
 
     @Test
     void create() {
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+        when(userRepository.prepareAndSaveWithPassword(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(USER_1.getId() + 8);
             return user;
@@ -95,9 +97,9 @@ public class TraineeServiceTest {
 
         User newUser = getNewUser();
         Trainee newTrainee = getNewTrainee();
-        Trainee savedTrainee = traineeService.create(newUser.getFirstName(), newUser.getLastName(), newTrainee.getDateOfBirth(), newTrainee.getAddress());
+        Trainee savedTrainee = traineeService.create(newUser.getFirstName(), newUser.getLastName(), newTrainee.getDateOfBirth(), newTrainee.getAddress(), newTrainee.getUser().getPassword());
 
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).prepareAndSaveWithPassword(any(User.class));
         verify(traineeRepository, times(1)).save(any(Trainee.class));
 
         int traineeId = savedTrainee.getId();
@@ -159,7 +161,8 @@ public class TraineeServiceTest {
 
     @Test
     void changePassword() {
-        when(userRepository.changePassword(USER_1_USERNAME, "newPassword")).thenReturn(1);
+        when(userRepository.changePassword(eq(USER_1_USERNAME), anyString())).thenReturn(1);
+
         Assertions.assertTrue(traineeService.changePassword(USER_1_USERNAME, "newPassword"));
     }
 

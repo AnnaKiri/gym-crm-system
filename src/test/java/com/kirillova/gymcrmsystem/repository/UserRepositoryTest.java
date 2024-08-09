@@ -22,12 +22,6 @@ public class UserRepositoryTest extends BaseTest {
     private UserRepository userRepository;
 
     @Test
-    void getByUsernameAndPassword() {
-        User retrievedUser = userRepository.getByUsernameAndPassword(USER_1.getUsername(), USER_1.getPassword());
-        USER_MATCHER.assertMatch(retrievedUser, USER_1);
-    }
-
-    @Test
     void findIsActiveByUsername() {
         assertTrue(userRepository.findIsActiveByUsername(USER_1_USERNAME));
     }

@@ -5,6 +5,7 @@ spring:
       - "classpath:dev/application-dev.yaml"
       - "classpath:stg/application-stg.yaml"
       - "classpath:prod/application-prod.yaml"
+      - "classpath:jwt-config.yaml"
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -56,3 +57,16 @@ management:
       enabled: true
     health:
       show-details: always
+
+cors:
+  allowed-origins:
+    - "http://localhost"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
