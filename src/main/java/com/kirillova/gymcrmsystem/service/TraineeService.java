@@ -1,7 +1,9 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.dto.TrainingInfoDto;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
+import com.kirillova.gymcrmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -35,6 +37,7 @@ public class TraineeService {
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
+    private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
 
     @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {
@@ -99,12 +102,26 @@ public class TraineeService {
     @Transactional
     public void delete(String username) {
         log.debug("Delete trainee with username = {}", username);
+        List<Training> trainings = getTrainings(username, null, null, null, null, null);
         int deletedEntities = userRepository.deleteByUsername(username);
 
         if (deletedEntities > 0) {
             log.debug("User and related entities with username = {} deleted", username);
         } else {
             throw new NotFoundException("Not found entity with " + username);
+        }
+
+        for (Training training : trainings) {
+            TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
+                    .username(training.getTrainer().getUser().getUsername())
+                    .firstName(training.getTrainer().getUser().getFirstName())
+                    .lastName(training.getTrainer().getUser().getLastName())
+                    .isActive(training.getTrainer().getUser().isActive())
+                    .date(training.getDate())
+                    .duration(training.getDuration())
+                    .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
+                    .build();
+            trainerWorkloadServiceFeignClient.updateTrainingInfo(trainingInfoDto);
         }
     }
 
