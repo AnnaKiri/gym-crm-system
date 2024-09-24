@@ -1,6 +1,8 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.dto.TrainingInfoDto;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
+import com.kirillova.gymcrmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -20,6 +22,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
@@ -44,6 +47,17 @@ public class TrainingService {
         training.setDate(date);
         training.setDuration(duration);
         ValidationUtil.validate(training);
-        return trainingRepository.save(training);
+        Training savedTraining = trainingRepository.save(training);
+        TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
+                .username(trainer.getUser().getUsername())
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .isActive(trainer.getUser().isActive())
+                .date(date)
+                .duration(duration)
+                .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
+                .build();
+        trainerWorkloadServiceFeignClient.updateTrainingInfo(trainingInfoDto);
+        return savedTraining;
     }
 }
