@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: gym-crm-system
   config:
     import:
       - "classpath:local/application-local.yaml"
@@ -29,11 +31,18 @@ spring:
       mode: always
 
 server:
+  port: 0
   servlet:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
 
 logging:
   level:
