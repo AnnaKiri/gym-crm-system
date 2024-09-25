@@ -79,3 +79,12 @@ cors:
   allowed-headers:
     - "Authorization"
     - "Content-Type"
+
+resilience4j.circuitbreaker:
+  instances:
+    trainerWorkloadService:
+      registerHealthIndicator: true
+      slidingWindowSize: 6
+      permittedNumberOfCallsInHalfOpenState: 4
+      waitDurationInOpenState: 20s
+      failureRateThreshold: 60
