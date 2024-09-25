@@ -1,6 +1,7 @@
 package com.kirillova.gymcrmsystem.service;
 
 import com.kirillova.gymcrmsystem.dto.TrainingInfoDto;
+import com.kirillova.gymcrmsystem.error.DataConflictException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.kirillova.gymcrmsystem.models.Trainee;
@@ -9,6 +10,7 @@ import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.repository.TrainingRepository;
 import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
+import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,13 @@ public class TrainingService {
         training.setDuration(duration);
         ValidationUtil.validate(training);
         Training savedTraining = trainingRepository.save(training);
+
+        String jwtToken = AuthUser.getJwtToken();
+        if (jwtToken == null) {
+            log.error("JWT token is missing, unable to make a call to trainerWorkloadService.");
+            throw new DataConflictException("JWT token is missing");
+        }
+
         TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
                 .username(trainer.getUser().getUsername())
                 .firstName(trainer.getUser().getFirstName())
@@ -57,7 +66,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo(trainingInfoDto);
+        trainerWorkloadServiceFeignClient.updateTrainingInfo(jwtToken, trainingInfoDto);
         return savedTraining;
     }
 }

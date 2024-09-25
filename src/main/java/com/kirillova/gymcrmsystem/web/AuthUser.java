@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem.web;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
 import com.kirillova.gymcrmsystem.models.User;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,10 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
 
     @Getter
     private final User user;
+
+    @Getter
+    @Setter
+    private String token;
 
     public AuthUser(@NonNull User user) {
         super(user.getUsername(), user.getPassword(), Collections.EMPTY_LIST);
@@ -37,6 +42,10 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
 
     public int id() {
         return user.id();
+    }
+
+    public static String getJwtToken() {
+        return get().getToken();
     }
 
     @Override
