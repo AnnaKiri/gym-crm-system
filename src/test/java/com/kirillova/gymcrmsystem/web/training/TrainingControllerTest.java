@@ -3,6 +3,7 @@ package com.kirillova.gymcrmsystem.web.training;
 import com.kirillova.gymcrmsystem.BaseTest;
 import com.kirillova.gymcrmsystem.TrainingTestData;
 import com.kirillova.gymcrmsystem.dto.TrainingDto;
+import com.kirillova.gymcrmsystem.security.JWTProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,14 +29,14 @@ public class TrainingControllerTest extends BaseTest {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId()))
-                .header(HttpHeaders.AUTHORIZATION, BEARER_WITH_SPACE + tokens.get(USER_3.getUsername())))
+                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_3.getUsername())))
                 .andExpect(status().isOk());
     }
 
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINING_1_ID)
-                .header(HttpHeaders.AUTHORIZATION, BEARER_WITH_SPACE + tokens.get(USER_1_USERNAME)))
+                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_1));
@@ -44,7 +45,7 @@ public class TrainingControllerTest extends BaseTest {
     @Test
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + 9999)
-                .header(HttpHeaders.AUTHORIZATION, BEARER_WITH_SPACE + tokens.get(USER_1_USERNAME)))
+                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
