@@ -21,6 +21,7 @@ import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,7 +131,9 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken, trainingInfoDto);
+            trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken,
+                    MDC.get("transactionId"),
+                    trainingInfoDto);
         }
     }
 

@@ -14,6 +14,7 @@ import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -67,7 +68,9 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken, trainingInfoDto);
+        trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken,
+                MDC.get("transactionId"),
+                trainingInfoDto);
         return savedTraining;
     }
 }
