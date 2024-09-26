@@ -9,6 +9,7 @@ import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
 import com.kirillova.gymcrmsystem.repository.TrainingRepository;
 import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
+import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo(jwtToken, trainingInfoDto);
+        trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken, trainingInfoDto);
         return savedTraining;
     }
 }

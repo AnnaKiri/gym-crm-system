@@ -15,6 +15,7 @@ import com.kirillova.gymcrmsystem.repository.TrainerSpecifications;
 import com.kirillova.gymcrmsystem.repository.TrainingRepository;
 import com.kirillova.gymcrmsystem.repository.TrainingSpecifications;
 import com.kirillova.gymcrmsystem.repository.UserRepository;
+import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
 import com.kirillova.gymcrmsystem.web.AuthUser;
@@ -129,7 +130,7 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClient.updateTrainingInfo(jwtToken, trainingInfoDto);
+            trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken, trainingInfoDto);
         }
     }
 

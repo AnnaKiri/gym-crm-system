@@ -12,6 +12,7 @@ import java.util.Date;
 
 @Component
 public class JWTProvider {
+    public static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret}")
     private String secretKey;
