@@ -11,7 +11,6 @@ import com.kirillova.gymcrmsystem.repository.TrainingRepository;
 import com.kirillova.gymcrmsystem.repository.TrainingTypeRepository;
 import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
-import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -27,6 +26,7 @@ public class TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
     private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private final AuthService authService;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
@@ -53,7 +53,7 @@ public class TrainingService {
         ValidationUtil.validate(training);
         Training savedTraining = trainingRepository.save(training);
 
-        String jwtToken = AuthUser.getJwtToken();
+        String jwtToken = authService.getJwtToken();
         if (jwtToken == null) {
             log.error("JWT token is missing, unable to make a call to trainerWorkloadService.");
             throw new DataConflictException("JWT token is missing");

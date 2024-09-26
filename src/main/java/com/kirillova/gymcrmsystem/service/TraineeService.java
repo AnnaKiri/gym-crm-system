@@ -18,7 +18,6 @@ import com.kirillova.gymcrmsystem.repository.UserRepository;
 import com.kirillova.gymcrmsystem.security.JWTProvider;
 import com.kirillova.gymcrmsystem.util.UserUtil;
 import com.kirillova.gymcrmsystem.util.ValidationUtil;
-import com.kirillova.gymcrmsystem.web.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -41,6 +40,7 @@ public class TraineeService {
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
+    private final AuthService authService;
     private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
 
     @Transactional
@@ -115,7 +115,7 @@ public class TraineeService {
             throw new NotFoundException("Not found entity with " + username);
         }
 
-        String jwtToken = AuthUser.getJwtToken();
+        String jwtToken = authService.getJwtToken();
         if (jwtToken == null) {
             log.error("JWT token is missing, unable to make a call to trainerWorkloadService.");
             throw new DataConflictException("JWT token is missing");

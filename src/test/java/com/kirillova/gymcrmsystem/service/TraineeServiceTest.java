@@ -1,7 +1,9 @@
 package com.kirillova.gymcrmsystem.service;
 
+import com.kirillova.gymcrmsystem.dto.TrainingInfoDto;
 import com.kirillova.gymcrmsystem.error.IllegalRequestDataException;
 import com.kirillova.gymcrmsystem.error.NotFoundException;
+import com.kirillova.gymcrmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.kirillova.gymcrmsystem.models.Trainee;
 import com.kirillova.gymcrmsystem.models.Trainer;
 import com.kirillova.gymcrmsystem.models.Training;
@@ -34,6 +36,7 @@ import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_1;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_2;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_3;
 import static com.kirillova.gymcrmsystem.TrainerTestData.TRAINER_MATCHER;
+import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_1;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_2;
 import static com.kirillova.gymcrmsystem.TrainingTestData.TRAINING_MATCHER;
 import static com.kirillova.gymcrmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
@@ -49,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,6 +71,12 @@ public class TraineeServiceTest {
 
     @Mock
     private TrainingRepository trainingRepository;
+
+    @Mock
+    private AuthService authService;
+
+    @Mock
+    private TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
 
     @InjectMocks
     private TraineeService traineeService;
@@ -122,10 +132,14 @@ public class TraineeServiceTest {
     @Test
     void delete() {
         when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
+        when(trainingRepository.findAllWithDetails(any(Specification.class))).thenReturn(List.of(TRAINING_1));
+        when(authService.getJwtToken()).thenReturn("");
+        doNothing().when(trainerWorkloadServiceFeignClient).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
 
         traineeService.delete(USER_1_USERNAME);
 
         verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);
+        verify(trainerWorkloadServiceFeignClient, times(1)).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
 
         when(traineeRepository.findByUsername(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + USER_1_USERNAME));
         assertThrows(NotFoundException.class, () -> traineeRepository.findByUsername(USER_1_USERNAME));
