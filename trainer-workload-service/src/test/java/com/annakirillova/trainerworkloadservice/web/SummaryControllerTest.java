@@ -12,15 +12,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_ADD;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_DELETE;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_INVALID_ACTION_TYPE;
-import static com.annakirillova.trainerworkloadservice.web.TrainingController.REST_URL;
+import static com.annakirillova.trainerworkloadservice.web.SummaryController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TrainingControllerTest extends BaseTest {
+class SummaryControllerTest extends BaseTest {
 
     @Test
-    void updateTrainingInfoAddCase() throws Exception {
+    void updateSummaryAddCase() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get("TEST"))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -29,7 +29,7 @@ class TrainingControllerTest extends BaseTest {
     }
 
     @Test
-    void updateTrainingInfoDeleteCase() throws Exception {
+    void updateSummaryDeleteCase() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get("TEST"))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -38,7 +38,7 @@ class TrainingControllerTest extends BaseTest {
     }
 
     @Test
-    void updateTrainingInfoInvalidActionType() throws Exception {
+    void updateSummaryInvalidActionType() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get("TEST"))
                 .contentType(MediaType.APPLICATION_JSON)

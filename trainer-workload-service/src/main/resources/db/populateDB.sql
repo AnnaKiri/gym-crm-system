@@ -1,2 +1,2 @@
-DELETE FROM trainer;
-DELETE FROM training;
+DELETE FROM Trainer;
+DELETE FROM Summary;

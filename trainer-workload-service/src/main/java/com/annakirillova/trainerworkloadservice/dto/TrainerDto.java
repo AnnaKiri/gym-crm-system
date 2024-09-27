@@ -9,12 +9,12 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString(callSuper = true)
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 public class TrainerDto {
@@ -32,5 +32,5 @@ public class TrainerDto {
     private boolean isActive;
 
     @NotNull
-    private Map<Integer, Map<String, Integer>> monthlySummary;
+    private List<SummaryDto> summaryList;
 }

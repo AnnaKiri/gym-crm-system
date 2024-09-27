@@ -1,5 +1,5 @@
 DELETE FROM trainer;
-DELETE FROM training;
+DELETE FROM summary;
 
 INSERT INTO trainer (username, first_name, last_name, is_active)
 VALUES ('Tom.Cruise', 'Tom', 'Cruise', true),
@@ -7,12 +7,10 @@ VALUES ('Tom.Cruise', 'Tom', 'Cruise', true),
        ('Jennifer.Aniston', 'Jennifer', 'Aniston', true),
        ('Sandra.Bullock', 'Sandra', 'Bullock', true);
 
-INSERT INTO training (trainer_username, date, duration)
-VALUES ('Sandra.Bullock',  '2024-01-01', 60),
-       ('Brad.Pitt', '2024-01-02', 60),
-       ('Brad.Pitt', '2024-01-02', 60),
-       ('Jennifer.Aniston', '2024-01-05', 60),
-       ('Brad.Pitt', '2024-02-05', 60),
-       ('Sandra.Bullock', '2024-01-01', 60),
-       ('Tom.Cruise', '2024-01-06', 60),
-       ('Jennifer.Aniston', '2024-01-05', 60);
+INSERT INTO summary (trainer_username, training_year, training_month,  duration)
+VALUES ('Sandra.Bullock', 2024, 1, 60),
+       ('Sandra.Bullock',  2024, 2, 60),
+       ('Brad.Pitt', 2024, 1, 120),
+       ('Brad.Pitt', 2024, 2, 60),
+       ('Jennifer.Aniston', 2024, 1, 120),
+       ('Tom.Cruise', 2024, 1, 60);

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString(callSuper = true)
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 public class TrainingDto {

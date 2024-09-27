@@ -12,33 +12,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "Training")
+@Table(name = "Summary")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Training extends AbstractBaseEntity {
+public class Summary extends AbstractBaseEntity {
 
     @JoinColumn(name = "trainer_username", referencedColumnName = "username", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Trainer trainer;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "training_year", nullable = false)
     @NotNull
-    private LocalDate date;
+    private Integer year;
+
+    @Column(name = "training_month", nullable = false)
+    @NotNull
+    private Integer month;
 
     @Column(name = "duration", nullable = false)
     @NotNull
-    private int duration;
+    private Integer duration;
 
-    public Training(Integer id, Trainer trainer, LocalDate date, int duration) {
+    public Summary(Integer id, Trainer trainer, Integer year, Integer month, Integer duration) {
         super(id);
         this.trainer = trainer;
-        this.date = date;
+        this.year = year;
+        this.month = month;
         this.duration = duration;
     }
 }
