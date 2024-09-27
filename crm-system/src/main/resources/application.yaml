@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: crm-system
+  config:
+    import:
+      - "classpath:local/application-local.yaml"
+      - "classpath:dev/application-dev.yaml"
+      - "classpath:stg/application-stg.yaml"
+      - "classpath:prod/application-prod.yaml"
+      - "classpath:jwt-config.yaml"
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 20
+        jdbc.batch_size: 20
+
+  sql:
+    init:
+      schema-locations: classpath:db/initDB.sql
+      data-locations: classpath:db/populateDB.sql
+      mode: always
+
+server:
+  port: 0
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+logging:
+  level:
+    root: INFO
+    com.annakirillova.crmsystem: DEBUG
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, env, prometheus
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+
+cors:
+  allowed-origins:
+    - "http://localhost"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
+
+resilience4j.circuitbreaker:
+  instances:
+    trainerWorkloadService:
+      registerHealthIndicator: true
+      slidingWindowSize: 6
+      permittedNumberOfCallsInHalfOpenState: 4
+      waitDurationInOpenState: 20s
+      failureRateThreshold: 60
