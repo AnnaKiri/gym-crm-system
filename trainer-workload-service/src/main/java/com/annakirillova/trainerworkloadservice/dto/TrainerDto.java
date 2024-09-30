@@ -2,12 +2,13 @@ package com.annakirillova.trainerworkloadservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -15,8 +16,9 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @ToString
-@SuperBuilder
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TrainerDto {
 
     @NotBlank
@@ -29,7 +31,7 @@ public class TrainerDto {
     private String lastName;
 
     @NotNull
-    private boolean isActive;
+    private Boolean isActive;
 
     @NotNull
     private List<SummaryDto> summaryList;

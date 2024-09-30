@@ -39,7 +39,7 @@ public class SummaryController {
                         trainingDto.getFirstName(),
                         trainingDto.getLastName(),
                         trainingDto.getUsername(),
-                        trainingDto.isActive());
+                        trainingDto.getIsActive());
                 summaryService.addOrUpdateTrainingDuration(
                         trainer.getUsername(),
                         trainingDto.getDate(),

@@ -2,12 +2,13 @@ package com.annakirillova.crmsystem.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -15,8 +16,9 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode
 @ToString(callSuper = true)
-@SuperBuilder
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TrainingInfoDto {
 
     public static final String ACTION_TYPE_ADD = "ADD";
@@ -32,13 +34,13 @@ public class TrainingInfoDto {
     private String lastName;
 
     @NotNull
-    private boolean isActive;
+    private Boolean isActive;
 
     @NotNull
     private LocalDate date;
 
     @NotNull
-    private int duration;
+    private Integer duration;
 
     @NotBlank
     private String actionType;

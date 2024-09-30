@@ -1,29 +1,25 @@
 package com.annakirillova.trainerworkloadservice.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class SummaryDto {
 
     @NotNull
-    private int year;
+    private Integer year;
 
     @NotNull
-    private int month;
+    private Integer month;
 
     @NotNull
-    private int duration;
-
-    public SummaryDto(int year, int month, int duration) {
-        this.year = year;
-        this.month = month;
-        this.duration = duration;
-    }
+    private Integer duration;
 }
