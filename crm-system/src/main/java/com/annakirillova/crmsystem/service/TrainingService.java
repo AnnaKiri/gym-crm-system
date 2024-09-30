@@ -9,7 +9,6 @@ import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
-import com.annakirillova.crmsystem.security.JWTProvider;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +67,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken,
+        trainerWorkloadServiceFeignClient.updateTrainingInfo("token" + jwtToken,
                 MDC.get("transactionId"),
                 trainingInfoDto);
         return savedTraining;

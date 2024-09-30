@@ -1,3 +1,15 @@
 spring:
   datasource:
-    password: stg_password
+    password: dev_password
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: client-id
+            client-secret: client-secret
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: client-id
+      client-secret: client-secret

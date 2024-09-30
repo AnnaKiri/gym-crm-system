@@ -34,7 +34,6 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TrainingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Training Controller", description = "Managing gym trainings")
-@SecurityRequirement(name = "Bearer Authentication")
 public class TrainingController {
     static final String REST_URL = "/trainings";
 

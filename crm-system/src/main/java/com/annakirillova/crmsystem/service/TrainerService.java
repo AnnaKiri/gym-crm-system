@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.annakirillova.crmsystem.config.SecurityConfig.PASSWORD_ENCODER;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -59,7 +57,7 @@ public class TrainerService {
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainer with username = {}", username);
-        int updatedEntities = userRepository.changePassword(username, PASSWORD_ENCODER.encode(newPassword));
+        int updatedEntities = userRepository.changePassword(username, newPassword);
 
         if (updatedEntities > 0) {
             log.debug("Changed password for user with username = {}", username);

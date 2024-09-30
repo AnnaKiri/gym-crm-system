@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(value = TrainingTypeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Training Type Controller", description = "Managing training types")
-@SecurityRequirement(name = "Bearer Authentication")
 public class TrainingTypeController {
 
     static final String REST_URL = "/training-types";

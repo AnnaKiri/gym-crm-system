@@ -15,7 +15,6 @@ import com.annakirillova.crmsystem.repository.TrainerSpecifications;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingSpecifications;
 import com.annakirillova.crmsystem.repository.UserRepository;
-import com.annakirillova.crmsystem.security.JWTProvider;
 import com.annakirillova.crmsystem.util.UserUtil;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-
-import static com.annakirillova.crmsystem.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Service
 @Slf4j
@@ -70,7 +67,7 @@ public class TraineeService {
     @Transactional
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainee with username = {}", username);
-        int updatedEntities = userRepository.changePassword(username, PASSWORD_ENCODER.encode(newPassword));
+        int updatedEntities = userRepository.changePassword(username, newPassword);
 
         if (updatedEntities > 0) {
             log.debug("Changed password for user with username = {}", username);
@@ -131,7 +128,7 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClient.updateTrainingInfo(JWTProvider.BEARER_PREFIX + jwtToken,
+            trainerWorkloadServiceFeignClient.updateTrainingInfo("token" + jwtToken,
                     MDC.get("transactionId"),
                     trainingInfoDto);
         }

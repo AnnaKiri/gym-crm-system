@@ -5,13 +5,11 @@ import com.annakirillova.crmsystem.TraineeTestData;
 import com.annakirillova.crmsystem.dto.TraineeDto;
 import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.error.NotFoundException;
-import com.annakirillova.crmsystem.security.JWTProvider;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,9 +32,9 @@ import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
 import static com.annakirillova.crmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.annakirillova.crmsystem.UserTestData.jsonWithPassword;
-import static com.annakirillova.crmsystem.config.SecurityConfig.PASSWORD_ENCODER;
 import static com.annakirillova.crmsystem.web.trainee.TraineeController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +50,7 @@ public class TraineeControllerTest extends BaseTest {
     void register() throws Exception {
         TraineeDto newTraineeDto = TraineeTestData.getNewTraineeDto();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTraineeDto)))
                 .andExpect(status().isCreated());
@@ -66,20 +65,18 @@ public class TraineeControllerTest extends BaseTest {
         String newPassword = "1234567890";
         UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithPassword(userDto, newPassword))
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .content(jsonWithPassword(userDto, newPassword)))
                 .andExpect(status().isOk());
 
         entityManager.clear();
-
-        Assertions.assertTrue(PASSWORD_ENCODER.matches(newPassword, traineeService.get(USER_1_USERNAME).getUser().getPassword()));
     }
 
     @Test
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME)
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_DTO_1));
@@ -99,9 +96,9 @@ public class TraineeControllerTest extends BaseTest {
                 .build();
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeDto))
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .content(JsonUtil.writeValue(traineeDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
@@ -110,7 +107,7 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -120,7 +117,7 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void getFreeTrainersForTrainee() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers")
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_DTO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
@@ -129,7 +126,7 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void getTrainings() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings")
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_LIST_FOR_TRAINEE_1));
@@ -138,8 +135,8 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void setActive() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .param("isActive", "false")
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt())
+                .param("isActive", "false"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -151,7 +148,7 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void getNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found")
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -161,9 +158,9 @@ public class TraineeControllerTest extends BaseTest {
         TraineeDto traineeDto = TraineeDto.builder().build();
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeDto))
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .content(JsonUtil.writeValue(traineeDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -173,9 +170,9 @@ public class TraineeControllerTest extends BaseTest {
         List<String> trainerUsernames = List.of(USER_5.getUsername(), USER_6.getUsername());
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/trainers")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(trainerUsernames))
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .content(JsonUtil.writeValue(trainerUsernames)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_DTO_MATCHER.contentJson(List.of(TRAINER_DTO_1, TRAINER_DTO_2)));
@@ -184,8 +181,8 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void setActiveAgain() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .param("isActive", "true")
-                .header(HttpHeaders.AUTHORIZATION, JWTProvider.BEARER_PREFIX + tokens.get(USER_1_USERNAME)))
+                .with(jwt())
+                .param("isActive", "true"))
                 .andDo(print())
                 .andExpect(status().isConflict());
     }

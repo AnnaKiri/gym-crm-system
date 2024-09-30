@@ -1,71 +1,38 @@
 package com.annakirillova.crmsystem.config;
 
-import com.annakirillova.crmsystem.models.User;
-import com.annakirillova.crmsystem.repository.UserRepository;
-import com.annakirillova.crmsystem.security.JWTProvider;
-import com.annakirillova.crmsystem.security.JWTTokenFilter;
-import com.annakirillova.crmsystem.service.TokenService;
-import com.annakirillova.crmsystem.web.AuthUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
 public class SecurityConfig {
-    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    private final UserRepository userRepository;
-    private final JWTProvider jwtProvider;
     private final CorsProperties corsProperties;
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return PASSWORD_ENCODER;
-    }
-
-    @Bean
-    UserDetailsService userDetailsService() {
-        return username -> {
-            log.debug("Authenticating '{}'", username);
-            Optional<User> optionalUser = userRepository.findByUsername(username);
-            return new AuthUser(optionalUser.orElseThrow(
-                    () -> new UsernameNotFoundException("User '" + username + "' was not found")));
-        };
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, TokenService tokenService) throws Exception {
-        http.authenticationManager(authenticationManager)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/trainees").anonymous()
-                        .requestMatchers(HttpMethod.POST, "/trainers").anonymous()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").anonymous()
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JWTTokenFilter(jwtProvider, userDetailsService, tokenService), UsernamePasswordAuthenticationFilter.class)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer
+                                .jwkSetUri("http://localhost/realms/gym-crm-system-realm/protocol/openid-connect/certs")
+                        )
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -73,11 +40,6 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean

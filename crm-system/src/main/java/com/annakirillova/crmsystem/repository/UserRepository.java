@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.annakirillova.crmsystem.config.SecurityConfig.PASSWORD_ENCODER;
-
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -43,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     }
 
     default User prepareAndSaveWithPassword(User user) {
-        user.setPassword(PASSWORD_ENCODER.encode(user.getPassword()));
+        user.setPassword(user.getPassword());
         return save(user);
     }
 }

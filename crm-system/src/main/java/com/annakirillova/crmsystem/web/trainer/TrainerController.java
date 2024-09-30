@@ -13,11 +13,9 @@ import com.annakirillova.crmsystem.models.User;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.util.UserUtil;
-import com.annakirillova.crmsystem.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -54,7 +53,6 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TrainerController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainer Controller", description = "Managing gym trainers")
-@SecurityRequirement(name = "Bearer Authentication")
 public class TrainerController {
     static final String REST_URL = "/trainers";
 
@@ -69,7 +67,6 @@ public class TrainerController {
             @ApiResponse(responseCode = "201", description = "Trainer created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
-    @SecurityRequirement(name = "")
     public ResponseEntity<LoginRequestDto> register(@Valid @RequestBody TrainerDto trainerDto) {
         long start = System.nanoTime();
 
@@ -104,9 +101,9 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username, @AuthenticationPrincipal AuthUser authUser) {
+    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username, @AuthenticationPrincipal Jwt jwt) {
         log.debug("Change password for user {} with username={}", userDto, username);
-        if (!username.equals(authUser.getUser().getUsername())) {
+        if (!username.equals(jwt.getClaimAsString("preferred_username"))) {
             throw new AuthenticationException("You can't change password for user " + username);
         }
         trainerService.changePassword(username, userDto.getNewPassword());
