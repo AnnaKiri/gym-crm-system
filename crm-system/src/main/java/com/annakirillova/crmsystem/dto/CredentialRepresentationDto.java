@@ -9,12 +9,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CredentialRepresentation {
+public class CredentialRepresentationDto {
     private String type;
     private String value;
     private boolean temporary;
 
-    public CredentialRepresentation(String value) {
+    public CredentialRepresentationDto(String value) {
         this.type = "password";
         this.value = value;
         this.temporary = false;

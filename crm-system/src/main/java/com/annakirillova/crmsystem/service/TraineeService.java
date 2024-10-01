@@ -71,7 +71,7 @@ public class TraineeService {
     public boolean changePassword(String username, String newPassword) {
         log.debug("Change password for trainee with username = {}", username);
         int updatedEntities = userRepository.changePassword(username, newPassword);
-
+        authService.updatePassword(username, newPassword);
         if (updatedEntities > 0) {
             log.debug("Changed password for user with username = {}", username);
             return true;

@@ -1,9 +1,10 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.dto.CredentialRepresentation;
+import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +12,12 @@ import java.util.List;
 @Service
 public class AuthService {
 
+    private final KeycloakFeignClient keycloakClient;
+    private final TokenService tokenService;
+
     public String getJwtToken() {
         return "";
     }
-
-    private final KeycloakFeignClient keycloakClient;
-    private final TokenService tokenService;
 
     @Autowired
     public AuthService(KeycloakFeignClient keycloakClient, TokenService tokenService) {
@@ -31,10 +32,33 @@ public class AuthService {
                 .lastName(lastName)
                 .enabled(true)
                 .build();
-        CredentialRepresentation credential = new CredentialRepresentation(password);
+        CredentialRepresentationDto credential = new CredentialRepresentationDto(password);
         user.setCredentials(List.of(credential));
 
         String adminToken = tokenService.getAdminToken().getAccessToken();
         keycloakClient.createUser("Bearer " + adminToken, user);
+    }
+
+    public void updatePassword(String username, String newPassword) {
+        String adminToken = tokenService.getAdminToken().getAccessToken();
+
+        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
+
+        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
+            KeycloakUserDto user = userResponse.getBody().getFirst();
+            String userId = user.getId();
+
+            CredentialRepresentationDto passwordDto = new CredentialRepresentationDto(newPassword);
+
+            ResponseEntity<Void> response = keycloakClient.updatePassword("Bearer " + adminToken, userId, passwordDto);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Password updated successfully for user: " + username);
+            } else {
+                throw new RuntimeException("Failed to update password for user: " + username);
+            }
+        } else {
+            throw new RuntimeException("User not found: " + username);
+        }
     }
 }

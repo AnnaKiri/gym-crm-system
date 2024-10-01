@@ -15,10 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class KeycloakUserDto {
 
+    private String id;
     private String username;
     private String firstName;
     private String lastName;
     private String email;
     private boolean enabled;
-    private List<CredentialRepresentation> credentials;
+    private List<CredentialRepresentationDto> credentials;
 }
