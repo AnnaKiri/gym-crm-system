@@ -1,10 +1,10 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.config.KeycloakProperties;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.feign.KeycloakAuthFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -19,25 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class TokenService {
-
-    @Value("${keycloak.admin.client-id}")
-    private String adminClientId;
-
-    @Value("${keycloak.admin.client-secret}")
-    private String adminClientSecret;
-
-    @Value("${spring.security.oauth2.client.registration.keycloak.client-id}")
-    private String ordinaryClientId;
-
-    @Value("${spring.security.oauth2.client.registration.keycloak.client-secret}")
-    private String ordinaryClientSecret;
-
-    @Value("${keycloak.admin.username}")
-    private String adminUsername;
-
-    @Value("${keycloak.admin.password}")
-    private String adminPassword;
-
+    private final KeycloakProperties keycloakProperties;
     private final KeycloakAuthFeignClient keycloakAuthFeignClient;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JwtDecoder jwtDecoder;
@@ -54,19 +36,19 @@ public class TokenService {
 
     public TokenResponseDto getAdminToken() {
         Map<String, String> formData = new HashMap<>();
-        formData.put("client_id", adminClientId);
-        formData.put("client_secret", adminClientSecret);
+        formData.put("client_id", keycloakProperties.getAdmin().getClientId());
+        formData.put("client_secret", keycloakProperties.getAdmin().getClientSecret());
         formData.put("grant_type", "password");
-        formData.put("username", adminUsername);
-        formData.put("password", adminPassword);
+        formData.put("username", keycloakProperties.getAdmin().getUsername());
+        formData.put("password", keycloakProperties.getAdmin().getPassword());
 
         return keycloakAuthFeignClient.loginUser(formData);
     }
 
     public TokenResponseDto getOrdinaryToken(String username, String password) {
         Map<String, String> formData = new HashMap<>();
-        formData.put("client_id", ordinaryClientId);
-        formData.put("client_secret", ordinaryClientSecret);
+        formData.put("client_id", keycloakProperties.getUser().getClientId());
+        formData.put("client_secret", keycloakProperties.getUser().getClientSecret());
         formData.put("grant_type", "password");
         formData.put("username", username);
         formData.put("password", password);
@@ -76,8 +58,8 @@ public class TokenService {
 
     public void logoutUser(String refreshToken) {
         Map<String, String> request = new HashMap<>();
-        request.put("client_id", ordinaryClientId);
-        request.put("client_secret", ordinaryClientSecret);
+        request.put("client_id", keycloakProperties.getUser().getClientId());
+        request.put("client_secret", keycloakProperties.getUser().getClientSecret());
         request.put("refresh_token", refreshToken);
 
         keycloakAuthFeignClient.logoutUser(request);

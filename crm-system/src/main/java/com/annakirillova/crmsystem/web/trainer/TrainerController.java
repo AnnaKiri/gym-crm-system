@@ -10,6 +10,7 @@ import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.models.User;
+import com.annakirillova.crmsystem.service.AuthService;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.util.UserUtil;
@@ -25,8 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -61,6 +60,7 @@ public class TrainerController {
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final RegisterMetrics registerMetrics;
+    private final AuthService authService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -104,10 +104,10 @@ public class TrainerController {
             @ApiResponse(responseCode = "400", description = "Validation error"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username, @AuthenticationPrincipal Jwt jwt) {
+    public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username) {
         log.debug("Change password for user {} with username={}", userDto, username);
-        if (!username.equals(jwt.getClaimAsString("preferred_username"))) {
-            throw new AuthenticationException("You can't change password for user " + username);
+        if (!username.equalsIgnoreCase(authService.getUsername())) {
+            throw new AuthenticationException("You can't change password for user " + username + " because you're " + authService.getUsername());
         }
         trainerService.changePassword(username, userDto.getNewPassword());
     }

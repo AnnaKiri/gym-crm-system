@@ -49,8 +49,6 @@ logging:
 springdoc:
   show-actuator: true
   swagger-ui:
-    oauth:
-      scopes: openid profile email
     path: /
 
 management:

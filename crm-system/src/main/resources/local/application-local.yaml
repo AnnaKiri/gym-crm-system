@@ -10,25 +10,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: http://localhost/realms/gym-crm-system-realm
-            authorization-uri: http://localhost/realms/gym-crm-system-realm/protocol/openid-connect/auth
-            token-uri: http://localhost/realms/gym-crm-system-realm/protocol/openid-connect/token
-            user-info-uri: http://localhost/realms/gym-crm-system-realm/protocol/openid-connect/userinfo
-            jwk-set-uri: http://localhost/realms/gym-crm-system-realm/protocol/openid-connect/certs
-            user-name-attribute: preferred_username
-        registration:
-          keycloak:
-            scope: openid, profile, email
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-springdoc:
-  swagger-ui:
-    oauth2-redirect-url: http://localhost:5555/swagger-ui/oauth2-redirect.html
 eureka:
   client:
     serviceUrl:
@@ -54,8 +35,8 @@ cors:
 keycloak:
   admin:
     username: gym-crm-system-admin
-    password: admin
     client-id: gym-crm-microservice-admin
-    client-secret: ZNQ5WNAnhkdNt7BsSrw99iSCuqXS2qGM
+  user:
+    client-id: gym-crm-microservice-client
   url: http://localhost
   realm: gym-crm-system-realm
