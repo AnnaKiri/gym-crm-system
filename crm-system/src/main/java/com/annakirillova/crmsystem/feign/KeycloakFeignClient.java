@@ -4,6 +4,7 @@ import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,4 +29,7 @@ public interface KeycloakFeignClient {
 
     @GetMapping("/users")
     ResponseEntity<List<KeycloakUserDto>> getUserByUsername(@RequestHeader("Authorization") String token, @RequestParam("username") String username);
+
+    @DeleteMapping("/users/{userId}")
+    ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String token, @PathVariable("userId") String userId);
 }

@@ -108,6 +108,7 @@ public class TraineeService {
         log.debug("Delete trainee with username = {}", username);
         List<Training> trainings = getTrainings(username, null, null, null, null, null);
         int deletedEntities = userRepository.deleteByUsername(username);
+        authService.deleteUser(username);
 
         if (deletedEntities > 0) {
             log.debug("User and related entities with username = {} deleted", username);

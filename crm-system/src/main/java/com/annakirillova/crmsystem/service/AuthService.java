@@ -61,4 +61,25 @@ public class AuthService {
             throw new RuntimeException("User not found: " + username);
         }
     }
+
+    public void deleteUser(String username) {
+        String adminToken = tokenService.getAdminToken().getAccessToken();
+
+        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
+
+        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
+            KeycloakUserDto user = userResponse.getBody().getFirst();
+            String userId = user.getId();
+
+            ResponseEntity<Void> response = keycloakClient.deleteUser("Bearer " + adminToken, userId);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("User deleted successfully: " + username);
+            } else {
+                throw new RuntimeException("Failed to delete user: " + username);
+            }
+        } else {
+            throw new RuntimeException("User not found: " + username);
+        }
+    }
 }
