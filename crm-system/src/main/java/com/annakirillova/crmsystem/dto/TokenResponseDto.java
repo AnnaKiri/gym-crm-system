@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TokenResponseDto {
 
-    @JsonProperty("access_token")
+    @JsonProperty(value = "access_token", access = JsonProperty.Access.READ_ONLY)
     private String accessToken;
 
-    @JsonProperty("expires_in")
+    @JsonProperty(value = "expires_in", access = JsonProperty.Access.READ_ONLY)
     private Long expiresIn;
 
     @JsonProperty("refresh_token")

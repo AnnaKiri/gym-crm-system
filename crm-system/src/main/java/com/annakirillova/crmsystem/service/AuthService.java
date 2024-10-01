@@ -3,13 +3,14 @@ package com.annakirillova.crmsystem.service;
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final KeycloakFeignClient keycloakClient;
@@ -17,12 +18,6 @@ public class AuthService {
 
     public String getJwtToken() {
         return "";
-    }
-
-    @Autowired
-    public AuthService(KeycloakFeignClient keycloakClient, TokenService tokenService) {
-        this.keycloakClient = keycloakClient;
-        this.tokenService = tokenService;
     }
 
     public void registerUser(String username, String firstName, String lastName, String password) {
@@ -106,4 +101,6 @@ public class AuthService {
             throw new RuntimeException("User not found: " + username);
         }
     }
+
+
 }

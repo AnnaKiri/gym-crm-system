@@ -54,4 +54,13 @@ public class TokenService {
 
         return keycloakAuthFeignClient.loginUser(formData);
     }
+
+    public void logoutUser(String refreshToken) {
+        Map<String, String> request = new HashMap<>();
+        request.put("client_id", ordinaryClientId);
+        request.put("client_secret", ordinaryClientSecret);
+        request.put("refresh_token", refreshToken);
+
+        keycloakAuthFeignClient.logoutUser(request);
+    }
 }
