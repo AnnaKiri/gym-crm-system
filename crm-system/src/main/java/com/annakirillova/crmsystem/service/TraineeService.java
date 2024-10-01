@@ -61,7 +61,10 @@ public class TraineeService {
         trainee.setDateOfBirth(birthday);
         trainee.setUser(newUser);
         ValidationUtil.validate(trainee);
-        return traineeRepository.save(trainee);
+        Trainee savedTrainee = traineeRepository.save(trainee);
+
+        authService.registerUser(savedTrainee.getUser().getUsername(), firstName, lastName, password);
+        return savedTrainee;
     }
 
     @Transactional

@@ -1,8 +1,9 @@
 package com.annakirillova.crmsystem.web;
 
-import com.annakirillova.crmsystem.dto.AuthResponseDto;
 import com.annakirillova.crmsystem.dto.LoginRequestDto;
+import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.service.BruteForceProtectionService;
+import com.annakirillova.crmsystem.service.TokenService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final BruteForceProtectionService bruteForceProtectionService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     @Transactional
-    public AuthResponseDto authenticate(@RequestBody LoginRequestDto loginRequest) {
+    public TokenResponseDto authenticate(@RequestBody LoginRequestDto loginRequest) {
         String username = loginRequest.getUsername();
         log.info("Attempt to login by user: {}", username);
 
@@ -33,20 +35,15 @@ public class AuthController {
         }
 
         try {
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword())
-//            );
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            TokenResponseDto tokenResponseDto = tokenService.getOrdinaryToken(username, loginRequest.getPassword());
             bruteForceProtectionService.resetBlock(username);
-
-//            String jwt = jwtProvider.createToken(username);
             log.info("Login successful for user: {}", username);
 
-            return new AuthResponseDto("jwt");
-        } catch (BadCredentialsException e) {
+            return tokenResponseDto;
+        } catch (Exception e) {
             bruteForceProtectionService.loginFailed(username);
-            throw e;
+            log.info("Wrong credentials for user: {}", username);
+            throw new BadCredentialsException("Wrong credentials");
         }
     }
 

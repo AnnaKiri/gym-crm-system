@@ -16,6 +16,7 @@ import com.annakirillova.crmsystem.util.UserUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TrainerController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainer Controller", description = "Managing gym trainers")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TrainerController {
     static final String REST_URL = "/trainers";
 
@@ -67,6 +69,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "201", description = "Trainer created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
+    @SecurityRequirement(name = "")
     public ResponseEntity<LoginRequestDto> register(@Valid @RequestBody TrainerDto trainerDto) {
         long start = System.nanoTime();
 

@@ -19,6 +19,7 @@ services:
       - KEYCLOAK_DATABASE_USER=postgres
       - KEYCLOAK_DATABASE_PASSWORD=postgres
       - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_LOG_LEVEL=DEBUG
     depends_on:
       - postgresql
   redis:

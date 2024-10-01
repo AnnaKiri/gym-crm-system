@@ -30,6 +30,7 @@ public class TrainerService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final AuthService authService;
 
     @Transactional
     public Trainer create(String firstName, String lastName, Integer specializationId, String password) {
@@ -51,7 +52,11 @@ public class TrainerService {
         trainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         trainer.setUser(newUser);
         ValidationUtil.validate(trainer);
-        return trainerRepository.save(trainer);
+        Trainer savedTrainer = trainerRepository.save(trainer);
+
+        authService.registerUser(savedTrainer.getUser().getUsername(), firstName, lastName, password);
+
+        return savedTrainer;
     }
 
     @Transactional

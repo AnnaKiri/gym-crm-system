@@ -5,6 +5,7 @@ import com.annakirillova.crmsystem.repository.LoginAttemptRepository;
 import com.annakirillova.crmsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class BruteForceProtectionService {
         loginAttemptRepository.deleteByUsername(username);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void loginFailed(String username) {
         userRepository.findByUsername(username).ifPresent(user -> {
             LoginAttempt loginAttempt = loginAttemptRepository.findByUsername(username).orElse(new LoginAttempt());

@@ -17,6 +17,7 @@ import com.annakirillova.crmsystem.util.UserUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @RequiredArgsConstructor
 @RequestMapping(value = TraineeController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Trainee Controller", description = "Managing gym trainees")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TraineeController {
     static final String REST_URL = "/trainees";
 
@@ -70,6 +72,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "201", description = "Trainee created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error")
     })
+    @SecurityRequirement(name = "")
     public ResponseEntity<LoginRequestDto> register(@Valid @RequestBody TraineeDto traineeDto) {
         long start = System.nanoTime();
         log.debug("Register a new trainee {}", traineeDto);
