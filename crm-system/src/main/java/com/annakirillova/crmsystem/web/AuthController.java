@@ -4,12 +4,15 @@ import com.annakirillova.crmsystem.dto.LoginRequestDto;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.service.BruteForceProtectionService;
 import com.annakirillova.crmsystem.service.TokenService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,13 +49,23 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    @Transactional
-    public String logout(@RequestBody TokenResponseDto tokenResponseDto) {
-        try {
-            tokenService.logoutUser(tokenResponseDto.getRefreshToken());
-            return "Logged out successfully";
-        } catch (Exception e) {
-            throw new BadCredentialsException("Invalid token");
+    public String logout(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
+                         @RequestBody TokenResponseDto tokenResponseDto) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            tokenService.invalidateToken(token);
+            SecurityContextHolder.clearContext();
+
+            try {
+                tokenService.logoutUser(tokenResponseDto.getRefreshToken());
+            } catch (Exception e) {
+                throw new BadCredentialsException("Invalid refresh token");
+            }
+
+        } else {
+            throw new BadCredentialsException("Invalid access token");
         }
+
+        return "Logged out successfully";
     }
 }
