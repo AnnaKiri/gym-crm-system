@@ -101,6 +101,8 @@ public class TraineeService {
         updatedTrainee.setAddress(address);
         ValidationUtil.validate(updatedTrainee);
         traineeRepository.save(updatedTrainee);
+
+        authService.updateUser(username, firstName, lastName);
     }
 
     @Transactional

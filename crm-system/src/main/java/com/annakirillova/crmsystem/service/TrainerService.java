@@ -92,6 +92,8 @@ public class TrainerService {
         updatedTrainer.setSpecialization(trainingTypeRepository.getTrainingTypeIfExists(specializationId));
         ValidationUtil.validate(updatedTrainer);
         trainerRepository.save(updatedTrainer);
+
+        authService.updateUser(username, firstName, lastName);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {

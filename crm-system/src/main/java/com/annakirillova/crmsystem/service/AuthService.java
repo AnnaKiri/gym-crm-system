@@ -82,4 +82,28 @@ public class AuthService {
             throw new RuntimeException("User not found: " + username);
         }
     }
+
+    public void updateUser(String username, String newFirstName, String newLastName) {
+        String adminToken = tokenService.getAdminToken().getAccessToken();
+
+        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
+
+        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
+            KeycloakUserDto user = userResponse.getBody().getFirst();
+            String userId = user.getId();
+
+            user.setFirstName(newFirstName);
+            user.setLastName(newLastName);
+
+            ResponseEntity<Void> response = keycloakClient.updateUser("Bearer " + adminToken, userId, user);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("User updated successfully: " + username);
+            } else {
+                throw new RuntimeException("Failed to update user: " + username);
+            }
+        } else {
+            throw new RuntimeException("User not found: " + username);
+        }
+    }
 }

@@ -19,7 +19,8 @@ import java.util.List;
 public interface KeycloakFeignClient {
 
     @PostMapping("/users")
-    ResponseEntity<Void> createUser(@RequestHeader("Authorization") String token, @RequestBody KeycloakUserDto user);
+    ResponseEntity<Void> createUser(@RequestHeader("Authorization") String token,
+                                    @RequestBody KeycloakUserDto user);
 
     @PutMapping("/users/{userId}/reset-password")
     ResponseEntity<Void> updatePassword(@RequestHeader("Authorization") String token,
@@ -28,8 +29,16 @@ public interface KeycloakFeignClient {
     );
 
     @GetMapping("/users")
-    ResponseEntity<List<KeycloakUserDto>> getUserByUsername(@RequestHeader("Authorization") String token, @RequestParam("username") String username);
+    ResponseEntity<List<KeycloakUserDto>> getUserByUsername(@RequestHeader("Authorization") String token,
+                                                            @RequestParam("username") String username);
 
     @DeleteMapping("/users/{userId}")
-    ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String token, @PathVariable("userId") String userId);
+    ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String token,
+                                    @PathVariable("userId") String userId);
+
+    @PutMapping("/users/{userId}")
+    ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String token,
+                                    @PathVariable("userId") String userId,
+                                    @RequestBody KeycloakUserDto user);
+
 }
