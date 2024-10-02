@@ -55,7 +55,7 @@ public class RestExceptionHandler {
             put(NotFoundException.class, NOT_FOUND);
             put(FileNotFoundException.class, NOT_FOUND);
             put(NoHandlerFoundException.class, NOT_FOUND);
-            put(IllegalRequestDataException.class, DATA_CONFLICT);
+            put(IllegalRequestDataException.class, BAD_REQUEST);
             put(AppException.class, APP_ERROR);
             put(UnsupportedOperationException.class, APP_ERROR);
             put(EntityNotFoundException.class, DATA_CONFLICT);

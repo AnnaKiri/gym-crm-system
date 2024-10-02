@@ -5,6 +5,10 @@ import com.annakirillova.trainerworkloadservice.error.IllegalRequestDataExceptio
 import com.annakirillova.trainerworkloadservice.model.Trainer;
 import com.annakirillova.trainerworkloadservice.service.SummaryService;
 import com.annakirillova.trainerworkloadservice.service.TrainerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = SummaryController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@Tag(name = "Summary Controller", description = "Managing trainer summaries")
 public class SummaryController {
 
     static final String REST_URL = "/summaries";
@@ -31,6 +36,12 @@ public class SummaryController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Transactional
+    @Operation(summary = "Update trainer summary", description = "Updates the details of the trainer summary")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Summary updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid action type"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
     public void updateSummary(@Valid @RequestBody TrainingDto trainingDto) {
         log.debug("{} a new training {}", trainingDto.getActionType(), trainingDto);
         switch (trainingDto.getActionType()) {
