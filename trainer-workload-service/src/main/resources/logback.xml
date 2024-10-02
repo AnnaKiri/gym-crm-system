@@ -17,7 +17,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.kirillova.anntrainerworkloadservice" level="debug"/>
+    <logger name="com.annakirillova.trainerworkloadservice" level="debug"/>
 
     <root level="info">
         <appender-ref ref="file"/>

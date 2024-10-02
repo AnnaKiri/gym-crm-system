@@ -1,4 +1,4 @@
-package com.annakirillova.trainerworkloadservice.web;
+package com.annakirillova.trainerworkloadservice.web.trainer;
 
 import com.annakirillova.trainerworkloadservice.dto.TrainerDto;
 import com.annakirillova.trainerworkloadservice.model.Summary;

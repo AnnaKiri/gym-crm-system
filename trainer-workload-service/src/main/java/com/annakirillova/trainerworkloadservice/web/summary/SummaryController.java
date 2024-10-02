@@ -1,4 +1,4 @@
-package com.annakirillova.trainerworkloadservice.web;
+package com.annakirillova.trainerworkloadservice.web.summary;
 
 import com.annakirillova.trainerworkloadservice.dto.TrainingDto;
 import com.annakirillova.trainerworkloadservice.error.IllegalRequestDataException;
