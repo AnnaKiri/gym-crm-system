@@ -15,7 +15,7 @@ public interface TrainerWorkloadServiceFeignClient {
 
     Logger log = LoggerFactory.getLogger(TrainerWorkloadServiceFeignClient.class);
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/trainings")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/summaries")
     @CircuitBreaker(name = "trainerWorkloadService", fallbackMethod = "updateTrainingInfoFallbackMethod")
     void updateTrainingInfo(@RequestHeader("Authorization") String token,
                             @RequestHeader("X-Request-ID") String transactionId,

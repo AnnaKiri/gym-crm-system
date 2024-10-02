@@ -64,6 +64,5 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
-
     }
 }

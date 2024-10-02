@@ -3,7 +3,10 @@ spring:
     name: trainer-workload-service
   config:
     import:
-      - "classpath:jwt-config.yaml"
+      - "classpath:local/application-local.yaml"
+      - "classpath:dev/application-dev.yaml"
+      - "classpath:stg/application-stg.yaml"
+      - "classpath:prod/application-prod.yaml"
   jpa:
     show-sql: true
     open-in-view: false

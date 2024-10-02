@@ -1,3 +1,0 @@
-jwt:
-  secret:
-  expiration: 3600000

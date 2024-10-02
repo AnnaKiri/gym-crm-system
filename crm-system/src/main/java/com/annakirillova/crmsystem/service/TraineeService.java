@@ -136,7 +136,7 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClient.updateTrainingInfo("token" + jwtToken,
+            trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
                     MDC.get("transactionId"),
                     trainingInfoDto);
         }

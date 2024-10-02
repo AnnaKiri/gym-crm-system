@@ -67,7 +67,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo("token" + jwtToken,
+        trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
                 MDC.get("transactionId"),
                 trainingInfoDto);
         return savedTraining;
