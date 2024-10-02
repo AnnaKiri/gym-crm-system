@@ -18,7 +18,6 @@ public interface TrainerWorkloadServiceFeignClient {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/summaries")
     @CircuitBreaker(name = "trainerWorkloadService", fallbackMethod = "updateTrainingInfoFallbackMethod")
-    @TimeLimiter(name = "trainerWorkloadService")
     void updateTrainingInfo(@RequestHeader("Authorization") String token,
                             @RequestBody TrainingInfoDto trainingInfoDto);
 

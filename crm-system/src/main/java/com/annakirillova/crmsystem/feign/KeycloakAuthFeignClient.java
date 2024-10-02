@@ -16,11 +16,9 @@ public interface KeycloakAuthFeignClient {
 
     @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     TokenResponseDto loginUser(Map<String, ?> request);
 
     @PostMapping(value = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> logoutUser(Map<String, ?> request);
 }

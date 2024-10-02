@@ -22,13 +22,11 @@ public interface KeycloakFeignClient {
 
     @PostMapping("/users")
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> createUser(@RequestHeader("Authorization") String token,
                                     @RequestBody KeycloakUserDto user);
 
     @PutMapping("/users/{userId}/reset-password")
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> updatePassword(@RequestHeader("Authorization") String token,
                                         @PathVariable("userId") String userId,
                                         @RequestBody CredentialRepresentationDto credential
@@ -36,19 +34,16 @@ public interface KeycloakFeignClient {
 
     @GetMapping("/users")
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<List<KeycloakUserDto>> getUserByUsername(@RequestHeader("Authorization") String token,
                                                             @RequestParam("username") String username);
 
     @DeleteMapping("/users/{userId}")
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String token,
                                     @PathVariable("userId") String userId);
 
     @PutMapping("/users/{userId}")
     @CircuitBreaker(name = "keycloak")
-    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String token,
                                     @PathVariable("userId") String userId,
                                     @RequestBody KeycloakUserDto user);
