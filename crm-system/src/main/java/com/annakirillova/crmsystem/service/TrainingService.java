@@ -12,7 +12,6 @@ import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -68,7 +67,6 @@ public class TrainingService {
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
         trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
-                MDC.get("transactionId"),
                 trainingInfoDto);
         return savedTraining;
     }

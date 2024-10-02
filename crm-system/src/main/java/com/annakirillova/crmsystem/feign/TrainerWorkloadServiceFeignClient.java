@@ -18,7 +18,6 @@ public interface TrainerWorkloadServiceFeignClient {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/summaries")
     @CircuitBreaker(name = "trainerWorkloadService", fallbackMethod = "updateTrainingInfoFallbackMethod")
     void updateTrainingInfo(@RequestHeader("Authorization") String token,
-                            @RequestHeader("X-Request-ID") String transactionId,
                             @RequestBody TrainingInfoDto trainingInfoDto);
 
     default void updateTrainingInfoFallbackMethod(Throwable throwable) {

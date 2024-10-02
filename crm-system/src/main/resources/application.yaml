@@ -62,6 +62,9 @@ management:
       enabled: true
     health:
       show-details: always
+  tracing:
+    propagation:
+      type: b3,b3_multi,w3c
 
 resilience4j.circuitbreaker:
   instances:

@@ -19,7 +19,6 @@ import com.annakirillova.crmsystem.util.UserUtil;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -137,7 +136,6 @@ public class TraineeService {
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
             trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
-                    MDC.get("transactionId"),
                     trainingInfoDto);
         }
     }
