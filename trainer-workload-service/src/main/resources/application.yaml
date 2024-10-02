@@ -35,6 +35,22 @@ logging:
     root: INFO
     com.kirillova.trainerworkloadservice: DEBUG
 
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, env
+  endpoint:
+    metrics:
+      enabled: true
+    health:
+      show-details: always
+
 server:
   port: 0
   servlet:
