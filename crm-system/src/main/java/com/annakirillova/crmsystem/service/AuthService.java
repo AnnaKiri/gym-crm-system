@@ -4,6 +4,7 @@ import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final KeycloakFeignClient keycloakClient;
@@ -23,8 +25,12 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtToken) {
+            log.debug("Retrieved JWT token for the current authentication context.");
+
             return jwtToken.getToken().getTokenValue();
         }
+
+        log.warn("Failed to retrieve JWT token: Authentication is not of type JwtAuthenticationToken.");
 
         return null;
     }
@@ -33,13 +39,20 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken jwtToken) {
-            return jwtToken.getToken().getClaimAsString("preferred_username");
+            String username = jwtToken.getToken().getClaimAsString("preferred_username");
+
+            log.debug("Retrieved username: {}", username);
+
+            return username;
         }
+        log.warn("Failed to retrieve username: Authentication is not of type JwtAuthenticationToken.");
 
         return null;
     }
 
     public void registerUser(String username, String firstName, String lastName, String password) {
+        log.info("Registering user with username: {}", username);
+
         KeycloakUserDto user = KeycloakUserDto.builder()
                 .username(username)
                 .firstName(firstName)
@@ -51,9 +64,13 @@ public class AuthService {
 
         String adminToken = tokenService.getAdminToken().getAccessToken();
         keycloakClient.createUser("Bearer " + adminToken, user);
+
+        log.info("User {} registered successfully.", username);
     }
 
     public void updatePassword(String username, String newPassword) {
+        log.info("Updating password for user: {}", username);
+
         String adminToken = tokenService.getAdminToken().getAccessToken();
 
         ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
@@ -67,7 +84,7 @@ public class AuthService {
             ResponseEntity<Void> response = keycloakClient.updatePassword("Bearer " + adminToken, userId, passwordDto);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Password updated successfully for user: " + username);
+                log.info("Password updated successfully for user: {}", username);
             } else {
                 throw new RuntimeException("Failed to update password for user: " + username);
             }
@@ -77,6 +94,8 @@ public class AuthService {
     }
 
     public void deleteUser(String username) {
+        log.info("Deleting user with username: {}", username);
+
         String adminToken = tokenService.getAdminToken().getAccessToken();
 
         ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
@@ -88,7 +107,7 @@ public class AuthService {
             ResponseEntity<Void> response = keycloakClient.deleteUser("Bearer " + adminToken, userId);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("User deleted successfully: " + username);
+                log.info("User {} deleted successfully.", username);
             } else {
                 throw new RuntimeException("Failed to delete user: " + username);
             }
@@ -98,6 +117,8 @@ public class AuthService {
     }
 
     public void updateUser(String username, String newFirstName, String newLastName) {
+        log.info("Updating user with username: {}", username);
+
         String adminToken = tokenService.getAdminToken().getAccessToken();
 
         ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
@@ -112,7 +133,7 @@ public class AuthService {
             ResponseEntity<Void> response = keycloakClient.updateUser("Bearer " + adminToken, userId, user);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("User updated successfully: " + username);
+                log.info("User {} updated successfully.", username);
             } else {
                 throw new RuntimeException("Failed to update user: " + username);
             }
@@ -120,6 +141,4 @@ public class AuthService {
             throw new RuntimeException("User not found: " + username);
         }
     }
-
-
 }

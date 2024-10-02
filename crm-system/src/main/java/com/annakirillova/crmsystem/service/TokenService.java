@@ -53,6 +53,8 @@ public class TokenService {
         formData.put("username", username);
         formData.put("password", password);
 
+        log.info("Admin token received successfully.");
+
         return keycloakAuthFeignClient.loginUser(formData);
     }
 
@@ -62,18 +64,25 @@ public class TokenService {
         request.put("client_secret", keycloakProperties.getUser().getClientSecret());
         request.put("refresh_token", refreshToken);
 
+        log.info("User with refresh token {} logged out successfully.", refreshToken);
+
         keycloakAuthFeignClient.logoutUser(request);
     }
 
     public long getExpirationTimeSeconds(String token) {
         Jwt decodedJwt = jwtDecoder.decode(token);
         Instant expiration = decodedJwt.getExpiresAt();
+
+        log.debug("Token {} expires at {}", token, expiration);
+
         return expiration.getEpochSecond();
     }
 
     public long getTimeRemaining(String token) {
         long expirationTimeSeconds = getExpirationTimeSeconds(token);
         long currentTimeSeconds = Instant.now().getEpochSecond();
-        return expirationTimeSeconds - currentTimeSeconds;
+        long timeRemaining = expirationTimeSeconds - currentTimeSeconds;
+        log.debug("Time remaining for token {}: {} seconds", token, timeRemaining);
+        return timeRemaining;
     }
 }
