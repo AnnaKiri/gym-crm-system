@@ -2,6 +2,8 @@ package com.annakirillova.crmsystem.feign;
 
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,24 +21,34 @@ import java.util.List;
 public interface KeycloakFeignClient {
 
     @PostMapping("/users")
+    @CircuitBreaker(name = "keycloak")
+    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> createUser(@RequestHeader("Authorization") String token,
                                     @RequestBody KeycloakUserDto user);
 
     @PutMapping("/users/{userId}/reset-password")
+    @CircuitBreaker(name = "keycloak")
+    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> updatePassword(@RequestHeader("Authorization") String token,
                                         @PathVariable("userId") String userId,
                                         @RequestBody CredentialRepresentationDto credential
     );
 
     @GetMapping("/users")
+    @CircuitBreaker(name = "keycloak")
+    @TimeLimiter(name = "keycloak")
     ResponseEntity<List<KeycloakUserDto>> getUserByUsername(@RequestHeader("Authorization") String token,
                                                             @RequestParam("username") String username);
 
     @DeleteMapping("/users/{userId}")
+    @CircuitBreaker(name = "keycloak")
+    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> deleteUser(@RequestHeader("Authorization") String token,
                                     @PathVariable("userId") String userId);
 
     @PutMapping("/users/{userId}")
+    @CircuitBreaker(name = "keycloak")
+    @TimeLimiter(name = "keycloak")
     ResponseEntity<Void> updateUser(@RequestHeader("Authorization") String token,
                                     @PathVariable("userId") String userId,
                                     @RequestBody KeycloakUserDto user);

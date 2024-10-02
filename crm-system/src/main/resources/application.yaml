@@ -66,11 +66,24 @@ management:
     propagation:
       type: b3,b3_multi,w3c
 
-resilience4j.circuitbreaker:
-  instances:
-    trainerWorkloadService:
-      registerHealthIndicator: true
-      slidingWindowSize: 6
-      permittedNumberOfCallsInHalfOpenState: 4
-      waitDurationInOpenState: 20s
-      failureRateThreshold: 60
+resilience4j:
+  circuitbreaker:
+    instances:
+      trainerWorkloadService:
+        registerHealthIndicator: true
+        slidingWindowSize: 6
+        permittedNumberOfCallsInHalfOpenState: 4
+        waitDurationInOpenState: 20s
+        failureRateThreshold: 60
+      keycloak:
+        registerHealthIndicator: true
+        slidingWindowSize: 6
+        permittedNumberOfCallsInHalfOpenState: 4
+        waitDurationInOpenState: 20s
+        failureRateThreshold: 60
+  timelimiter:
+    instances:
+      keycloak:
+        timeoutDuration: 10s
+      trainerWorkloadService:
+        timeoutDuration: 10s

@@ -2,6 +2,7 @@ package com.annakirillova.crmsystem.feign;
 
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,6 +18,7 @@ public interface TrainerWorkloadServiceFeignClient {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/summaries")
     @CircuitBreaker(name = "trainerWorkloadService", fallbackMethod = "updateTrainingInfoFallbackMethod")
+    @TimeLimiter(name = "trainerWorkloadService")
     void updateTrainingInfo(@RequestHeader("Authorization") String token,
                             @RequestBody TrainingInfoDto trainingInfoDto);
 
