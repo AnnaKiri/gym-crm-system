@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.IllegalRequestDataException;
@@ -126,7 +127,7 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClientHelper.updateTrainingInfo("Bearer " + jwtToken, trainingInfoDto);
+            trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(SecurityConfig.BEARER_PREFIX + jwtToken, trainingInfoDto);
         }
     }
 
@@ -184,7 +185,7 @@ public class TraineeService {
         log.debug("Update trainers list for trainee with username = {}", username);
         Trainee updatedTrainee = traineeRepository
                 .findByUsernameWithTrainerList(username)
-                .orElseThrow(() -> new NotFoundException("Trainer with username=" + username + " not found"));
+                .orElseThrow(() -> new NotFoundException("Trainee with username=" + username + " not found"));
         updatedTrainee.getTrainerList().clear();
         for (String trainerUsername : trainers) {
             Trainer trainer = trainerRepository.getTrainerIfExists(trainerUsername);

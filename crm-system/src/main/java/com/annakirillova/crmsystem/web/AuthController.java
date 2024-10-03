@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.web;
 
+import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.LoginRequestDto;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.service.BruteForceProtectionService;
@@ -51,7 +52,7 @@ public class AuthController {
     @PostMapping("/logout")
     public String logout(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
                          @RequestBody TokenResponseDto tokenResponseDto) {
-        if (token.startsWith("Bearer ")) {
+        if (token.startsWith(SecurityConfig.BEARER_PREFIX)) {
             token = token.substring(7);
             tokenService.invalidateToken(token);
             SecurityContextHolder.clearContext();

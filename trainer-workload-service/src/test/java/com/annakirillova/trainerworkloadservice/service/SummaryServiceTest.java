@@ -35,7 +35,6 @@ class SummaryServiceTest {
     @Mock
     private TrainerRepository trainerRepository;
 
-
     @InjectMocks
     private SummaryService summaryService;
 

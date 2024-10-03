@@ -21,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Slf4j
 @AllArgsConstructor
 public class SecurityConfig {
+    public static final String BEARER_PREFIX = "Bearer ";
 
     private final CorsProperties corsProperties;
     private final KeycloakProperties keycloakProperties;

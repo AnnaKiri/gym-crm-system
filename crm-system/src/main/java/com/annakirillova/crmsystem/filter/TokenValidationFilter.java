@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.filter;
 
+import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +22,7 @@ public class TokenValidationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(SecurityConfig.BEARER_PREFIX)) {
             String token = authorizationHeader.substring(7);
 
             if (tokenService.isTokenInvalid(token)) {

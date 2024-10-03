@@ -30,7 +30,6 @@ public class TrainerService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final AuthService authService;
     private final KeycloakService keycloakService;
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.error.KeycloakOperationException;
@@ -33,7 +34,7 @@ public class KeycloakService {
 
         try {
             String adminToken = tokenService.getAdminToken();
-            keycloakFeignClientHelper.createUserWithCircuitBreaker("Bearer " + adminToken, user).get();
+            keycloakFeignClientHelper.createUserWithCircuitBreaker(SecurityConfig.BEARER_PREFIX + adminToken, user).get();
             log.info("User {} registered successfully.", username);
         } catch (Exception e) {
             throw new KeycloakOperationException("Failed to register user {} : " + username);
@@ -48,7 +49,7 @@ public class KeycloakService {
             CredentialRepresentationDto passwordDto = new CredentialRepresentationDto(newPassword);
             try {
                 String adminToken = tokenService.getAdminToken();
-                keycloakFeignClientHelper.updatePasswordWithCircuitBreaker("Bearer " + adminToken, user.getId(), passwordDto).get();
+                keycloakFeignClientHelper.updatePasswordWithCircuitBreaker(SecurityConfig.BEARER_PREFIX + adminToken, user.getId(), passwordDto).get();
                 log.info("Password updated successfully for user: {}", username);
             } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to update password for user: " + username);
@@ -65,7 +66,7 @@ public class KeycloakService {
         if (user != null) {
             try {
                 String adminToken = tokenService.getAdminToken();
-                keycloakFeignClientHelper.deleteUserWithCircuitBreaker("Bearer " + adminToken, user.getId()).get();
+                keycloakFeignClientHelper.deleteUserWithCircuitBreaker(SecurityConfig.BEARER_PREFIX + adminToken, user.getId()).get();
                 log.info("User {} deleted successfully.", username);
             } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to delete user: " + username);
@@ -85,7 +86,7 @@ public class KeycloakService {
             String adminToken = tokenService.getAdminToken();
 
             try {
-                keycloakFeignClientHelper.updateUserWithCircuitBreaker("Bearer " + adminToken, user.getId(), user).get();
+                keycloakFeignClientHelper.updateUserWithCircuitBreaker(SecurityConfig.BEARER_PREFIX + adminToken, user.getId(), user).get();
                 log.info("User {} updated successfully.", username);
             } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to update user: " + username);
@@ -98,7 +99,7 @@ public class KeycloakService {
     private KeycloakUserDto getUserByUsername(String username) {
         String adminToken = tokenService.getAdminToken();
         try {
-            ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker("Bearer " + adminToken, username).get();
+            ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(SecurityConfig.BEARER_PREFIX + adminToken, username).get();
             if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
                 return userResponse.getBody().getFirst();
             } else {

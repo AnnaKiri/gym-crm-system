@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.NotFoundException;
@@ -65,7 +66,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClientHelper.updateTrainingInfo("Bearer " + jwtToken, trainingInfoDto);
+        trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(SecurityConfig.BEARER_PREFIX + jwtToken, trainingInfoDto);
 
         return savedTraining;
     }
