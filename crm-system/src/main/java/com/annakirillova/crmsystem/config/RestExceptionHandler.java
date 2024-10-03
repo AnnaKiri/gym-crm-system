@@ -5,6 +5,7 @@ import com.annakirillova.crmsystem.error.AuthenticationException;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.ErrorType;
 import com.annakirillova.crmsystem.error.IllegalRequestDataException;
+import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.error.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,7 @@ public class RestExceptionHandler {
             put(DataIntegrityViolationException.class, DATA_CONFLICT);
             put(IllegalArgumentException.class, BAD_DATA);
             put(ValidationException.class, BAD_REQUEST);
+            put(KeycloakOperationException.class, BAD_REQUEST);
             put(HttpRequestMethodNotSupportedException.class, BAD_REQUEST);
             put(ServletRequestBindingException.class, BAD_REQUEST);
             put(AccessDeniedException.class, FORBIDDEN);

@@ -2,6 +2,8 @@ package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
+import com.annakirillova.crmsystem.error.KeycloakOperationException;
+import com.annakirillova.crmsystem.error.NotFoundException;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +31,7 @@ public class AuthService {
 
             return jwtToken.getToken().getTokenValue();
         }
-
         log.warn("Failed to retrieve JWT token: Authentication is not of type JwtAuthenticationToken.");
-
         return null;
     }
 
@@ -46,7 +46,6 @@ public class AuthService {
             return username;
         }
         log.warn("Failed to retrieve username: Authentication is not of type JwtAuthenticationToken.");
-
         return null;
     }
 
@@ -71,74 +70,70 @@ public class AuthService {
     public void updatePassword(String username, String newPassword) {
         log.info("Updating password for user: {}", username);
 
-        String adminToken = tokenService.getAdminToken().getAccessToken();
-
-        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
-
-        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
-            KeycloakUserDto user = userResponse.getBody().getFirst();
-            String userId = user.getId();
-
+        KeycloakUserDto user = getUserByUsername(username);
+        if (user != null) {
             CredentialRepresentationDto passwordDto = new CredentialRepresentationDto(newPassword);
-
-            ResponseEntity<Void> response = keycloakClient.updatePassword("Bearer " + adminToken, userId, passwordDto);
+            ResponseEntity<Void> response = keycloakClient.updatePassword("Bearer " + getAdminToken(), user.getId(), passwordDto);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("Password updated successfully for user: {}", username);
             } else {
-                throw new RuntimeException("Failed to update password for user: " + username);
+                throw new KeycloakOperationException("Failed to update password for user: " + username);
             }
         } else {
-            throw new RuntimeException("User not found: " + username);
+            throw new NotFoundException("User not found: " + username);
         }
     }
 
     public void deleteUser(String username) {
         log.info("Deleting user with username: {}", username);
 
-        String adminToken = tokenService.getAdminToken().getAccessToken();
-
-        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
-
-        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
-            KeycloakUserDto user = userResponse.getBody().getFirst();
-            String userId = user.getId();
-
-            ResponseEntity<Void> response = keycloakClient.deleteUser("Bearer " + adminToken, userId);
+        KeycloakUserDto user = getUserByUsername(username);
+        if (user != null) {
+            ResponseEntity<Void> response = keycloakClient.deleteUser("Bearer " + getAdminToken(), user.getId());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("User {} deleted successfully.", username);
             } else {
-                throw new RuntimeException("Failed to delete user: " + username);
+                throw new KeycloakOperationException("Failed to delete user: " + username);
             }
         } else {
-            throw new RuntimeException("User not found: " + username);
+            throw new NotFoundException("User not found: " + username);
         }
     }
 
     public void updateUser(String username, String newFirstName, String newLastName) {
         log.info("Updating user with username: {}", username);
 
-        String adminToken = tokenService.getAdminToken().getAccessToken();
-
-        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
-
-        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
-            KeycloakUserDto user = userResponse.getBody().getFirst();
-            String userId = user.getId();
-
+        KeycloakUserDto user = getUserByUsername(username);
+        if (user != null) {
             user.setFirstName(newFirstName);
             user.setLastName(newLastName);
 
-            ResponseEntity<Void> response = keycloakClient.updateUser("Bearer " + adminToken, userId, user);
+            ResponseEntity<Void> response = keycloakClient.updateUser("Bearer " + getAdminToken(), user.getId(), user);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("User {} updated successfully.", username);
             } else {
-                throw new RuntimeException("Failed to update user: " + username);
+                throw new KeycloakOperationException("Failed to update user: " + username);
             }
         } else {
-            throw new RuntimeException("User not found: " + username);
+            throw new NotFoundException("User not found: " + username);
+        }
+    }
+
+    private String getAdminToken() {
+        return tokenService.getAdminToken().getAccessToken();
+    }
+
+    private KeycloakUserDto getUserByUsername(String username) {
+        String adminToken = getAdminToken();
+        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
+
+        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
+            return userResponse.getBody().getFirst();
+        } else {
+            return null;
         }
     }
 }

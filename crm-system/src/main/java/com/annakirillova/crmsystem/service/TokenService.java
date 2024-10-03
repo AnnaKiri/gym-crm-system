@@ -2,6 +2,7 @@ package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.config.KeycloakProperties;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.feign.KeycloakAuthFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,37 +36,31 @@ public class TokenService {
     }
 
     public TokenResponseDto getAdminToken() {
-        Map<String, String> formData = new HashMap<>();
-        formData.put("client_id", keycloakProperties.getAdmin().getClientId());
-        formData.put("client_secret", keycloakProperties.getAdmin().getClientSecret());
-        formData.put("grant_type", "password");
-        formData.put("username", keycloakProperties.getAdmin().getUsername());
-        formData.put("password", keycloakProperties.getAdmin().getPassword());
+        Map<String, String> formData = createAuthForm(
+                keycloakProperties.getAdmin().getClientId(),
+                keycloakProperties.getAdmin().getClientSecret(),
+                keycloakProperties.getAdmin().getUsername(),
+                keycloakProperties.getAdmin().getPassword()
+        );
 
-        return keycloakAuthFeignClient.loginUser(formData);
+        return requestToken(formData, "Admin token");
     }
 
     public TokenResponseDto getOrdinaryToken(String username, String password) {
-        Map<String, String> formData = new HashMap<>();
-        formData.put("client_id", keycloakProperties.getUser().getClientId());
-        formData.put("client_secret", keycloakProperties.getUser().getClientSecret());
-        formData.put("grant_type", "password");
-        formData.put("username", username);
-        formData.put("password", password);
+        Map<String, String> formData = createAuthForm(
+                keycloakProperties.getUser().getClientId(),
+                keycloakProperties.getUser().getClientSecret(),
+                username,
+                password
+        );
 
-        log.info("Admin token received successfully.");
-
-        return keycloakAuthFeignClient.loginUser(formData);
+        return requestToken(formData, "Token for user " + username);
     }
 
     public void logoutUser(String refreshToken) {
-        Map<String, String> request = new HashMap<>();
-        request.put("client_id", keycloakProperties.getUser().getClientId());
-        request.put("client_secret", keycloakProperties.getUser().getClientSecret());
-        request.put("refresh_token", refreshToken);
+        Map<String, String> request = createLogoutRequest(refreshToken);
 
         log.info("User with refresh token {} logged out successfully.", refreshToken);
-
         keycloakAuthFeignClient.logoutUser(request);
     }
 
@@ -74,7 +69,6 @@ public class TokenService {
         Instant expiration = decodedJwt.getExpiresAt();
 
         log.debug("Token {} expires at {}", token, expiration);
-
         return expiration.getEpochSecond();
     }
 
@@ -84,5 +78,36 @@ public class TokenService {
         long timeRemaining = expirationTimeSeconds - currentTimeSeconds;
         log.debug("Time remaining for token {}: {} seconds", token, timeRemaining);
         return timeRemaining;
+    }
+
+    private TokenResponseDto requestToken(Map<String, String> formData, String logMessage) {
+        TokenResponseDto tokenResponse;
+        try {
+            tokenResponse = keycloakAuthFeignClient.loginUser(formData);
+            log.info("{} received successfully.", logMessage);
+        } catch (Exception e) {
+            log.error("Failed to retrieve {}.", logMessage, e);
+            throw new KeycloakOperationException("Failed to retrieve. " + logMessage);
+        }
+
+        return tokenResponse;
+    }
+
+    private Map<String, String> createAuthForm(String clientId, String clientSecret, String username, String password) {
+        Map<String, String> formData = new HashMap<>();
+        formData.put("client_id", clientId);
+        formData.put("client_secret", clientSecret);
+        formData.put("grant_type", "password");
+        formData.put("username", username);
+        formData.put("password", password);
+        return formData;
+    }
+
+    private Map<String, String> createLogoutRequest(String refreshToken) {
+        Map<String, String> request = new HashMap<>();
+        request.put("client_id", keycloakProperties.getUser().getClientId());
+        request.put("client_secret", keycloakProperties.getUser().getClientSecret());
+        request.put("refresh_token", refreshToken);
+        return request;
     }
 }

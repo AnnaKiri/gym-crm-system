@@ -35,7 +35,7 @@ public class TrainerController {
     private final TrainerService trainerService;
     private final SummaryService summaryService;
 
-    @GetMapping("/{username}/monthly_summary")
+    @GetMapping("/{username}/monthly-summary")
     @Transactional
     @Operation(summary = "Get trainer details", description = "Gets the summary of the specified trainer")
     @ApiResponses(value = {
