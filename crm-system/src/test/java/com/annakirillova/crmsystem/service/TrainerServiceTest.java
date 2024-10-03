@@ -44,8 +44,7 @@ import static com.annakirillova.crmsystem.UserTestData.USER_5_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_LIST;
 import static com.annakirillova.crmsystem.UserTestData.getNewUser;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,6 +63,9 @@ class TrainerServiceTest {
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
+
+    @Mock
+    private AuthService authService;
 
     @InjectMocks
     private TrainerService trainerService;
@@ -102,7 +104,7 @@ class TrainerServiceTest {
 
     @Test
     void create() {
-        when(userRepository.prepareAndSaveWithPassword(any(User.class))).thenAnswer(invocation -> {
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(USER_1.getId() + 8);
             return user;
@@ -126,11 +128,13 @@ class TrainerServiceTest {
 
         when(trainingTypeRepository.getTrainingTypeIfExists(any(Integer.class))).thenAnswer(invocation -> TRAINING_TYPE_4);
 
+        doNothing().when(authService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
+
         User newUser = getNewUser();
         Trainer newTrainer = getNewTrainer();
-        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization().getId(), newTrainer.getUser().getPassword());
+        Trainer savedTrainer = trainerService.create(newUser.getFirstName(), newUser.getLastName(), newTrainer.getSpecialization().getId(), "password");
 
-        verify(userRepository, times(1)).prepareAndSaveWithPassword(any(User.class));
+        verify(userRepository, times(1)).save(any(User.class));
         verify(trainerRepository, times(1)).save(any(Trainer.class));
 
         int trainerId = savedTrainer.getId();
@@ -154,8 +158,11 @@ class TrainerServiceTest {
 
     @Test
     void changePassword() {
-        when(userRepository.changePassword(eq(USER_5_USERNAME), anyString())).thenReturn(1);
-        Assertions.assertTrue(trainerService.changePassword(USER_5_USERNAME, "newPassword"));
+        doNothing().when(authService).updatePassword(USER_5_USERNAME, "newPassword");
+
+        trainerService.changePassword(USER_5_USERNAME, "newPassword");
+
+        verify(authService, times(1)).updatePassword(USER_5_USERNAME, "newPassword");
     }
 
     @Test

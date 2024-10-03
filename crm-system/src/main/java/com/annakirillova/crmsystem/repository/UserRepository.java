@@ -20,10 +20,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     int updateIsActiveByUsername(@Param("username") String username, @Param("isActive") Boolean isActive);
 
     @Modifying
-    @Query("UPDATE User u SET u.password = :newPassword WHERE u.username = :username")
-    int changePassword(@Param("username") String username, @Param("newPassword") String newPassword);
-
-    @Modifying
     @Query("DELETE FROM User u WHERE u.username = :username")
     int deleteByUsername(@Param("username") String username);
 
@@ -38,10 +34,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     default User getUserIfExists(String username) {
         return findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User with username=" + username + " not found"));
-    }
-
-    default User prepareAndSaveWithPassword(User user) {
-        user.setPassword(user.getPassword());
-        return save(user);
     }
 }

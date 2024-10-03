@@ -111,7 +111,7 @@ public class TraineeController {
     public void changePassword(@Valid @RequestBody UserDto userDto, @PathVariable String username) {
         log.debug("Change password for user {} with username={}", userDto, username);
         if (!username.equalsIgnoreCase(authService.getUsername())) {
-            throw new AuthenticationException("You can't change password for user " + username + "because you're " + authService.getUsername());
+            throw new AuthenticationException("You can't change password for user " + username + " because you're " + authService.getUsername());
         }
         traineeService.changePassword(username, userDto.getNewPassword());
     }

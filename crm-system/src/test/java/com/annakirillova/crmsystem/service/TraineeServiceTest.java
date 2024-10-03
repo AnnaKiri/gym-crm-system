@@ -3,7 +3,6 @@ package com.annakirillova.crmsystem.service;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.error.IllegalRequestDataException;
 import com.annakirillova.crmsystem.error.NotFoundException;
-import com.annakirillova.crmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -25,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1_ID;
@@ -51,7 +51,6 @@ import static com.annakirillova.crmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,14 +75,14 @@ public class TraineeServiceTest {
     private AuthService authService;
 
     @Mock
-    private TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @InjectMocks
     private TraineeService traineeService;
 
     @Test
     void create() {
-        when(userRepository.prepareAndSaveWithPassword(any(User.class))).thenAnswer(invocation -> {
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(USER_1.getId() + 8);
             return user;
@@ -105,11 +104,13 @@ public class TraineeServiceTest {
                     .toList();
         });
 
+        doNothing().when(authService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
+
         User newUser = getNewUser();
         Trainee newTrainee = getNewTrainee();
-        Trainee savedTrainee = traineeService.create(newUser.getFirstName(), newUser.getLastName(), newTrainee.getDateOfBirth(), newTrainee.getAddress(), newTrainee.getUser().getPassword());
+        Trainee savedTrainee = traineeService.create(newUser.getFirstName(), newUser.getLastName(), newTrainee.getDateOfBirth(), newTrainee.getAddress(), "password");
 
-        verify(userRepository, times(1)).prepareAndSaveWithPassword(any(User.class));
+        verify(userRepository, times(1)).save(any(User.class));
         verify(traineeRepository, times(1)).save(any(Trainee.class));
 
         int traineeId = savedTrainee.getId();
@@ -134,12 +135,13 @@ public class TraineeServiceTest {
         when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
         when(trainingRepository.findAllWithDetails(any(Specification.class))).thenReturn(List.of(TRAINING_1));
         when(authService.getJwtToken()).thenReturn("");
-        doNothing().when(trainerWorkloadServiceFeignClient).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
+        when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(anyString(), any(TrainingInfoDto.class)))
+                .thenReturn(CompletableFuture.completedFuture(null));
 
         traineeService.delete(USER_1_USERNAME);
 
         verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);
-        verify(trainerWorkloadServiceFeignClient, times(1)).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
+        verify(trainerWorkloadServiceFeignClientHelper, times(1)).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
 
         when(traineeRepository.findByUsername(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + USER_1_USERNAME));
         assertThrows(NotFoundException.class, () -> traineeRepository.findByUsername(USER_1_USERNAME));
@@ -175,10 +177,13 @@ public class TraineeServiceTest {
 
     @Test
     void changePassword() {
-        when(userRepository.changePassword(eq(USER_1_USERNAME), anyString())).thenReturn(1);
+        doNothing().when(authService).updatePassword(USER_1_USERNAME, "newPassword");
 
-        Assertions.assertTrue(traineeService.changePassword(USER_1_USERNAME, "newPassword"));
+        traineeService.changePassword(USER_1_USERNAME, "newPassword");
+
+        verify(authService, times(1)).updatePassword(USER_1_USERNAME, "newPassword");
     }
+
 
     @Test
     void active() {

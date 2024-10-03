@@ -12,7 +12,6 @@ CREATE TABLE users
     first_name VARCHAR           NOT NULL,
     last_name  VARCHAR           NOT NULL,
     username   VARCHAR           NOT NULL,
-    password   VARCHAR           NOT NULL,
     is_active  BOOL DEFAULT TRUE NOT NULL
 );
 CREATE UNIQUE INDEX users_unique_username_idx ON users (username);

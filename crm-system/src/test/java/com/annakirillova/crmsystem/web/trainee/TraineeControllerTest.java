@@ -3,13 +3,17 @@ package com.annakirillova.crmsystem.web.trainee;
 import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.TraineeTestData;
 import com.annakirillova.crmsystem.dto.TraineeDto;
+import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.service.AuthService;
 import com.annakirillova.crmsystem.service.TraineeService;
+import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,6 +38,13 @@ import static com.annakirillova.crmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.annakirillova.crmsystem.UserTestData.jsonWithPassword;
 import static com.annakirillova.crmsystem.web.trainee.TraineeController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -42,6 +53,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TraineeControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
+    @MockBean
+    private AuthService authService;
+
+    @MockBean
+    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
+
+
     @Autowired
     private TraineeService traineeService;
 
@@ -49,8 +67,15 @@ public class TraineeControllerTest extends BaseTest {
     @DirtiesContext
     void register() throws Exception {
         TraineeDto newTraineeDto = TraineeTestData.getNewTraineeDto();
+
+        doNothing().when(authService).registerUser(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString()
+        );
+
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
-                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTraineeDto)))
                 .andExpect(status().isCreated());
@@ -58,12 +83,27 @@ public class TraineeControllerTest extends BaseTest {
         UserDto created = USER_DTO_MATCHER.readFromJson(action);
         String expectedUsername = newTraineeDto.getFirstName() + "." + newTraineeDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
+
+        verify(authService, times(1)).registerUser(
+                eq(expectedUsername),
+                eq(newTraineeDto.getFirstName()),
+                eq(newTraineeDto.getLastName()),
+                anyString()
+        );
     }
 
     @Test
     void changePassword() throws Exception {
         String newPassword = "1234567890";
-        UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(USER_1.getPassword()).build();
+        UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(newPassword).build();
+
+        when(authService.getUsername()).thenReturn(USER_1_USERNAME);
+
+        doNothing().when(authService).updatePassword(
+                eq(USER_1_USERNAME),
+                eq(newPassword)
+        );
+
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,6 +111,8 @@ public class TraineeControllerTest extends BaseTest {
                 .andExpect(status().isOk());
 
         entityManager.clear();
+
+        verify(authService, times(1)).updatePassword(USER_1_USERNAME, newPassword);
     }
 
     @Test
@@ -106,6 +148,12 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void delete() throws Exception {
+        doNothing().when(authService).deleteUser(USER_1_USERNAME);
+        when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(any(String.class), any(TrainingInfoDto.class)))
+                .thenReturn(null);
+
+        when(authService.getJwtToken()).thenReturn("valid-jwt-token");
+
         perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
                 .with(jwt()))
                 .andDo(print())

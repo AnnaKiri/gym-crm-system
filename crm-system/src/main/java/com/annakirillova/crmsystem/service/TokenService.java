@@ -3,7 +3,6 @@ package com.annakirillova.crmsystem.service;
 import com.annakirillova.crmsystem.config.KeycloakProperties;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.error.KeycloakOperationException;
-import com.annakirillova.crmsystem.feign.KeycloakAuthFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TokenService {
     private final KeycloakProperties keycloakProperties;
-    private final KeycloakAuthFeignClient keycloakAuthFeignClient;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JwtDecoder jwtDecoder;
     private final KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;

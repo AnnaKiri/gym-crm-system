@@ -34,16 +34,6 @@ public class UserRepositoryTest extends BaseTest {
     }
 
     @Test
-    void changePassword() {
-        int changedLines = userRepository.changePassword(USER_1_USERNAME, "newPassword");
-        Assertions.assertEquals(1, changedLines);
-        User retrievedUser = userRepository.findByUsername(USER_1_USERNAME).orElse(null);
-        User updatedUser = new User(USER_1);
-        updatedUser.setPassword("newPassword");
-        USER_MATCHER.assertMatch(retrievedUser, updatedUser);
-    }
-
-    @Test
     void updateIsActiveByUsername() {
         int changedLines = userRepository.updateIsActiveByUsername(USER_1_USERNAME, false);
         Assertions.assertEquals(1, changedLines);

@@ -5,15 +5,15 @@ DELETE FROM users;
 DELETE FROM trainee2trainer;
 DELETE FROM training;
 
-INSERT INTO users (first_name, last_name, username, password, is_active)
-VALUES ('Angelina', 'Jolie', 'Angelina.Jolie', '{noop}password1', true),
-       ('Ryan', 'Reynolds', 'Ryan.Reynolds', '{noop}password2', true),
-       ('Tom', 'Hardy', 'Tom.Hardy', '{noop}password3', true),
-       ('Keanu', 'Reeves', 'Keanu.Reeves', '{noop}password4', true),
-       ('Tom', 'Cruise', 'Tom.Cruise', '{noop}password5', true),
-       ('Brad', 'Pitt', 'Brad.Pitt', '{noop}password6', true),
-       ('Jennifer', 'Aniston', 'Jennifer.Aniston', '{noop}password7', true),
-       ('Sandra', 'Bullock', 'Sandra.Bullock', '{noop}password8', true);
+INSERT INTO users (first_name, last_name, username, is_active)
+VALUES ('Angelina', 'Jolie', 'Angelina.Jolie', true),
+       ('Ryan', 'Reynolds', 'Ryan.Reynolds', true),
+       ('Tom', 'Hardy', 'Tom.Hardy', true),
+       ('Keanu', 'Reeves', 'Keanu.Reeves', true),
+       ('Tom', 'Cruise', 'Tom.Cruise', true),
+       ('Brad', 'Pitt', 'Brad.Pitt', true),
+       ('Jennifer', 'Aniston', 'Jennifer.Aniston', true),
+       ('Sandra', 'Bullock', 'Sandra.Bullock', true);
 
 INSERT INTO training_type (name)
 VALUES ('Strength'),

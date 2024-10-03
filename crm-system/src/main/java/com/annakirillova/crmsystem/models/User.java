@@ -19,7 +19,7 @@ import org.hibernate.annotations.Proxy;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = "password", callSuper = true)
+@ToString(callSuper = true)
 @Proxy(lazy = false)
 public class User extends AbstractBaseEntity {
 
@@ -37,24 +37,18 @@ public class User extends AbstractBaseEntity {
     @NotBlank
     private String username;
 
-    @Column(name = "password", nullable = false)
-    @NotBlank
-    @Size(min = 5)
-    private String password;
-
     @Column(name = "is_active", nullable = false, columnDefinition = "bool default true")
     private boolean isActive;
 
     public User(User user) {
-        this(user.id, user.firstName, user.lastName, user.username, user.password, user.isActive);
+        this(user.id, user.firstName, user.lastName, user.username, user.isActive);
     }
 
-    public User(Integer id, String firstName, String lastName, String username, String password, boolean isActive) {
+    public User(Integer id, String firstName, String lastName, String username, boolean isActive) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        this.password = password;
         this.isActive = isActive;
     }
 }

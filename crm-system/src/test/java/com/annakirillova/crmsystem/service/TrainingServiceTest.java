@@ -1,7 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
@@ -12,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.concurrent.CompletableFuture;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_3;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_3;
@@ -25,8 +25,6 @@ import static com.annakirillova.crmsystem.TrainingTestData.getNewTraining;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,7 +42,7 @@ class TrainingServiceTest {
     private AuthService authService;
 
     @Mock
-    private TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @InjectMocks
     private TrainingService trainingService;
@@ -71,13 +69,14 @@ class TrainingServiceTest {
 
         when(trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
         when(authService.getJwtToken()).thenReturn("");
-        doNothing().when(trainerWorkloadServiceFeignClient).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
+        when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(anyString(), any(TrainingInfoDto.class)))
+                .thenReturn(CompletableFuture.completedFuture(null));
 
         Training newTraining = getNewTraining();
         Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingRepository, times(1)).save(any(Training.class));
-        verify(trainerWorkloadServiceFeignClient, times(1)).updateTrainingInfo(anyString(), eq(null), any(TrainingInfoDto.class));
+        verify(trainerWorkloadServiceFeignClientHelper, times(1)).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
 
         int trainingId = savedTraining.getId();
         newTraining.setId(trainingId);

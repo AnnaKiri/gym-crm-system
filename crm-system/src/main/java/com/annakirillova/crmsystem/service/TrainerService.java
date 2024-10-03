@@ -42,10 +42,9 @@ public class TrainerService {
                 UserUtil.generateUsername(
                         firstName, lastName,
                         userRepository.findUsernamesByFirstNameAndLastName(firstName, lastName)));
-        newUser.setPassword(password);
         newUser.setActive(true);
         ValidationUtil.validate(newUser);
-        newUser = userRepository.prepareAndSaveWithPassword(newUser);
+        newUser = userRepository.save(newUser);
 
         log.debug("Create new trainer");
         Trainer trainer = new Trainer();
@@ -60,18 +59,9 @@ public class TrainerService {
     }
 
     @Transactional
-    public boolean changePassword(String username, String newPassword) {
+    public void changePassword(String username, String newPassword) {
         log.debug("Change password for trainer with username = {}", username);
-        int updatedEntities = userRepository.changePassword(username, newPassword);
-
         authService.updatePassword(username, newPassword);
-
-        if (updatedEntities > 0) {
-            log.debug("Changed password for user with username = {}", username);
-            return true;
-        } else {
-            throw new NotFoundException("Not found entity with " + username);
-        }
     }
 
     public List<Trainer> getTrainersForTrainee(String username) {
