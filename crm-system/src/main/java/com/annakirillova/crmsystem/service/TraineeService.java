@@ -36,6 +36,8 @@ public class TraineeService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final KeycloakService keycloakService;
+
     private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @Transactional
@@ -60,14 +62,14 @@ public class TraineeService {
         ValidationUtil.validate(trainee);
         Trainee savedTrainee = traineeRepository.save(trainee);
 
-        authService.registerUser(savedTrainee.getUser().getUsername(), firstName, lastName, password);
+        keycloakService.registerUser(savedTrainee.getUser().getUsername(), firstName, lastName, password);
         return savedTrainee;
     }
 
     @Transactional
     public void changePassword(String username, String newPassword) {
         log.debug("Change password for trainee with username = {}", username);
-        authService.updatePassword(username, newPassword);
+        keycloakService.updatePassword(username, newPassword);
     }
 
     public List<Trainee> getTraineesForTrainer(String username) {
@@ -92,7 +94,7 @@ public class TraineeService {
         ValidationUtil.validate(updatedTrainee);
         traineeRepository.save(updatedTrainee);
 
-        authService.updateUser(username, firstName, lastName);
+        keycloakService.updateUser(username, firstName, lastName);
     }
 
     @Transactional
@@ -100,7 +102,7 @@ public class TraineeService {
         log.debug("Delete trainee with username = {}", username);
         List<Training> trainings = getTrainings(username, null, null, null, null, null);
         int deletedEntities = userRepository.deleteByUsername(username);
-        authService.deleteUser(username);
+        keycloakService.deleteUser(username);
 
         if (deletedEntities > 0) {
             log.debug("User and related entities with username = {} deleted", username);

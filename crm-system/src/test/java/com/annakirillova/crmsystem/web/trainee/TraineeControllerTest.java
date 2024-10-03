@@ -7,6 +7,7 @@ import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.error.NotFoundException;
 import com.annakirillova.crmsystem.service.AuthService;
+import com.annakirillova.crmsystem.service.KeycloakService;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import com.annakirillova.crmsystem.util.JsonUtil;
@@ -57,6 +58,9 @@ public class TraineeControllerTest extends BaseTest {
     private AuthService authService;
 
     @MockBean
+    private KeycloakService keycloakService;
+
+    @MockBean
     private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
 
@@ -68,7 +72,7 @@ public class TraineeControllerTest extends BaseTest {
     void register() throws Exception {
         TraineeDto newTraineeDto = TraineeTestData.getNewTraineeDto();
 
-        doNothing().when(authService).registerUser(
+        doNothing().when(keycloakService).registerUser(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -84,7 +88,7 @@ public class TraineeControllerTest extends BaseTest {
         String expectedUsername = newTraineeDto.getFirstName() + "." + newTraineeDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
 
-        verify(authService, times(1)).registerUser(
+        verify(keycloakService, times(1)).registerUser(
                 eq(expectedUsername),
                 eq(newTraineeDto.getFirstName()),
                 eq(newTraineeDto.getLastName()),
@@ -99,7 +103,7 @@ public class TraineeControllerTest extends BaseTest {
 
         when(authService.getUsername()).thenReturn(USER_1_USERNAME);
 
-        doNothing().when(authService).updatePassword(
+        doNothing().when(keycloakService).updatePassword(
                 eq(USER_1_USERNAME),
                 eq(newPassword)
         );
@@ -112,7 +116,7 @@ public class TraineeControllerTest extends BaseTest {
 
         entityManager.clear();
 
-        verify(authService, times(1)).updatePassword(USER_1_USERNAME, newPassword);
+        verify(keycloakService, times(1)).updatePassword(USER_1_USERNAME, newPassword);
     }
 
     @Test
@@ -148,7 +152,7 @@ public class TraineeControllerTest extends BaseTest {
 
     @Test
     void delete() throws Exception {
-        doNothing().when(authService).deleteUser(USER_1_USERNAME);
+        doNothing().when(keycloakService).deleteUser(USER_1_USERNAME);
         when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(any(String.class), any(TrainingInfoDto.class)))
                 .thenReturn(null);
 

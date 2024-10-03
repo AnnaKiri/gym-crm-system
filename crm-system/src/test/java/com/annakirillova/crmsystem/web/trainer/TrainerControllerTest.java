@@ -5,6 +5,7 @@ import com.annakirillova.crmsystem.TrainerTestData;
 import com.annakirillova.crmsystem.dto.TrainerDto;
 import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.service.AuthService;
+import com.annakirillova.crmsystem.service.KeycloakService;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
@@ -45,6 +46,9 @@ public class TrainerControllerTest extends BaseTest {
     @MockBean
     private AuthService authService;
 
+    @MockBean
+    private KeycloakService keycloakService;
+
     @Autowired
     private TrainerService trainerService;
 
@@ -53,7 +57,7 @@ public class TrainerControllerTest extends BaseTest {
     void register() throws Exception {
         TrainerDto newTrainerDto = TrainerTestData.getNewTrainerDto();
 
-        doNothing().when(authService).registerUser(
+        doNothing().when(keycloakService).registerUser(
                 any(String.class),
                 any(String.class),
                 any(String.class),
@@ -69,7 +73,7 @@ public class TrainerControllerTest extends BaseTest {
         String expectedUsername = newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
 
-        verify(authService, times(1)).registerUser(
+        verify(keycloakService, times(1)).registerUser(
                 eq(expectedUsername),
                 eq(newTrainerDto.getFirstName()),
                 eq(newTrainerDto.getLastName()),
@@ -84,7 +88,7 @@ public class TrainerControllerTest extends BaseTest {
 
         when(authService.getUsername()).thenReturn(USER_5_USERNAME);
 
-        doNothing().when(authService).updatePassword(
+        doNothing().when(keycloakService).updatePassword(
                 eq(USER_1_USERNAME),
                 eq(newPassword)
         );
@@ -97,7 +101,7 @@ public class TrainerControllerTest extends BaseTest {
 
         entityManager.clear();
 
-        verify(authService, times(1)).updatePassword(USER_5_USERNAME, newPassword);
+        verify(keycloakService, times(1)).updatePassword(USER_5_USERNAME, newPassword);
     }
 
     @Test

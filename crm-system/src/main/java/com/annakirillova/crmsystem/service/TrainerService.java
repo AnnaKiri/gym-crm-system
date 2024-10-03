@@ -31,6 +31,7 @@ public class TrainerService {
     private final UserRepository userRepository;
     private final TrainingTypeRepository trainingTypeRepository;
     private final AuthService authService;
+    private final KeycloakService keycloakService;
 
     @Transactional
     public Trainer create(String firstName, String lastName, Integer specializationId, String password) {
@@ -53,7 +54,7 @@ public class TrainerService {
         ValidationUtil.validate(trainer);
         Trainer savedTrainer = trainerRepository.save(trainer);
 
-        authService.registerUser(savedTrainer.getUser().getUsername(), firstName, lastName, password);
+        keycloakService.registerUser(savedTrainer.getUser().getUsername(), firstName, lastName, password);
 
         return savedTrainer;
     }
@@ -61,7 +62,7 @@ public class TrainerService {
     @Transactional
     public void changePassword(String username, String newPassword) {
         log.debug("Change password for trainer with username = {}", username);
-        authService.updatePassword(username, newPassword);
+        keycloakService.updatePassword(username, newPassword);
     }
 
     public List<Trainer> getTrainersForTrainee(String username) {
@@ -85,7 +86,7 @@ public class TrainerService {
         ValidationUtil.validate(updatedTrainer);
         trainerRepository.save(updatedTrainer);
 
-        authService.updateUser(username, firstName, lastName);
+        keycloakService.updateUser(username, firstName, lastName);
     }
 
     public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String traineeFirstName, String traineeLastName) {

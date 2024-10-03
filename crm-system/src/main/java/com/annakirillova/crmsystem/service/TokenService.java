@@ -34,7 +34,7 @@ public class TokenService {
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
-    public TokenResponseDto getAdminToken() {
+    public String getAdminToken() {
         Map<String, String> formData = createAuthForm(
                 keycloakProperties.getAdmin().getClientId(),
                 keycloakProperties.getAdmin().getClientSecret(),
@@ -42,10 +42,10 @@ public class TokenService {
                 keycloakProperties.getAdmin().getPassword()
         );
 
-        return requestToken(formData, "Admin token");
+        return requestToken(formData, "Admin token").getAccessToken();
     }
 
-    public TokenResponseDto getOrdinaryToken(String username, String password) {
+    public TokenResponseDto getUserToken(String username, String password) {
         Map<String, String> formData = createAuthForm(
                 keycloakProperties.getUser().getClientId(),
                 keycloakProperties.getUser().getClientSecret(),

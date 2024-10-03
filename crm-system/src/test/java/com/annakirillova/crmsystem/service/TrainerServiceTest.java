@@ -65,7 +65,7 @@ class TrainerServiceTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Mock
-    private AuthService authService;
+    private KeycloakService keycloakService;
 
     @InjectMocks
     private TrainerService trainerService;
@@ -128,7 +128,7 @@ class TrainerServiceTest {
 
         when(trainingTypeRepository.getTrainingTypeIfExists(any(Integer.class))).thenAnswer(invocation -> TRAINING_TYPE_4);
 
-        doNothing().when(authService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
+        doNothing().when(keycloakService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
 
         User newUser = getNewUser();
         Trainer newTrainer = getNewTrainer();
@@ -158,11 +158,11 @@ class TrainerServiceTest {
 
     @Test
     void changePassword() {
-        doNothing().when(authService).updatePassword(USER_5_USERNAME, "newPassword");
+        doNothing().when(keycloakService).updatePassword(USER_5_USERNAME, "newPassword");
 
         trainerService.changePassword(USER_5_USERNAME, "newPassword");
 
-        verify(authService, times(1)).updatePassword(USER_5_USERNAME, "newPassword");
+        verify(keycloakService, times(1)).updatePassword(USER_5_USERNAME, "newPassword");
     }
 
     @Test

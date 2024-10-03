@@ -36,7 +36,7 @@ public class AuthController {
         }
 
         try {
-            TokenResponseDto tokenResponseDto = tokenService.getOrdinaryToken(username, loginRequest.getPassword());
+            TokenResponseDto tokenResponseDto = tokenService.getUserToken(username, loginRequest.getPassword());
             bruteForceProtectionService.resetBlock(username);
             log.info("Login successful for user: {}", username);
 

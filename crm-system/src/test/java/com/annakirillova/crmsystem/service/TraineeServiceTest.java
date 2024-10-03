@@ -75,6 +75,9 @@ public class TraineeServiceTest {
     private AuthService authService;
 
     @Mock
+    private KeycloakService keycloakService;
+
+    @Mock
     private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @InjectMocks
@@ -104,7 +107,7 @@ public class TraineeServiceTest {
                     .toList();
         });
 
-        doNothing().when(authService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
+        doNothing().when(keycloakService).registerUser(any(String.class), any(String.class), any(String.class), any(String.class));
 
         User newUser = getNewUser();
         Trainee newTrainee = getNewTrainee();
@@ -177,11 +180,11 @@ public class TraineeServiceTest {
 
     @Test
     void changePassword() {
-        doNothing().when(authService).updatePassword(USER_1_USERNAME, "newPassword");
+        doNothing().when(keycloakService).updatePassword(USER_1_USERNAME, "newPassword");
 
         traineeService.changePassword(USER_1_USERNAME, "newPassword");
 
-        verify(authService, times(1)).updatePassword(USER_1_USERNAME, "newPassword");
+        verify(keycloakService, times(1)).updatePassword(USER_1_USERNAME, "newPassword");
     }
 
 

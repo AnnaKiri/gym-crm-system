@@ -24,7 +24,14 @@ import org.springframework.context.annotation.Configuration;
                         Gym CRM System application
                         <p><b>Test credentials:</b><br>
                         - Trainee: Angelina.Jolie / password1<br>
-                        - Trainer: Brad.Pitt / password6</p>
+                        - Trainee: Ryan.Reynolds / password2<br>
+                        - Trainee: Tom.Hardy / password3<br>
+                        - Trainee: Keanu.Reeves / password4<br>
+                        <br>
+                        - Trainer: Tom.Cruise / password5<br>
+                        - Trainer: Brad.Pitt / password6<br>
+                        - Trainer: Jennifer.Aniston / password7<br>
+                        - Trainer: Sandra.Bullock / password8</p>
                         """
         ),
         security = @SecurityRequirement(name = "Bearer Authentication")
