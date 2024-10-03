@@ -44,6 +44,7 @@ logging:
   level:
     root: INFO
     com.annakirillova.crmsystem: DEBUG
+    org.zalando.logbook: TRACE
 
 springdoc:
   show-actuator: true
@@ -84,3 +85,6 @@ resilience4j:
         timeoutDuration: 10s
       trainerWorkloadService:
         timeoutDuration: 10s
+logbook:
+  format:
+    style: http

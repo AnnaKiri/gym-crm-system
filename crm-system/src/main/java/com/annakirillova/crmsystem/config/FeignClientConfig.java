@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.config;
 
-import feign.Logger;
+import feign.Feign;
 import feign.codec.Encoder;
 import feign.form.spring.SpringFormEncoder;
 import io.micrometer.context.ContextExecutorService;
@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.zalando.logbook.Logbook;
+import org.zalando.logbook.openfeign.FeignLogbookLogger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,11 +21,7 @@ import java.util.concurrent.Executors;
 @Configuration
 @RequiredArgsConstructor
 public class FeignClientConfig {
-
-    @Bean
-    Logger.Level feignLoggerLevel() {
-        return Logger.Level.FULL;
-    }
+    private final Logbook logbook;
 
     @Bean
     public Encoder encoder(ObjectFactory<HttpMessageConverters> converters) {
@@ -46,5 +44,12 @@ public class FeignClientConfig {
     public ExecutorService traceableExecutor() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         return ContextExecutorService.wrap(executorService);
+    }
+
+    @Bean
+    public Feign.Builder feignBuilder() {
+        return Feign.builder()
+                .logger(new FeignLogbookLogger(logbook))
+                .logLevel(feign.Logger.Level.FULL);
     }
 }

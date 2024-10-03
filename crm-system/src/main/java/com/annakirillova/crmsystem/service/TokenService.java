@@ -32,7 +32,7 @@ public class TokenService {
     }
 
     public boolean isTokenInvalid(String token) {
-        log.debug("Checking if token {} is in the invalidated token storage.", token);
+        log.debug("Checking if token {} is in the invalidated token storage.", token.substring(1, 10));
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
@@ -63,7 +63,7 @@ public class TokenService {
 
         try {
             keycloakAuthFeignClientHelper.logoutUserWithCircuitBreaker(request).get();
-            log.info("User with refresh token {} logged out successfully.", refreshToken);
+            log.info("User with refresh token {} logged out successfully.", refreshToken.substring(1, 10));
         } catch (Exception e) {
             throw new KeycloakOperationException("Failed to log out user: " + e.getMessage());
         }
@@ -73,7 +73,7 @@ public class TokenService {
         Jwt decodedJwt = jwtDecoder.decode(token);
         Instant expiration = decodedJwt.getExpiresAt();
 
-        log.debug("Token {} expires at {}", token, expiration);
+        log.debug("Token {} expires at {}", token.substring(1, 10), expiration);
         return expiration.getEpochSecond();
     }
 
@@ -81,7 +81,7 @@ public class TokenService {
         long expirationTimeSeconds = getExpirationTimeSeconds(token);
         long currentTimeSeconds = Instant.now().getEpochSecond();
         long timeRemaining = expirationTimeSeconds - currentTimeSeconds;
-        log.debug("Time remaining for token {}: {} seconds", token, timeRemaining);
+        log.debug("Time remaining for token {}: {} seconds", token.substring(1, 10), timeRemaining);
         return timeRemaining;
     }
 

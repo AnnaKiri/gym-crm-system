@@ -18,6 +18,7 @@
     </appender>
 
     <logger name="com.annakirillova.trainerworkloadservice" level="debug"/>
+    <logger name="org.zalando.logbook" level="trace"/>
 
     <root level="info">
         <appender-ref ref="file"/>

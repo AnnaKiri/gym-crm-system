@@ -1,6 +1,5 @@
 package com.annakirillova.crmsystem.config;
 
-import com.annakirillova.crmsystem.filter.RequestResponseLoggingFilter;
 import com.annakirillova.crmsystem.filter.TokenValidationFilter;
 import com.annakirillova.crmsystem.service.TokenService;
 import lombok.AllArgsConstructor;
@@ -19,15 +18,6 @@ public class FilterConfig {
         registrationBean.setFilter(new TokenValidationFilter(tokenService));
         registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(1);
-        return registrationBean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<RequestResponseLoggingFilter> loggingFilter() {
-        FilterRegistrationBean<RequestResponseLoggingFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new RequestResponseLoggingFilter());
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(2);
         return registrationBean;
     }
 }
