@@ -2,7 +2,6 @@ package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.config.KeycloakProperties;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
-import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -59,12 +58,8 @@ public class TokenService {
     public void logoutUser(String refreshToken) {
         Map<String, String> request = createLogoutRequest(refreshToken);
 
-        try {
-            keycloakAuthFeignClientHelper.logoutUserWithCircuitBreaker(request).get();
-            log.info("User with refresh token {} logged out successfully.", refreshToken.substring(1, 10));
-        } catch (Exception e) {
-            throw new KeycloakOperationException("Failed to log out user: " + e.getMessage());
-        }
+        keycloakAuthFeignClientHelper.logoutUserWithCircuitBreaker(request);
+        log.info("User with refresh token {} logged out successfully.", refreshToken.substring(1, 10));
     }
 
     public long getExpirationTimeSeconds(String token) {
@@ -85,14 +80,8 @@ public class TokenService {
 
     private TokenResponseDto requestToken(Map<String, String> formData, String logMessage) {
         TokenResponseDto tokenResponse;
-        try {
-            tokenResponse = keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(formData).get();
-            ;
-            log.info("{} received successfully.", logMessage);
-        } catch (Exception e) {
-            log.error("Failed to retrieve {}.", logMessage, e);
-            throw new KeycloakOperationException("Failed to retrieve. " + logMessage);
-        }
+        tokenResponse = keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(formData);
+        log.info("{} received successfully.", logMessage);
 
         return tokenResponse;
     }

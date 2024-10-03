@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1_ID;
@@ -138,9 +137,7 @@ public class TraineeServiceTest {
         when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
         when(trainingRepository.findAllWithDetails(any(Specification.class))).thenReturn(List.of(TRAINING_1));
         when(authService.getJwtToken()).thenReturn("");
-        when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(anyString(), any(TrainingInfoDto.class)))
-                .thenReturn(CompletableFuture.completedFuture(null));
-
+        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
         traineeService.delete(USER_1_USERNAME);
 
         verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);

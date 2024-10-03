@@ -1,6 +1,5 @@
 package com.annakirillova.crmsystem.feign;
 
-import com.annakirillova.crmsystem.config.FeignClientConfig;
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Map;
 
-@FeignClient(name = "keycloak-auth", url = "${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect", configuration = FeignClientConfig.class)
+@FeignClient(name = "keycloak-auth", url = "${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect")
 public interface KeycloakAuthFeignClient {
 
     @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

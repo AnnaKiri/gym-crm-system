@@ -28,6 +28,13 @@ spring:
       schema-locations: classpath:db/initDB.sql
       data-locations: classpath:db/populateDB.sql
       mode: always
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
 
 server:
   port: 0
@@ -79,12 +86,6 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 4
         waitDurationInOpenState: 20s
         failureRateThreshold: 60
-  timelimiter:
-    instances:
-      keycloak:
-        timeoutDuration: 10s
-      trainerWorkloadService:
-        timeoutDuration: 10s
 logbook:
   format:
     style: http

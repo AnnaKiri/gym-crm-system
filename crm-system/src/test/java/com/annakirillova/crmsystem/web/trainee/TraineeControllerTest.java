@@ -153,8 +153,7 @@ public class TraineeControllerTest extends BaseTest {
     @Test
     void delete() throws Exception {
         doNothing().when(keycloakService).deleteUser(USER_1_USERNAME);
-        when(trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(any(String.class), any(TrainingInfoDto.class)))
-                .thenReturn(null);
+        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
 
         when(authService.getJwtToken()).thenReturn("valid-jwt-token");
 
