@@ -3,7 +3,6 @@ package com.annakirillova.crmsystem.service;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.NotFoundException;
-import com.annakirillova.crmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -23,7 +22,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
     private final AuthService authService;
 
     public Training get(int id) {
@@ -66,8 +65,8 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
-                trainingInfoDto);
+        trainerWorkloadServiceFeignClientHelper.updateTrainingInfo("Bearer " + jwtToken, trainingInfoDto);
+
         return savedTraining;
     }
 }

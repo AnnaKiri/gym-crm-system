@@ -4,7 +4,6 @@ import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.IllegalRequestDataException;
 import com.annakirillova.crmsystem.error.NotFoundException;
-import com.annakirillova.crmsystem.feign.TrainerWorkloadServiceFeignClient;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -37,7 +36,7 @@ public class TraineeService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
-    private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {
@@ -135,8 +134,7 @@ public class TraineeService {
                     .duration(training.getDuration())
                     .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
                     .build();
-            trainerWorkloadServiceFeignClient.updateTrainingInfo("Bearer " + jwtToken,
-                    trainingInfoDto);
+            trainerWorkloadServiceFeignClientHelper.updateTrainingInfo("Bearer " + jwtToken, trainingInfoDto);
         }
     }
 
@@ -149,7 +147,9 @@ public class TraineeService {
         return freeTrainers;
     }
 
-    public List<Training> getTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainingType, String trainerFirstName, String trainerLastName) {
+    public List<Training> getTrainings(String username, LocalDate fromDate,
+                                       LocalDate toDate, String trainingType,
+                                       String trainerFirstName, String trainerLastName) {
         log.debug("Get Trainings List by trainee username and criteria (from date, to date, trainer name, training type) for trainee with username = {}", username);
 
         Specification<Training> spec = TrainingSpecifications

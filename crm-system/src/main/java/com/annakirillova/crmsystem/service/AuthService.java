@@ -4,7 +4,6 @@ import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.error.NotFoundException;
-import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class AuthService {
 
-    private final KeycloakFeignClient keycloakClient;
+    private final KeycloakFeignClientHelper keycloakFeignClientHelper;
     private final TokenService tokenService;
 
     public String getJwtToken() {
@@ -62,9 +61,12 @@ public class AuthService {
         user.setCredentials(List.of(credential));
 
         String adminToken = tokenService.getAdminToken().getAccessToken();
-        keycloakClient.createUser("Bearer " + adminToken, user);
-
-        log.info("User {} registered successfully.", username);
+        try {
+            keycloakFeignClientHelper.createUserWithCircuitBreaker("Bearer " + adminToken, user).get();
+            log.info("User {} registered successfully.", username);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to register user {} : " + username);
+        }
     }
 
     public void updatePassword(String username, String newPassword) {
@@ -73,11 +75,10 @@ public class AuthService {
         KeycloakUserDto user = getUserByUsername(username);
         if (user != null) {
             CredentialRepresentationDto passwordDto = new CredentialRepresentationDto(newPassword);
-            ResponseEntity<Void> response = keycloakClient.updatePassword("Bearer " + getAdminToken(), user.getId(), passwordDto);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
+            try {
+                keycloakFeignClientHelper.updatePasswordWithCircuitBreaker("Bearer " + getAdminToken(), user.getId(), passwordDto).get();
                 log.info("Password updated successfully for user: {}", username);
-            } else {
+            } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to update password for user: " + username);
             }
         } else {
@@ -90,11 +91,10 @@ public class AuthService {
 
         KeycloakUserDto user = getUserByUsername(username);
         if (user != null) {
-            ResponseEntity<Void> response = keycloakClient.deleteUser("Bearer " + getAdminToken(), user.getId());
-
-            if (response.getStatusCode().is2xxSuccessful()) {
+            try {
+                keycloakFeignClientHelper.deleteUserWithCircuitBreaker("Bearer " + getAdminToken(), user.getId()).get();
                 log.info("User {} deleted successfully.", username);
-            } else {
+            } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to delete user: " + username);
             }
         } else {
@@ -110,11 +110,10 @@ public class AuthService {
             user.setFirstName(newFirstName);
             user.setLastName(newLastName);
 
-            ResponseEntity<Void> response = keycloakClient.updateUser("Bearer " + getAdminToken(), user.getId(), user);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
+            try {
+                keycloakFeignClientHelper.updateUserWithCircuitBreaker("Bearer " + getAdminToken(), user.getId(), user).get();
                 log.info("User {} updated successfully.", username);
-            } else {
+            } catch (Exception e) {
                 throw new KeycloakOperationException("Failed to update user: " + username);
             }
         } else {
@@ -128,12 +127,15 @@ public class AuthService {
 
     private KeycloakUserDto getUserByUsername(String username) {
         String adminToken = getAdminToken();
-        ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakClient.getUserByUsername("Bearer " + adminToken, username);
-
-        if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
-            return userResponse.getBody().getFirst();
-        } else {
-            return null;
+        try {
+            ResponseEntity<List<KeycloakUserDto>> userResponse = keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker("Bearer " + adminToken, username).get();
+            if (userResponse.getBody() != null && !userResponse.getBody().isEmpty()) {
+                return userResponse.getBody().getFirst();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to retrieve user by username: " + username);
         }
     }
 }

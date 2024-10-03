@@ -24,6 +24,7 @@ public class TokenService {
     private final KeycloakAuthFeignClient keycloakAuthFeignClient;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JwtDecoder jwtDecoder;
+    private final KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;
 
     public void invalidateToken(String token) {
         log.debug("Token {} has been marked as invalid.", token);
@@ -60,8 +61,12 @@ public class TokenService {
     public void logoutUser(String refreshToken) {
         Map<String, String> request = createLogoutRequest(refreshToken);
 
-        log.info("User with refresh token {} logged out successfully.", refreshToken);
-        keycloakAuthFeignClient.logoutUser(request);
+        try {
+            keycloakAuthFeignClientHelper.logoutUserWithCircuitBreaker(request).get();
+            log.info("User with refresh token {} logged out successfully.", refreshToken);
+        } catch (Exception e) {
+            throw new KeycloakOperationException("Failed to log out user: " + e.getMessage());
+        }
     }
 
     public long getExpirationTimeSeconds(String token) {
@@ -83,7 +88,8 @@ public class TokenService {
     private TokenResponseDto requestToken(Map<String, String> formData, String logMessage) {
         TokenResponseDto tokenResponse;
         try {
-            tokenResponse = keycloakAuthFeignClient.loginUser(formData);
+            tokenResponse = keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(formData).get();
+            ;
             log.info("{} received successfully.", logMessage);
         } catch (Exception e) {
             log.error("Failed to retrieve {}.", logMessage, e);
