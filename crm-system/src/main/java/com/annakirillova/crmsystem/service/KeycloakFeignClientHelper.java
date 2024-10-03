@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +21,12 @@ import java.util.concurrent.CompletableFuture;
 public class KeycloakFeignClientHelper {
 
     private final KeycloakFeignClient keycloakFeignClient;
+    private final ExecutorService traceableExecutor;
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "createUserFallback")
     @TimeLimiter(name = "keycloakService")
     public CompletableFuture<ResponseEntity<Void>> createUserWithCircuitBreaker(String token, KeycloakUserDto user) {
-        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.createUser(token, user));
+        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.createUser(token, user), traceableExecutor);
     }
 
     public CompletableFuture<ResponseEntity<Void>> createUserFallback(String token, KeycloakUserDto user, Throwable throwable) {
@@ -37,7 +39,7 @@ public class KeycloakFeignClientHelper {
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updatePasswordFallback")
     @TimeLimiter(name = "keycloakService")
     public CompletableFuture<ResponseEntity<Void>> updatePasswordWithCircuitBreaker(String token, String userId, CredentialRepresentationDto credential) {
-        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.updatePassword(token, userId, credential));
+        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.updatePassword(token, userId, credential), traceableExecutor);
     }
 
     public CompletableFuture<ResponseEntity<Void>> updatePasswordFallback(String token, String userId, CredentialRepresentationDto credential, Throwable throwable) {
@@ -50,7 +52,7 @@ public class KeycloakFeignClientHelper {
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "deleteUserFallback")
     @TimeLimiter(name = "keycloakService")
     public CompletableFuture<ResponseEntity<Void>> deleteUserWithCircuitBreaker(String token, String userId) {
-        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.deleteUser(token, userId));
+        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.deleteUser(token, userId), traceableExecutor);
     }
 
     public CompletableFuture<ResponseEntity<Void>> deleteUserFallback(String token, String userId, Throwable throwable) {
@@ -63,7 +65,7 @@ public class KeycloakFeignClientHelper {
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "getUserByUsernameFallback")
     @TimeLimiter(name = "keycloakService")
     public CompletableFuture<ResponseEntity<List<KeycloakUserDto>>> getUserByUsernameWithCircuitBreaker(String token, String username) {
-        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.getUserByUsername(token, username));
+        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.getUserByUsername(token, username), traceableExecutor);
     }
 
     public CompletableFuture<ResponseEntity<List<KeycloakUserDto>>> getUserByUsernameFallback(String token, String username, Throwable throwable) {
@@ -76,7 +78,7 @@ public class KeycloakFeignClientHelper {
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updateUserFallback")
     @TimeLimiter(name = "keycloakService")
     public CompletableFuture<ResponseEntity<Void>> updateUserWithCircuitBreaker(String token, String userId, KeycloakUserDto user) {
-        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.updateUser(token, userId, user));
+        return CompletableFuture.supplyAsync(() -> keycloakFeignClient.updateUser(token, userId, user), traceableExecutor);
     }
 
     public CompletableFuture<ResponseEntity<Void>> updateUserFallback(String token, String userId, KeycloakUserDto user, Throwable throwable) {

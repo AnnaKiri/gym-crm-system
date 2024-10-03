@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @Slf4j
@@ -16,11 +17,12 @@ import java.util.concurrent.CompletableFuture;
 public class TrainerWorkloadServiceFeignClientHelper {
 
     private final TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+    private final ExecutorService traceableExecutor;
 
     @CircuitBreaker(name = "trainerWorkloadService", fallbackMethod = "updateTrainingInfoFallbackMethod")
     @TimeLimiter(name = "trainerWorkloadService")
     public CompletableFuture<Void> updateTrainingInfo(String token, TrainingInfoDto trainingInfoDto) {
-        return CompletableFuture.runAsync(() -> trainerWorkloadServiceFeignClient.updateTrainingInfo(token, trainingInfoDto));
+        return CompletableFuture.runAsync(() -> trainerWorkloadServiceFeignClient.updateTrainingInfo(token, trainingInfoDto), traceableExecutor);
     }
 
     public CompletableFuture<Void> updateTrainingInfoFallbackMethod(String token, TrainingInfoDto trainingInfoDto, Throwable throwable) {
@@ -28,4 +30,3 @@ public class TrainerWorkloadServiceFeignClientHelper {
         return CompletableFuture.completedFuture(null);
     }
 }
-

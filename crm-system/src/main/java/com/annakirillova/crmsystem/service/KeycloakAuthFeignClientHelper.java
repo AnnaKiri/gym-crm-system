@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +19,12 @@ import java.util.concurrent.CompletableFuture;
 public class KeycloakAuthFeignClientHelper {
 
     private final KeycloakAuthFeignClient keycloakAuthFeignClient;
+    private final ExecutorService traceableExecutor;
 
     @CircuitBreaker(name = "keycloakAuthService", fallbackMethod = "loginFallback")
     @TimeLimiter(name = "keycloakAuthService")
     public CompletableFuture<TokenResponseDto> requestTokenWithCircuitBreaker(Map<String, ?> formData) {
-        return CompletableFuture.supplyAsync(() -> keycloakAuthFeignClient.loginUser(formData));
+        return CompletableFuture.supplyAsync(() -> keycloakAuthFeignClient.loginUser(formData), traceableExecutor);
     }
 
     public CompletableFuture<TokenResponseDto> loginFallback(Map<String, ?> formData, Throwable throwable) {
@@ -35,7 +37,7 @@ public class KeycloakAuthFeignClientHelper {
     @CircuitBreaker(name = "keycloakAuthService", fallbackMethod = "logoutFallback")
     @TimeLimiter(name = "keycloakAuthService")
     public CompletableFuture<Void> logoutUserWithCircuitBreaker(Map<String, ?> request) {
-        return CompletableFuture.runAsync(() -> keycloakAuthFeignClient.logoutUser(request));
+        return CompletableFuture.runAsync(() -> keycloakAuthFeignClient.logoutUser(request), traceableExecutor);
     }
 
     public CompletableFuture<Void> logoutFallback(Map<String, ?> request, Throwable throwable) {

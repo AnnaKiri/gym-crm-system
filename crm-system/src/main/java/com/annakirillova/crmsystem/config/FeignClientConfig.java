@@ -3,15 +3,21 @@ package com.annakirillova.crmsystem.config;
 import feign.Logger;
 import feign.codec.Encoder;
 import feign.form.spring.SpringFormEncoder;
+import io.micrometer.context.ContextExecutorService;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Configuration
+@RequiredArgsConstructor
 public class FeignClientConfig {
 
     @Bean
@@ -34,5 +40,11 @@ public class FeignClientConfig {
                 requestTemplate.header("X-B3-Sampled", currentSpan.context().sampled() ? "1" : "0");
             }
         };
+    }
+
+    @Bean
+    public ExecutorService traceableExecutor() {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        return ContextExecutorService.wrap(executorService);
     }
 }

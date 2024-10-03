@@ -30,6 +30,4 @@ public class FilterConfig {
         registrationBean.setOrder(2);
         return registrationBean;
     }
-
-
 }
