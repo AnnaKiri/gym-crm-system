@@ -79,8 +79,7 @@ public class TokenService {
     }
 
     private TokenResponseDto requestToken(Map<String, String> formData, String logMessage) {
-        TokenResponseDto tokenResponse;
-        tokenResponse = keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(formData);
+        TokenResponseDto tokenResponse = keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(formData);
         log.info("{} received successfully.", logMessage);
 
         return tokenResponse;

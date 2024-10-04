@@ -2,35 +2,41 @@ package com.annakirillova.crmsystem.web.trainer;
 
 import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.TrainerTestData;
+import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
+import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.dto.TrainerDto;
 import com.annakirillova.crmsystem.dto.UserDto;
-import com.annakirillova.crmsystem.service.AuthService;
-import com.annakirillova.crmsystem.service.KeycloakService;
+import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
+import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;
 import com.annakirillova.crmsystem.service.TrainerService;
+import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Map;
+
+import static com.annakirillova.crmsystem.FeignClientTestData.KEYCLOAK_USER_RESPONSE;
+import static com.annakirillova.crmsystem.FeignClientTestData.TOKEN_RESPONSE_DTO;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_1;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST;
 import static com.annakirillova.crmsystem.TrainerTestData.getUpdatedTrainerDto;
 import static com.annakirillova.crmsystem.TrainerTestData.jsonWithSpecializationId;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINER_1;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
-import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_5_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.annakirillova.crmsystem.UserTestData.jsonWithPassword;
 import static com.annakirillova.crmsystem.web.trainer.TrainerController.REST_URL;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,10 +50,13 @@ public class TrainerControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @MockBean
-    private AuthService authService;
+    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @MockBean
-    private KeycloakService keycloakService;
+    private KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;
+
+    @MockBean
+    private KeycloakFeignClientHelper keycloakFeignClientHelper;
 
     @Autowired
     private TrainerService trainerService;
@@ -56,12 +65,9 @@ public class TrainerControllerTest extends BaseTest {
     @DirtiesContext
     void register() throws Exception {
         TrainerDto newTrainerDto = TrainerTestData.getNewTrainerDto();
-
-        doNothing().when(keycloakService).registerUser(
-                any(String.class),
-                any(String.class),
-                any(String.class),
-                any(String.class)
+        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
+        doNothing().when(keycloakFeignClientHelper).createUserWithCircuitBreaker(
+                any(String.class), any(KeycloakUserDto.class)
         );
 
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -73,12 +79,12 @@ public class TrainerControllerTest extends BaseTest {
         String expectedUsername = newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName();
         Assertions.assertEquals(expectedUsername, created.getUsername());
 
-        verify(keycloakService, times(1)).registerUser(
-                eq(expectedUsername),
-                eq(newTrainerDto.getFirstName()),
-                eq(newTrainerDto.getLastName()),
-                any(String.class)
+        verify(keycloakAuthFeignClientHelper, times(1)).requestTokenWithCircuitBreaker(
+                any(Map.class)
         );
+        verify(keycloakFeignClientHelper, times(1)).createUserWithCircuitBreaker(
+                any(String.class),
+                any(KeycloakUserDto.class));
     }
 
     @Test
@@ -86,22 +92,28 @@ public class TrainerControllerTest extends BaseTest {
         String newPassword = "1234567890";
         UserDto userDto = UserDto.builder().username(USER_5_USERNAME).password(newPassword).build();
 
-        when(authService.getUsername()).thenReturn(USER_5_USERNAME);
-
-        doNothing().when(keycloakService).updatePassword(
-                eq(USER_1_USERNAME),
-                eq(newPassword)
+        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
+        when(keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class))).thenReturn(KEYCLOAK_USER_RESPONSE);
+        doNothing().when(keycloakFeignClientHelper).updatePasswordWithCircuitBreaker(
+                any(String.class), any(String.class), any(CredentialRepresentationDto.class)
         );
 
+        Jwt jwt = Jwt.withTokenValue("test-token")
+                .header("alg", "HS256")
+                .claim("preferred_username", USER_5_USERNAME)
+                .build();
+
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_5.getUsername() + "/password")
-                .with(jwt())
+                .with(jwt().jwt(jwt))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithPassword(userDto, newPassword)))
                 .andExpect(status().isOk());
 
         entityManager.clear();
 
-        verify(keycloakService, times(1)).updatePassword(USER_5_USERNAME, newPassword);
+        verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
+        verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
+        verify(keycloakFeignClientHelper, times(1)).updatePasswordWithCircuitBreaker(any(String.class), any(String.class), any(CredentialRepresentationDto.class));
     }
 
     @Test
@@ -118,6 +130,12 @@ public class TrainerControllerTest extends BaseTest {
         TrainerDto trainerExpected = getUpdatedTrainerDto();
         trainerExpected.setTraineeList(TRAINER_DTO_1.getTraineeList());
 
+        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
+        when(keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class))).thenReturn(KEYCLOAK_USER_RESPONSE);
+        doNothing().when(keycloakFeignClientHelper).updateUserWithCircuitBreaker(
+                any(String.class), any(String.class), any(KeycloakUserDto.class)
+        );
+
         TrainerDto trainerDto = TrainerDto.builder()
                 .firstName(trainerExpected.getFirstName())
                 .lastName(trainerExpected.getLastName())
@@ -132,6 +150,11 @@ public class TrainerControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST.contentJson(trainerExpected));
+
+        verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
+        verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
+        verify(keycloakFeignClientHelper, times(1)).updateUserWithCircuitBreaker(any(String.class), any(String.class), any(KeycloakUserDto.class));
+
     }
 
     @Test
