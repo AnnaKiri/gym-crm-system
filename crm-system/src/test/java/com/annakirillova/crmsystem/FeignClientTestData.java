@@ -10,4 +10,6 @@ public class FeignClientTestData {
     public static final TokenResponseDto TOKEN_RESPONSE_DTO = new TokenResponseDto("token", 5L, "token");
     public static final KeycloakUserDto KEYCLOAK_USER_DTO = KeycloakUserDto.builder().id("id").build();
     public static final ResponseEntity<List<KeycloakUserDto>> KEYCLOAK_USER_RESPONSE = ResponseEntity.ok(List.of(KEYCLOAK_USER_DTO));
+    public static final MatcherFactory.Matcher<TokenResponseDto> TOKEN_RESPONSE_DTO_MATCHER = MatcherFactory.usingEqualsComparator(TokenResponseDto.class);
+
 }

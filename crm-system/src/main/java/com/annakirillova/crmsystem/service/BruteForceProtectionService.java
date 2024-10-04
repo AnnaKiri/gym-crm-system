@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class BruteForceProtectionService {
-    private static final int MAX_ATTEMPTS = 3;
-    private static final long BLOCK_DURATION_MINUTES = 5;
+    public static final int MAX_ATTEMPTS = 3;
+    public static final long BLOCK_DURATION_MINUTES = 5;
 
     private final LoginAttemptRepository loginAttemptRepository;
     private final UserRepository userRepository;

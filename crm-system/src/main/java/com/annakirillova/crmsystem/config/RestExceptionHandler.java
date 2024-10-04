@@ -74,7 +74,7 @@ public class RestExceptionHandler {
             put(ServletRequestBindingException.class, BAD_REQUEST);
             put(AccessDeniedException.class, FORBIDDEN);
             put(ConstraintViolationException.class, BAD_REQUEST);
-            put(BadCredentialsException.class, FORBIDDEN);
+            put(BadCredentialsException.class, UNAUTHORIZED);
         }
     };
 
