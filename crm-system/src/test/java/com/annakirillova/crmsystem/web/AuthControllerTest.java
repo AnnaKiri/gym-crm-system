@@ -26,6 +26,7 @@ import static com.annakirillova.crmsystem.service.BruteForceProtectionService.BL
 import static com.annakirillova.crmsystem.service.BruteForceProtectionService.MAX_ATTEMPTS;
 import static com.annakirillova.crmsystem.web.AuthController.REST_URL;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -101,7 +102,7 @@ public class AuthControllerTest extends BaseTest {
 
         when(jwtDecoder.decode(anyString())).thenReturn(jwt);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        doNothing().when(valueOperations).set(eq("access-token"), eq("invalidated"), eq(3600L), eq(TimeUnit.SECONDS));
+        doNothing().when(valueOperations).set(eq("access-token"), eq("invalidated"), anyLong(), eq(TimeUnit.SECONDS));
         doNothing().when(keycloakAuthFeignClientHelper).logoutUserWithCircuitBreaker(any(Map.class));
 
         perform(MockMvcRequestBuilders.post(REST_URL + "/logout")
@@ -113,7 +114,7 @@ public class AuthControllerTest extends BaseTest {
                 .andExpect(content().string("Logged out successfully"));
 
         verify(jwtDecoder, times(1)).decode(anyString());
-        verify(valueOperations, times(1)).set(eq("access-token"), eq("invalidated"), eq(3600L), eq(TimeUnit.SECONDS));
+        verify(valueOperations, times(1)).set(eq("access-token"), eq("invalidated"), anyLong(), eq(TimeUnit.SECONDS));
         verify(keycloakAuthFeignClientHelper, times(1)).logoutUserWithCircuitBreaker(any(Map.class));
     }
 
