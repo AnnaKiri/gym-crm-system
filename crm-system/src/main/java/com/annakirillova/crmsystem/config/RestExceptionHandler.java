@@ -4,8 +4,12 @@ import com.annakirillova.crmsystem.error.AppException;
 import com.annakirillova.crmsystem.error.AuthenticationException;
 import com.annakirillova.crmsystem.error.DataConflictException;
 import com.annakirillova.crmsystem.error.ErrorType;
+import com.annakirillova.crmsystem.error.FeignCircuitBreakerException;
+import com.annakirillova.crmsystem.error.FeignConnectionException;
+import com.annakirillova.crmsystem.error.FeignServiceUnavailableException;
+import com.annakirillova.crmsystem.error.FeignTimeoutException;
+import com.annakirillova.crmsystem.error.FeignUnknownException;
 import com.annakirillova.crmsystem.error.IllegalRequestDataException;
-import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.error.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,8 +48,11 @@ import static com.annakirillova.crmsystem.error.ErrorType.APP_ERROR;
 import static com.annakirillova.crmsystem.error.ErrorType.BAD_DATA;
 import static com.annakirillova.crmsystem.error.ErrorType.BAD_REQUEST;
 import static com.annakirillova.crmsystem.error.ErrorType.DATA_CONFLICT;
+import static com.annakirillova.crmsystem.error.ErrorType.FEIGN_CONNECTION_ERROR;
+import static com.annakirillova.crmsystem.error.ErrorType.FEIGN_TIMEOUT;
 import static com.annakirillova.crmsystem.error.ErrorType.FORBIDDEN;
 import static com.annakirillova.crmsystem.error.ErrorType.NOT_FOUND;
+import static com.annakirillova.crmsystem.error.ErrorType.SERVICE_UNAVAILABLE;
 import static com.annakirillova.crmsystem.error.ErrorType.UNAUTHORIZED;
 
 @Getter
@@ -69,12 +76,16 @@ public class RestExceptionHandler {
             put(DataIntegrityViolationException.class, DATA_CONFLICT);
             put(IllegalArgumentException.class, BAD_DATA);
             put(ValidationException.class, BAD_REQUEST);
-            put(KeycloakOperationException.class, BAD_REQUEST);
             put(HttpRequestMethodNotSupportedException.class, BAD_REQUEST);
             put(ServletRequestBindingException.class, BAD_REQUEST);
             put(AccessDeniedException.class, FORBIDDEN);
             put(ConstraintViolationException.class, BAD_REQUEST);
             put(BadCredentialsException.class, UNAUTHORIZED);
+            put(FeignServiceUnavailableException.class, SERVICE_UNAVAILABLE);
+            put(FeignTimeoutException.class, FEIGN_TIMEOUT);
+            put(FeignConnectionException.class, FEIGN_CONNECTION_ERROR);
+            put(FeignCircuitBreakerException.class, SERVICE_UNAVAILABLE);
+            put(FeignUnknownException.class, APP_ERROR);
         }
     };
 

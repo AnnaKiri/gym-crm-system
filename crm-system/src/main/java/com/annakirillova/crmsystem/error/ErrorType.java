@@ -10,7 +10,10 @@ public enum ErrorType {
     NOT_FOUND("Wrong data in request", HttpStatus.NOT_FOUND),
     AUTH_ERROR("Authorization error", HttpStatus.FORBIDDEN),
     UNAUTHORIZED("Request unauthorized", HttpStatus.UNAUTHORIZED),
-    FORBIDDEN("Request forbidden", HttpStatus.FORBIDDEN);
+    SERVICE_UNAVAILABLE("Service Unavailable", HttpStatus.SERVICE_UNAVAILABLE),
+    FORBIDDEN("Request forbidden", HttpStatus.FORBIDDEN),
+    FEIGN_TIMEOUT("Timeout occurred while calling Feign client", HttpStatus.GATEWAY_TIMEOUT),
+    FEIGN_CONNECTION_ERROR("Connection error occurred while calling Feign client", HttpStatus.BAD_GATEWAY);
 
     public final String title;
     public final HttpStatus status;

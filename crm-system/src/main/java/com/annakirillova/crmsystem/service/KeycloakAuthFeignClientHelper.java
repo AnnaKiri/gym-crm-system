@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.TokenResponseDto;
-import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.feign.KeycloakAuthFeignClient;
+import com.annakirillova.crmsystem.util.FeignExceptionUtil;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,8 @@ import java.util.Map;
 @Slf4j
 public class KeycloakAuthFeignClientHelper {
 
+    private static final String SERVICE_NAME = "Keycloak Open Id API Service";
+
     private final KeycloakAuthFeignClient keycloakAuthFeignClient;
 
     @CircuitBreaker(name = "keycloakAuthService", fallbackMethod = "loginFallback")
@@ -23,8 +25,9 @@ public class KeycloakAuthFeignClientHelper {
     }
 
     public TokenResponseDto loginFallback(Map<String, ?> formData, Throwable throwable) {
-        log.error("Keycloak login failed: {}", throwable.getMessage());
-        throw new KeycloakOperationException("Keycloak login failed: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        return new TokenResponseDto();
     }
 
     @CircuitBreaker(name = "keycloakAuthService", fallbackMethod = "logoutFallback")
@@ -33,7 +36,7 @@ public class KeycloakAuthFeignClientHelper {
     }
 
     public void logoutFallback(Map<String, ?> request, Throwable throwable) {
-        log.error("Keycloak logout failed: {}", throwable.getMessage());
-        throw new KeycloakOperationException("Keycloak logout failed: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 }

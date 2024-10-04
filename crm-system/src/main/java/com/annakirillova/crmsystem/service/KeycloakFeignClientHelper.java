@@ -2,20 +2,24 @@ package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
-import com.annakirillova.crmsystem.error.KeycloakOperationException;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
+import com.annakirillova.crmsystem.util.FeignExceptionUtil;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class KeycloakFeignClientHelper {
+
+    private static final String SERVICE_NAME = "Keycloak Admin API Service";
 
     private final KeycloakFeignClient keycloakFeignClient;
 
@@ -25,8 +29,8 @@ public class KeycloakFeignClientHelper {
     }
 
     public void createUserFallback(String token, KeycloakUserDto user, Throwable throwable) {
-        log.error("Failed to create user: {}. Error: {}", user.getUsername(), throwable.getMessage());
-        throw new KeycloakOperationException("Failed to create user: " + user.getUsername() + ". Error: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updatePasswordFallback")
@@ -35,8 +39,8 @@ public class KeycloakFeignClientHelper {
     }
 
     public void updatePasswordFallback(String token, String userId, CredentialRepresentationDto credential, Throwable throwable) {
-        log.error("Failed to update password for user ID: {}. Error: {}", userId, throwable.getMessage());
-        throw new KeycloakOperationException("Failed to update password for user ID: " + userId + ". Error: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "deleteUserFallback")
@@ -45,8 +49,8 @@ public class KeycloakFeignClientHelper {
     }
 
     public void deleteUserFallback(String token, String userId, Throwable throwable) {
-        log.error("Failed to delete user ID: {}. Error: {}", userId, throwable.getMessage());
-        throw new KeycloakOperationException("Failed to delete user ID: " + userId + ". Error: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "getUserByUsernameFallback")
@@ -55,8 +59,9 @@ public class KeycloakFeignClientHelper {
     }
 
     public ResponseEntity<List<KeycloakUserDto>> getUserByUsernameFallback(String token, String username, Throwable throwable) {
-        log.error("Failed to retrieve user by username: {}. Error: {}", username, throwable.getMessage());
-        throw new KeycloakOperationException("Failed to retrieve user by username: " + username + ". Error: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        return ResponseEntity.ok(new ArrayList<>());
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updateUserFallback")
@@ -65,7 +70,7 @@ public class KeycloakFeignClientHelper {
     }
 
     public void updateUserFallback(String token, String userId, KeycloakUserDto user, Throwable throwable) {
-        log.error("Failed to update user ID: {}. Error: {}", userId, throwable.getMessage());
-        throw new KeycloakOperationException("Failed to update user ID: " + userId + ". Error: " + throwable.getMessage());
+        Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
+        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 }
