@@ -50,18 +50,4 @@ public class TraineeUtil {
         }
         return traineeDtoList;
     }
-
-    public static Trainee createNewFromDto(TraineeDto traineeDto) {
-        User newUser = new User();
-        newUser.setFirstName(traineeDto.getFirstName());
-        newUser.setLastName(traineeDto.getLastName());
-        newUser.setUsername(traineeDto.getFirstName() + "." + traineeDto.getLastName());
-        newUser.setActive(true);
-
-        Trainee trainee = new Trainee();
-        trainee.setAddress(traineeDto.getAddress());
-        trainee.setDateOfBirth(traineeDto.getBirthday());
-        trainee.setUser(newUser);
-        return trainee;
-    }
 }
