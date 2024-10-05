@@ -1,8 +1,6 @@
 package com.annakirillova.crmsystem.web;
 
 import com.annakirillova.crmsystem.BaseTest;
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.models.LoginAttempt;
 import com.annakirillova.crmsystem.repository.LoginAttemptRepository;
 import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
@@ -21,6 +19,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static com.annakirillova.crmsystem.FeignClientTestData.LOGIN_REQUEST_DTO;
+import static com.annakirillova.crmsystem.FeignClientTestData.TOKEN_RESPONSE_DTO;
 import static com.annakirillova.crmsystem.FeignClientTestData.TOKEN_RESPONSE_DTO_MATCHER;
 import static com.annakirillova.crmsystem.service.BruteForceProtectionService.BLOCK_DURATION_MINUTES;
 import static com.annakirillova.crmsystem.service.BruteForceProtectionService.MAX_ATTEMPTS;
@@ -49,51 +49,44 @@ public class AuthControllerTest extends BaseTest {
 
     @Test
     void authenticateSuccess() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("user1", "password1");
-        TokenResponseDto tokenResponseDto = new TokenResponseDto("access-token", 5L, "refresh-token");
-
-        when(loginAttemptRepository.findByUsername(loginRequestDto.getUsername())).thenReturn(Optional.empty());
-        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(tokenResponseDto);
-        when(loginAttemptRepository.deleteByUsername(loginRequestDto.getUsername())).thenReturn(1);
+        when(loginAttemptRepository.findByUsername(LOGIN_REQUEST_DTO.getUsername())).thenReturn(Optional.empty());
+        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
+        when(loginAttemptRepository.deleteByUsername(LOGIN_REQUEST_DTO.getUsername())).thenReturn(1);
 
         perform(MockMvcRequestBuilders.post(REST_URL + "/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(loginRequestDto)))
+                .content(JsonUtil.writeValue(LOGIN_REQUEST_DTO)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TOKEN_RESPONSE_DTO_MATCHER.contentJson(tokenResponseDto));
+                .andExpect(TOKEN_RESPONSE_DTO_MATCHER.contentJson(TOKEN_RESPONSE_DTO));
 
-        verify(loginAttemptRepository, times(1)).findByUsername(loginRequestDto.getUsername());
+        verify(loginAttemptRepository, times(1)).findByUsername(LOGIN_REQUEST_DTO.getUsername());
         verify(keycloakAuthFeignClientHelper, times(1)).requestTokenWithCircuitBreaker(any(Map.class));
-        verify(loginAttemptRepository, times(1)).deleteByUsername(loginRequestDto.getUsername());
+        verify(loginAttemptRepository, times(1)).deleteByUsername(LOGIN_REQUEST_DTO.getUsername());
     }
 
     @Test
     void authenticateBlockedUser() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("blockedUser", "password1");
         LoginAttempt loginAttempt = new LoginAttempt();
         loginAttempt.setAttempts(MAX_ATTEMPTS);
         loginAttempt.setBlockedUntil(LocalDateTime.now().plusMinutes(BLOCK_DURATION_MINUTES));
 
-        when(loginAttemptRepository.findByUsername(loginRequestDto.getUsername()))
+        when(loginAttemptRepository.findByUsername(LOGIN_REQUEST_DTO.getUsername()))
                 .thenReturn(Optional.of(loginAttempt));
 
         perform(MockMvcRequestBuilders.post(REST_URL + "/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(loginRequestDto)))
+                .content(JsonUtil.writeValue(LOGIN_REQUEST_DTO)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
 
-        verify(loginAttemptRepository, times(1)).findByUsername(loginRequestDto.getUsername());
+        verify(loginAttemptRepository, times(1)).findByUsername(LOGIN_REQUEST_DTO.getUsername());
     }
 
     @Test
     void logoutSuccess() throws Exception {
-        String accessToken = "access-token";
-        TokenResponseDto tokenResponseDto = new TokenResponseDto("access-token", 5L, "refresh-token");
-
-        Jwt jwt = Jwt.withTokenValue(accessToken)
+        Jwt jwt = Jwt.withTokenValue("access-token")
                 .header("alg", "HS256")
                 .claim("sub", "user1")
                 .issuedAt(Instant.now())
@@ -108,7 +101,7 @@ public class AuthControllerTest extends BaseTest {
         perform(MockMvcRequestBuilders.post(REST_URL + "/logout")
                 .with(jwt().jwt(jwt))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(tokenResponseDto)))
+                .content(JsonUtil.writeValue(TOKEN_RESPONSE_DTO)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("Logged out successfully"));
@@ -120,32 +113,27 @@ public class AuthControllerTest extends BaseTest {
 
     @Test
     void logoutInvalidToken() throws Exception {
-        String invalidToken = "InvalidToken";
-        TokenResponseDto tokenResponseDto = new TokenResponseDto("access-token", 5L, "refresh-token");
-
         perform(MockMvcRequestBuilders.post(REST_URL + "/logout")
-                .header(HttpHeaders.AUTHORIZATION, invalidToken)
+                .header(HttpHeaders.AUTHORIZATION, "InvalidToken")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(tokenResponseDto)))
+                .content(JsonUtil.writeValue(TOKEN_RESPONSE_DTO)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void authenticateWrongCredentials() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("user1", "wrongPassword");
-
-        when(loginAttemptRepository.findByUsername(loginRequestDto.getUsername())).thenReturn(Optional.empty());
+        when(loginAttemptRepository.findByUsername(LOGIN_REQUEST_DTO.getUsername())).thenReturn(Optional.empty());
         when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class)))
                 .thenThrow(new BadCredentialsException("Wrong credentials"));
 
         perform(MockMvcRequestBuilders.post(REST_URL + "/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(loginRequestDto)))
+                .content(JsonUtil.writeValue(LOGIN_REQUEST_DTO)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
 
-        verify(loginAttemptRepository, times(1)).findByUsername(loginRequestDto.getUsername());
+        verify(loginAttemptRepository, times(1)).findByUsername(LOGIN_REQUEST_DTO.getUsername());
         verify(keycloakAuthFeignClientHelper, times(1)).requestTokenWithCircuitBreaker(any(Map.class));
     }
 }

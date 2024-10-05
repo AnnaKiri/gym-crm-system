@@ -38,7 +38,7 @@ public class AuthController {
     @Operation(summary = "Login", description = "Use this endpoint for getting tokens")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successfully"),
-            @ApiResponse(responseCode = "401", description = "Wrong credentials our you're blocked"),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials or you're blocked"),
     })
     public TokenResponseDto authenticate(@RequestBody LoginRequestDto loginRequest) {
         String username = loginRequest.getUsername();

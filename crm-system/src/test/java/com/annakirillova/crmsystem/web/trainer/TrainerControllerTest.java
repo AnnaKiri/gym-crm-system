@@ -9,7 +9,6 @@ import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
 import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;
 import com.annakirillova.crmsystem.service.TrainerService;
-import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,9 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TrainerControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
-
-    @MockBean
-    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @MockBean
     private KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;
