@@ -11,7 +11,6 @@ import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
 import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;
 import com.annakirillova.crmsystem.service.TraineeService;
-import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -58,9 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TraineeControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
-
-    @MockBean
-    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
 
     @MockBean
     private KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;
@@ -175,7 +171,7 @@ public class TraineeControllerTest extends BaseTest {
         doNothing().when(keycloakFeignClientHelper).deleteUserWithCircuitBreaker(
                 any(String.class), any(String.class)
         );
-        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        doNothing().when(jmsTemplate).convertAndSend(anyString(), any(TrainingInfoDto.class));
 
         perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
                 .with(jwt()))
@@ -187,7 +183,7 @@ public class TraineeControllerTest extends BaseTest {
         verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
         verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
         verify(keycloakFeignClientHelper, times(1)).deleteUserWithCircuitBreaker(any(String.class), any(String.class));
-        verify(trainerWorkloadServiceFeignClientHelper, times(2)).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        verify(jmsTemplate, times(2)).convertAndSend(anyString(), any(TrainingInfoDto.class));
     }
 
     @Test

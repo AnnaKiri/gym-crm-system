@@ -71,13 +71,10 @@ public class TraineeServiceTest {
     private TrainingRepository trainingRepository;
 
     @Mock
-    private AuthService authService;
-
-    @Mock
     private KeycloakService keycloakService;
 
     @Mock
-    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
+    private MessageSenderService messageSenderService;
 
     @InjectMocks
     private TraineeService traineeService;
@@ -136,12 +133,11 @@ public class TraineeServiceTest {
     void delete() {
         when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
         when(trainingRepository.findAllWithDetails(any(Specification.class))).thenReturn(List.of(TRAINING_1));
-        when(authService.getJwtToken()).thenReturn("");
-        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        doNothing().when(messageSenderService).sendMessage(anyString(), any(TrainingInfoDto.class));
         traineeService.delete(USER_1_USERNAME);
 
         verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);
-        verify(trainerWorkloadServiceFeignClientHelper, times(1)).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        verify(messageSenderService, times(1)).sendMessage(anyString(), any(TrainingInfoDto.class));
 
         when(traineeRepository.findByUsername(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + USER_1_USERNAME));
         assertThrows(NotFoundException.class, () -> traineeRepository.findByUsername(USER_1_USERNAME));

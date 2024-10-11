@@ -4,9 +4,7 @@ import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.TrainingTestData;
 import com.annakirillova.crmsystem.dto.TrainingDto;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.service.TrainerWorkloadServiceFeignClientHelper;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,13 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TrainingControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
-    @MockBean
-    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
-
     @Test
     void create() throws Exception {
-        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(
-                any(String.class), any(TrainingInfoDto.class)
+        doNothing().when(jmsTemplate).convertAndSend(any(String.class), any(TrainingInfoDto.class)
         );
 
         TrainingDto newTrainingDto = TrainingTestData.getNewTrainingDto();
@@ -43,8 +37,7 @@ public class TrainingControllerTest extends BaseTest {
                 .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId())))
                 .andExpect(status().isOk());
 
-        verify(trainerWorkloadServiceFeignClientHelper, times(1))
-            .updateTrainingInfo(any(String.class), any(TrainingInfoDto.class));
+        verify(jmsTemplate, times(1)).convertAndSend(any(String.class), any(TrainingInfoDto.class));
     }
 
     @Test

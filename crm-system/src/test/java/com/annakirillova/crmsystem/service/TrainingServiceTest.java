@@ -39,10 +39,7 @@ class TrainingServiceTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Mock
-    private AuthService authService;
-
-    @Mock
-    private TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
+    private MessageSenderService messageSenderService;
 
     @InjectMocks
     private TrainingService trainingService;
@@ -68,14 +65,13 @@ class TrainingServiceTest {
         });
 
         when(trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
-        when(authService.getJwtToken()).thenReturn("");
-        doNothing().when(trainerWorkloadServiceFeignClientHelper).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        doNothing().when(messageSenderService).sendMessage(anyString(), any(TrainingInfoDto.class));
 
         Training newTraining = getNewTraining();
         Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingRepository, times(1)).save(any(Training.class));
-        verify(trainerWorkloadServiceFeignClientHelper, times(1)).updateTrainingInfo(anyString(), any(TrainingInfoDto.class));
+        verify(messageSenderService, times(1)).sendMessage(anyString(), any(TrainingInfoDto.class));
 
         int trainingId = savedTraining.getId();
         newTraining.setId(trainingId);
