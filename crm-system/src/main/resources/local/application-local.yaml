@@ -1,0 +1,42 @@
+spring:
+  config:
+    import: "classpath:local/confidential-local.yaml"
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_crm_system
+    username: postgres
+  data:
+    redis:
+      host: localhost
+      port: 6379
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    metadata-map:
+      keycloak-service: http://localhost:8080/
+      keycloak-auth: http://localhost:8080/
+cors:
+  allowed-origins:
+    - "http://localhost"
+    - "http://localhost:5555"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
+
+keycloak:
+  admin:
+    username: gym-crm-system-admin
+    client-id: gym-crm-microservice-admin
+  user:
+    client-id: gym-crm-microservice-client
+  url: http://localhost
+  realm: gym-crm-system-realm

@@ -1,0 +1,2 @@
+DELETE FROM Trainer;
+DELETE FROM Summary;

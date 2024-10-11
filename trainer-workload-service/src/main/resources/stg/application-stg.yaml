@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: stg
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+cors:
+  allowed-origins:
+    - "http://localhost"
+    - "http://localhost:5555"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
+keycloak:
+  url: http://localhost
+  realm: gym-crm-system-realm

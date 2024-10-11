@@ -1,3 +1,0 @@
-spring:
-  datasource:
-    password: local_password

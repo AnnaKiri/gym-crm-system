@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    password: stg_password
+keycloak:
+  admin:
+    password: admin_password
+    client-secret: admin_client_secret
+  user:
+    client-secret: user_client_secret
