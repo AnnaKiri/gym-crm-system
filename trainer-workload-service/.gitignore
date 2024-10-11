@@ -4,4 +4,7 @@ target
 *.iml
 log
 *.patch
-/src/main/resources/jwt-config.yaml
+/src/main/resources/local/confidential-local.yaml
+/src/main/resources/dev/confidential-dev.yaml
+/src/main/resources/prod/confidential-prod.yaml
+/src/main/resources/stg/confidential-stg.yaml

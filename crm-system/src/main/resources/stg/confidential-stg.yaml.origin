@@ -1,6 +1,8 @@
 spring:
   datasource:
     password: stg_password
+  activemq:
+    password: stg_password
 keycloak:
   admin:
     password: admin_password

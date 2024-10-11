@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingDto {
+public class TrainingInfoDto {
 
     public static final String ACTION_TYPE_ADD = "ADD";
     public static final String ACTION_TYPE_DELETE = "DELETE";

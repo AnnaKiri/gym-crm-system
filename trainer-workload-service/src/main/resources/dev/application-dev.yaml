@@ -1,7 +1,11 @@
 spring:
   config:
+    import: "classpath:dev/confidential-dev.yaml"
     activate:
       on-profile: dev
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
 eureka:
   client:
     serviceUrl:

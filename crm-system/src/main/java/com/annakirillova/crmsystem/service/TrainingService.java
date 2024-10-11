@@ -1,8 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.exception.DataConflictException;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
@@ -16,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import static com.annakirillova.crmsystem.service.MessageSenderService.TRAINER_WORKLOAD_QUEUE;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -23,8 +23,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
-    private final AuthService authService;
+    private final MessageSenderService messageSenderService;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
@@ -51,11 +50,6 @@ public class TrainingService {
         ValidationUtil.validate(training);
         Training savedTraining = trainingRepository.save(training);
 
-        String jwtToken = authService.getJwtToken();
-        if (jwtToken == null) {
-            throw DataConflictException.missingToken();
-        }
-
         TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
                 .username(trainer.getUser().getUsername())
                 .firstName(trainer.getUser().getFirstName())
@@ -65,8 +59,7 @@ public class TrainingService {
                 .duration(duration)
                 .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
                 .build();
-        trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(SecurityConfig.BEARER_PREFIX + jwtToken, trainingInfoDto);
-
+        messageSenderService.sendMessage(TRAINER_WORKLOAD_QUEUE, trainingInfoDto);
         return savedTraining;
     }
 }
