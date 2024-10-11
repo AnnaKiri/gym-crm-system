@@ -7,7 +7,7 @@ import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.dto.TraineeDto;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.dto.UserDto;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
 import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;
 import com.annakirillova.crmsystem.service.TraineeService;

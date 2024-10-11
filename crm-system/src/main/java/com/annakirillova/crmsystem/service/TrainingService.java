@@ -2,8 +2,8 @@ package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.error.DataConflictException;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.DataConflictException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -53,8 +53,7 @@ public class TrainingService {
 
         String jwtToken = authService.getJwtToken();
         if (jwtToken == null) {
-            log.error("JWT token is missing, unable to make a call to trainerWorkloadService.");
-            throw new DataConflictException("JWT token is missing");
+            throw DataConflictException.missingToken();
         }
 
         TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()

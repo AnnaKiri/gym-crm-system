@@ -3,7 +3,7 @@ package com.annakirillova.crmsystem.service;
 import com.annakirillova.crmsystem.config.SecurityConfig;
 import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

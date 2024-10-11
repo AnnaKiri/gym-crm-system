@@ -24,10 +24,9 @@ public class KeycloakAuthFeignClientHelper {
         return keycloakAuthFeignClient.loginUser(formData);
     }
 
-    public TokenResponseDto loginFallback(Map<String, ?> formData, Throwable throwable) {
+    public TokenResponseDto loginFallback(Map<String, ?> formData, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
-        return new TokenResponseDto();
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakAuthService", fallbackMethod = "logoutFallback")
@@ -35,8 +34,8 @@ public class KeycloakAuthFeignClientHelper {
         keycloakAuthFeignClient.logoutUser(request);
     }
 
-    public void logoutFallback(Map<String, ?> request, Throwable throwable) {
+    public void logoutFallback(Map<String, ?> request, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 }

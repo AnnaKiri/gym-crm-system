@@ -4,7 +4,7 @@ import com.annakirillova.crmsystem.dto.LoginRequestDto;
 import com.annakirillova.crmsystem.dto.TrainerDto;
 import com.annakirillova.crmsystem.dto.TrainingDto;
 import com.annakirillova.crmsystem.dto.UserDto;
-import com.annakirillova.crmsystem.error.AuthenticationException;
+import com.annakirillova.crmsystem.exception.AuthenticationException;
 import com.annakirillova.crmsystem.metrics.RegisterMetrics;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;

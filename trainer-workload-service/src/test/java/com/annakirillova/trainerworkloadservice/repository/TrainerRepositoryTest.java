@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.repository;
 
 import com.annakirillova.trainerworkloadservice.BaseTest;
-import com.annakirillova.trainerworkloadservice.error.NotFoundException;
+import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
 import com.annakirillova.trainerworkloadservice.model.Trainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

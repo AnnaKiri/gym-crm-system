@@ -24,9 +24,9 @@ public class TrainerWorkloadServiceFeignClientHelper {
         trainerWorkloadServiceFeignClient.updateTrainingInfo(token, trainingInfoDto);
     }
 
-    private void updateTrainingInfoFallbackMethod(String token, TrainingInfoDto trainingInfoDto, Throwable throwable) {
+    private void updateTrainingInfoFallbackMethod(String token, TrainingInfoDto trainingInfoDto, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 }
 

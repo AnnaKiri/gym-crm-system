@@ -1,9 +1,8 @@
 package com.annakirillova.trainerworkloadservice.config;
 
-import com.annakirillova.trainerworkloadservice.error.AppException;
-import com.annakirillova.trainerworkloadservice.error.ErrorType;
-import com.annakirillova.trainerworkloadservice.error.IllegalRequestDataException;
-import com.annakirillova.trainerworkloadservice.error.NotFoundException;
+import com.annakirillova.trainerworkloadservice.exception.ErrorType;
+import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
+import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -36,12 +35,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.APP_ERROR;
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.BAD_DATA;
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.BAD_REQUEST;
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.DATA_CONFLICT;
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.FORBIDDEN;
-import static com.annakirillova.trainerworkloadservice.error.ErrorType.NOT_FOUND;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.APP_ERROR;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.BAD_DATA;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.BAD_REQUEST;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.DATA_CONFLICT;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.FORBIDDEN;
+import static com.annakirillova.trainerworkloadservice.exception.ErrorType.NOT_FOUND;
 
 @Getter
 @RestControllerAdvice
@@ -56,7 +55,6 @@ public class RestExceptionHandler {
             put(FileNotFoundException.class, NOT_FOUND);
             put(NoHandlerFoundException.class, NOT_FOUND);
             put(IllegalRequestDataException.class, BAD_REQUEST);
-            put(AppException.class, APP_ERROR);
             put(UnsupportedOperationException.class, APP_ERROR);
             put(EntityNotFoundException.class, DATA_CONFLICT);
             put(DataIntegrityViolationException.class, DATA_CONFLICT);

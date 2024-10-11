@@ -1,16 +1,16 @@
 package com.annakirillova.crmsystem.config;
 
-import com.annakirillova.crmsystem.error.AppException;
-import com.annakirillova.crmsystem.error.AuthenticationException;
-import com.annakirillova.crmsystem.error.DataConflictException;
-import com.annakirillova.crmsystem.error.ErrorType;
-import com.annakirillova.crmsystem.error.FeignCircuitBreakerException;
-import com.annakirillova.crmsystem.error.FeignConnectionException;
-import com.annakirillova.crmsystem.error.FeignServiceUnavailableException;
-import com.annakirillova.crmsystem.error.FeignTimeoutException;
-import com.annakirillova.crmsystem.error.FeignUnknownException;
-import com.annakirillova.crmsystem.error.IllegalRequestDataException;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.AppException;
+import com.annakirillova.crmsystem.exception.AuthenticationException;
+import com.annakirillova.crmsystem.exception.DataConflictException;
+import com.annakirillova.crmsystem.exception.ErrorType;
+import com.annakirillova.crmsystem.exception.FeignCircuitBreakerException;
+import com.annakirillova.crmsystem.exception.FeignConnectionException;
+import com.annakirillova.crmsystem.exception.FeignServiceUnavailableException;
+import com.annakirillova.crmsystem.exception.FeignTimeoutException;
+import com.annakirillova.crmsystem.exception.FeignUnknownException;
+import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -44,16 +44,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.annakirillova.crmsystem.error.ErrorType.APP_ERROR;
-import static com.annakirillova.crmsystem.error.ErrorType.BAD_DATA;
-import static com.annakirillova.crmsystem.error.ErrorType.BAD_REQUEST;
-import static com.annakirillova.crmsystem.error.ErrorType.DATA_CONFLICT;
-import static com.annakirillova.crmsystem.error.ErrorType.FEIGN_CONNECTION_ERROR;
-import static com.annakirillova.crmsystem.error.ErrorType.FEIGN_TIMEOUT;
-import static com.annakirillova.crmsystem.error.ErrorType.FORBIDDEN;
-import static com.annakirillova.crmsystem.error.ErrorType.NOT_FOUND;
-import static com.annakirillova.crmsystem.error.ErrorType.SERVICE_UNAVAILABLE;
-import static com.annakirillova.crmsystem.error.ErrorType.UNAUTHORIZED;
+import static com.annakirillova.crmsystem.exception.ErrorType.APP_ERROR;
+import static com.annakirillova.crmsystem.exception.ErrorType.BAD_DATA;
+import static com.annakirillova.crmsystem.exception.ErrorType.BAD_REQUEST;
+import static com.annakirillova.crmsystem.exception.ErrorType.DATA_CONFLICT;
+import static com.annakirillova.crmsystem.exception.ErrorType.FEIGN_CONNECTION_ERROR;
+import static com.annakirillova.crmsystem.exception.ErrorType.FEIGN_TIMEOUT;
+import static com.annakirillova.crmsystem.exception.ErrorType.FORBIDDEN;
+import static com.annakirillova.crmsystem.exception.ErrorType.NOT_FOUND;
+import static com.annakirillova.crmsystem.exception.ErrorType.SERVICE_UNAVAILABLE;
+import static com.annakirillova.crmsystem.exception.ErrorType.UNAUTHORIZED;
 
 @Getter
 @RestControllerAdvice

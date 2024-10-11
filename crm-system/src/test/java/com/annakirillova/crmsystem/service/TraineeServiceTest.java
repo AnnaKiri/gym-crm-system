@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.error.IllegalRequestDataException;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;

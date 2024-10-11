@@ -10,12 +10,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CredentialRepresentationDto {
+
+    public static final String PASSWORD_STRING = "password";
+
     private String type;
     private String value;
     private boolean temporary;
 
     public CredentialRepresentationDto(String value) {
-        this.type = "password";
+        this.type = PASSWORD_STRING;
         this.value = value;
         this.temporary = false;
     }

@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.web.summary;
 
 import com.annakirillova.trainerworkloadservice.dto.TrainingDto;
-import com.annakirillova.trainerworkloadservice.error.IllegalRequestDataException;
+import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
 import com.annakirillova.trainerworkloadservice.model.Trainer;
 import com.annakirillova.trainerworkloadservice.service.SummaryService;
 import com.annakirillova.trainerworkloadservice.service.TrainerService;

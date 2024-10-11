@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.annakirillova.crmsystem.dto.CredentialRepresentationDto.PASSWORD_STRING;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -89,7 +91,7 @@ public class TokenService {
         Map<String, String> formData = new HashMap<>();
         formData.put("client_id", clientId);
         formData.put("client_secret", clientSecret);
-        formData.put("grant_type", "password");
+        formData.put("grant_type", PASSWORD_STRING);
         formData.put("username", username);
         formData.put("password", password);
         return formData;

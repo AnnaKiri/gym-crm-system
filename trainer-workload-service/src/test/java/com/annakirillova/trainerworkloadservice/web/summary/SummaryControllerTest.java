@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.web.summary;
 
 import com.annakirillova.trainerworkloadservice.BaseTest;
-import com.annakirillova.trainerworkloadservice.error.IllegalRequestDataException;
+import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
 import com.annakirillova.trainerworkloadservice.util.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

@@ -1,18 +1,17 @@
 package com.annakirillova.crmsystem.util;
 
-import com.annakirillova.crmsystem.error.AppException;
-import com.annakirillova.crmsystem.error.AuthenticationException;
-import com.annakirillova.crmsystem.error.FeignCircuitBreakerException;
-import com.annakirillova.crmsystem.error.FeignConnectionException;
-import com.annakirillova.crmsystem.error.FeignServiceUnavailableException;
-import com.annakirillova.crmsystem.error.FeignTimeoutException;
-import com.annakirillova.crmsystem.error.FeignUnknownException;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.AppException;
+import com.annakirillova.crmsystem.exception.AuthenticationException;
+import com.annakirillova.crmsystem.exception.FeignCircuitBreakerException;
+import com.annakirillova.crmsystem.exception.FeignConnectionException;
+import com.annakirillova.crmsystem.exception.FeignServiceUnavailableException;
+import com.annakirillova.crmsystem.exception.FeignTimeoutException;
+import com.annakirillova.crmsystem.exception.FeignUnknownException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.validation.ValidationException;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.net.ConnectException;
@@ -20,7 +19,6 @@ import java.net.SocketTimeoutException;
 import java.util.Map;
 
 @UtilityClass
-@Slf4j
 public class FeignExceptionUtil {
 
     public static Map<String, String> getExceptionMessages(String serviceName, Throwable t) {
@@ -38,55 +36,37 @@ public class FeignExceptionUtil {
         );
     }
 
-    public void handleFeignException(Throwable t, Map<String, String> exceptionMessages) {
+    public Throwable handleFeignException(Throwable t, Map<String, String> exceptionMessages) {
         switch (t) {
             case FeignException feignException -> {
                 int statusCode = feignException.status();
                 String message = exceptionMessages.get(String.valueOf(statusCode));
 
-                switch (statusCode) {
-                    case 400:
-                        log.error(message);
-                        throw new ValidationException(message);
-                    case 401:
-                        log.error(message);
-                        throw new AuthenticationException(message);
-                    case 403:
-                        log.error(message);
-                        throw new AccessDeniedException(message);
-                    case 404:
-                        log.error(message);
-                        throw new NotFoundException(message);
-                    case 500:
-                        log.error(message);
-                        throw new AppException(message);
-                    case 503:
-                        log.error(message);
-                        throw new FeignServiceUnavailableException(message);
-                    default:
-                        log.error(message);
-                        throw new FeignUnknownException("Unhandled status code: " + statusCode);
-                }
+                return switch (statusCode) {
+                    case 400 -> new ValidationException(message);
+                    case 401 -> new AuthenticationException(message);
+                    case 403 -> new AccessDeniedException(message);
+                    case 404 -> new NotFoundException(message);
+                    case 500 -> new AppException(message);
+                    case 503 -> new FeignServiceUnavailableException(message);
+                    default -> new FeignUnknownException("Unhandled status code: " + statusCode);
+                };
             }
             case SocketTimeoutException socketTimeoutException -> {
                 String message = exceptionMessages.get("SocketTimeoutException");
-                log.error(message);
-                throw new FeignTimeoutException(message);
+                return new FeignTimeoutException(message);
             }
             case ConnectException connectException -> {
                 String message = exceptionMessages.get("ConnectException");
-                log.error(message);
-                throw new FeignConnectionException(message);
+                return new FeignConnectionException(message);
             }
             case CallNotPermittedException callNotPermittedException -> {
                 String message = exceptionMessages.get("CallNotPermittedException");
-                log.error(message);
-                throw new FeignCircuitBreakerException(message);
+                return new FeignCircuitBreakerException(message);
             }
             case null, default -> {
                 String message = exceptionMessages.get("Throwable");
-                log.error(message);
-                throw new FeignUnknownException(message);
+                return new FeignUnknownException(message);
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.repository;
 
 import com.annakirillova.crmsystem.BaseTest;
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.TrainingType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

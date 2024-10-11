@@ -1,4 +1,4 @@
-package com.annakirillova.crmsystem.error;
+package com.annakirillova.crmsystem.exception;
 
 import org.springframework.lang.NonNull;
 

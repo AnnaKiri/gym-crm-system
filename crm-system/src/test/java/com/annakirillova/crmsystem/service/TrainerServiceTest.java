@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.error.IllegalRequestDataException;
+import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.models.User;

@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +27,9 @@ public class KeycloakFeignClientHelper {
         keycloakFeignClient.createUser(token, user);
     }
 
-    public void createUserFallback(String token, KeycloakUserDto user, Throwable throwable) {
+    public void createUserFallback(String token, KeycloakUserDto user, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updatePasswordFallback")
@@ -38,9 +37,9 @@ public class KeycloakFeignClientHelper {
         keycloakFeignClient.updatePassword(token, userId, credential);
     }
 
-    public void updatePasswordFallback(String token, String userId, CredentialRepresentationDto credential, Throwable throwable) {
+    public void updatePasswordFallback(String token, String userId, CredentialRepresentationDto credential, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "deleteUserFallback")
@@ -48,9 +47,9 @@ public class KeycloakFeignClientHelper {
         keycloakFeignClient.deleteUser(token, userId);
     }
 
-    public void deleteUserFallback(String token, String userId, Throwable throwable) {
+    public void deleteUserFallback(String token, String userId, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "getUserByUsernameFallback")
@@ -58,10 +57,9 @@ public class KeycloakFeignClientHelper {
         return keycloakFeignClient.getUserByUsername(token, username);
     }
 
-    public ResponseEntity<List<KeycloakUserDto>> getUserByUsernameFallback(String token, String username, Throwable throwable) {
+    public ResponseEntity<List<KeycloakUserDto>> getUserByUsernameFallback(String token, String username, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
-        return ResponseEntity.ok(new ArrayList<>());
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 
     @CircuitBreaker(name = "keycloakService", fallbackMethod = "updateUserFallback")
@@ -69,8 +67,8 @@ public class KeycloakFeignClientHelper {
         keycloakFeignClient.updateUser(token, userId, user);
     }
 
-    public void updateUserFallback(String token, String userId, KeycloakUserDto user, Throwable throwable) {
+    public void updateUserFallback(String token, String userId, KeycloakUserDto user, Throwable throwable) throws Throwable {
         Map<String, String> exceptionMessages = FeignExceptionUtil.getExceptionMessages(SERVICE_NAME, throwable);
-        FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
+        throw FeignExceptionUtil.handleFeignException(throwable, exceptionMessages);
     }
 }

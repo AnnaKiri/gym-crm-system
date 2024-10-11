@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.repository;
 
-import com.annakirillova.crmsystem.error.NotFoundException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
