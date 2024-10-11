@@ -1,7 +1,6 @@
 package com.annakirillova.trainerworkloadservice.config;
 
 import com.annakirillova.trainerworkloadservice.exception.ErrorType;
-import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
 import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +53,6 @@ public class RestExceptionHandler {
             put(NotFoundException.class, NOT_FOUND);
             put(FileNotFoundException.class, NOT_FOUND);
             put(NoHandlerFoundException.class, NOT_FOUND);
-            put(IllegalRequestDataException.class, BAD_REQUEST);
             put(UnsupportedOperationException.class, APP_ERROR);
             put(EntityNotFoundException.class, DATA_CONFLICT);
             put(DataIntegrityViolationException.class, DATA_CONFLICT);

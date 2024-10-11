@@ -62,7 +62,12 @@ class TrainerServiceTest {
     void createExistedTrainer() {
         when(trainerRepository.findByUsername(TRAINER_1_USERNAME)).thenReturn(Optional.of(TRAINER_1));
 
-        Trainer savedTrainer = trainerService.create(TRAINER_1.getFirstName(), TRAINER_1.getLastName(), TRAINER_1.getUsername(), true);
+        Trainer savedTrainer = trainerService.create(
+                TRAINER_1.getFirstName(),
+                TRAINER_1.getLastName(),
+                TRAINER_1.getUsername(),
+                true
+        );
 
         verify(trainerRepository, times(0)).save(any(Trainer.class));
 
