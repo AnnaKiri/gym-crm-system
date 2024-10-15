@@ -18,7 +18,6 @@ public class MessageListener {
     private static final String TRAINER_WORKLOAD_DEAD_LETTER_QUEUE = "trainer-workload-dlq";
 
     private final TrainerService trainerService;
-    private final SummaryService summaryService;
 
     @JmsListener(destination = TRAINER_WORKLOAD_QUEUE, containerFactory = "jmsFactory")
     @Transactional
@@ -32,13 +31,13 @@ public class MessageListener {
                         trainingInfoDto.getLastName(),
                         trainingInfoDto.getUsername(),
                         trainingInfoDto.getIsActive());
-                summaryService.addOrUpdateTrainingDuration(
+                trainerService.addOrUpdateTrainingDuration(
                         trainer.getUsername(),
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
                 break;
             case DELETE:
-                summaryService.deleteTrainingDurationFromSummaryByDateAndUsername(
+                trainerService.deleteTrainingDurationFromSummaryByDateAndUsername(
                         trainingInfoDto.getUsername(),
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
@@ -51,5 +50,3 @@ public class MessageListener {
         log.error("Received message in DLQ. Raw message: {}", rawMessage);
     }
 }
-
-

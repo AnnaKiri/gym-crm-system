@@ -32,7 +32,6 @@ services:
       - "8761:8761"
   activemq:
     image: webcenter/activemq:5.14.3
-    container_name: activemq
     environment:
       ACTIVEMQ_ADMIN_LOGIN: admin
       ACTIVEMQ_ADMIN_PASSWORD: admin
@@ -42,6 +41,31 @@ services:
       - "61613:61613"
     volumes:
       - 'C:/docker/activemq/conf/activemq.xml:/opt/activemq/conf/activemq.xml'
+
+  mongodb:
+    image: mongo:8.0.1
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'C:/docker/mongo_data:/data/db'
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_URL: mongodb://mongoadmin:secret@mongodb:27017/
+
 volumes:
   postgresql_data:
+    driver: local
+  mongo_data:
     driver: local

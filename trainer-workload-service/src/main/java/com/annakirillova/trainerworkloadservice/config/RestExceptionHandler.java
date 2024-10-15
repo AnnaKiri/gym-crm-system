@@ -2,7 +2,6 @@ package com.annakirillova.trainerworkloadservice.config;
 
 import com.annakirillova.trainerworkloadservice.exception.ErrorType;
 import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
@@ -54,7 +53,6 @@ public class RestExceptionHandler {
             put(FileNotFoundException.class, NOT_FOUND);
             put(NoHandlerFoundException.class, NOT_FOUND);
             put(UnsupportedOperationException.class, APP_ERROR);
-            put(EntityNotFoundException.class, DATA_CONFLICT);
             put(DataIntegrityViolationException.class, DATA_CONFLICT);
             put(IllegalArgumentException.class, BAD_DATA);
             put(ValidationException.class, BAD_REQUEST);

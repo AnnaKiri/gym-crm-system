@@ -1,45 +1,65 @@
 package com.annakirillova.trainerworkloadservice.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "Trainer")
+import java.util.List;
+
 @Getter
 @Setter
+@ToString
+@Builder
 @NoArgsConstructor
-@ToString(callSuper = true)
-public class Trainer extends AbstractBaseEntity {
+@AllArgsConstructor
+@Document(collection = "trainers")
+@EqualsAndHashCode(of = "username")
+@CompoundIndexes({
+        @CompoundIndex(name = "name_idx", def = "{'firstName': 1, 'lastName': 1}")
+})
+public class Trainer {
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Id
     @NotBlank
     private String username;
 
-    @Column(name = "first_name", nullable = false)
     @NotBlank
-    @Size(min = 1, max = 128)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
     @NotBlank
-    @Size(min = 1, max = 128)
     private String lastName;
 
-    @Column(name = "is_active", nullable = false, columnDefinition = "bool default true")
-    private boolean isActive;
+    @NotNull
+    private Boolean isActive;
 
-    public Trainer(Integer id, String username, String firstName, String lastName, boolean isActive) {
-        super(id);
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isActive = isActive;
+    @NotNull
+    private List<Summary> summaryList;
+
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Summary {
+
+        @NotNull
+        private Integer year;
+
+        @NotNull
+        private Integer month;
+
+        @NotNull
+        private Integer duration;
     }
 }

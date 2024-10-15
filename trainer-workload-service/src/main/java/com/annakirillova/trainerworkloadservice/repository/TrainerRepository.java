@@ -2,13 +2,11 @@ package com.annakirillova.trainerworkloadservice.repository;
 
 import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
 import com.annakirillova.trainerworkloadservice.model.Trainer;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-@Transactional(readOnly = true)
-public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
+public interface TrainerRepository extends MongoRepository<Trainer, String> {
 
     Optional<Trainer> findByUsername(String username);
 

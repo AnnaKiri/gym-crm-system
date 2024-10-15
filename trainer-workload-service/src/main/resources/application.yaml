@@ -19,16 +19,9 @@ spring:
         default_batch_fetch_size: 20
         jdbc.batch_size: 20
 
-  datasource:
-    url: jdbc:h2:mem:trainerworkloadservice
-#    tcp: jdbc:h2:tcp://localhost:9092/mem:trainerworkloadservice
-    username: sa
-    password:
-
-  sql:
-    init:
-      data-locations: classpath:db/populateDB.sql
-      mode: always
+  data:
+    mongodb:
+      auto-index-creation: true
 
 logging:
   level:
