@@ -43,7 +43,7 @@ public class TrainerService {
         return trainerRepository.getTrainerIfExists(username);
     }
 
-    public void addOrUpdateTrainingDuration(String username, LocalDate date, int duration) {
+    public Trainer addOrUpdateTrainingDuration(String username, LocalDate date, int duration) {
         log.debug("Add or update training duration {} for trainer with username = {} and date = {}", duration, username, date);
         Trainer trainer = trainerRepository.getTrainerIfExists(username);
 
@@ -61,10 +61,10 @@ public class TrainerService {
             log.debug("Added new training summary for trainer with username = {} for month = {} and year = {}", username, date.getMonthValue(), date.getYear());
         }
 
-        trainerRepository.save(trainer);
+        return trainerRepository.save(trainer);
     }
 
-    public void deleteTrainingDurationFromSummaryByDateAndUsername(String username, LocalDate date, int duration) {
+    public Trainer deleteTrainingDurationFromSummaryByDateAndUsername(String username, LocalDate date, int duration) {
         log.debug("Delete training duration {} for trainer with username = {} and date = {}", duration, username, date);
         Trainer trainer = trainerRepository.getTrainerIfExists(username);
 
@@ -76,6 +76,6 @@ public class TrainerService {
                     log.debug("Training duration for trainer with username = {} for month = {} and year = {} was updated", username, date.getMonthValue(), date.getYear());
                 });
 
-        trainerRepository.save(trainer);
+        return trainerRepository.save(trainer);
     }
 }

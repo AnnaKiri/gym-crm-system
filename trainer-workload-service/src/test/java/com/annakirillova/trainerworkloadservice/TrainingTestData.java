@@ -5,8 +5,8 @@ import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
 
 import java.time.LocalDate;
 
-import static com.annakirillova.trainerworkloadservice.TrainerTestData.TRAINER_1;
-import static com.annakirillova.trainerworkloadservice.TrainerTestData.TRAINER_2;
+import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_1;
+import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_2;
 
 public class TrainingTestData {
 
@@ -14,7 +14,7 @@ public class TrainingTestData {
             .username(TRAINER_1.getUsername())
             .firstName(TRAINER_1.getFirstName())
             .lastName(TRAINER_1.getLastName())
-            .isActive(TRAINER_1.isActive())
+            .isActive(TRAINER_1.getIsActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
             .actionType(ActionType.ADD)
@@ -24,7 +24,7 @@ public class TrainingTestData {
             .username(TRAINER_2.getUsername())
             .firstName(TRAINER_2.getFirstName())
             .lastName(TRAINER_2.getLastName())
-            .isActive(TRAINER_2.isActive())
+            .isActive(TRAINER_2.getIsActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
             .actionType(ActionType.DELETE)
@@ -34,7 +34,7 @@ public class TrainingTestData {
             .username(TRAINER_1.getUsername())
             .firstName(TRAINER_1.getFirstName())
             .lastName(TRAINER_1.getLastName())
-            .isActive(TRAINER_1.isActive())
+            .isActive(TRAINER_1.getIsActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
             .build();

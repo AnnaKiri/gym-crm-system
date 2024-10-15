@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 
-import static com.annakirillova.trainerworkloadservice.TrainerTestData.TRAINER_1;
+import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_1;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_ADD;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_DELETE;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_INVALID_ACTION_TYPE;
@@ -25,9 +25,6 @@ public class MessageListenerTest {
     @Mock
     private TrainerService trainerService;
 
-    @Mock
-    private SummaryService summaryService;
-
     @InjectMocks
     private MessageListener messageListener;
 
@@ -43,7 +40,7 @@ public class MessageListenerTest {
                 TRAINING_DTO_ADD.getUsername(),
                 TRAINING_DTO_ADD.getIsActive()
         );
-        verify(summaryService, times(1)).addOrUpdateTrainingDuration(
+        verify(trainerService, times(1)).addOrUpdateTrainingDuration(
                 TRAINING_DTO_ADD.getUsername(),
                 TRAINING_DTO_ADD.getDate(),
                 TRAINING_DTO_ADD.getDuration()
@@ -54,7 +51,7 @@ public class MessageListenerTest {
     void shouldDeleteTrainingWhenActionIsDelete() {
         messageListener.receiveMessage(TRAINING_DTO_DELETE);
 
-        verify(summaryService, times(1)).deleteTrainingDurationFromSummaryByDateAndUsername(
+        verify(trainerService, times(1)).deleteTrainingDurationFromSummaryByDateAndUsername(
                 TRAINING_DTO_DELETE.getUsername(),
                 TRAINING_DTO_DELETE.getDate(),
                 TRAINING_DTO_DELETE.getDuration()
