@@ -17,6 +17,7 @@ import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_2;
 import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_2_USERNAME;
 import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_MATCHER_WITH_SUMMARY_LIST;
 import static com.annakirillova.trainerworkloadservice.TestData.getNewTrainer;
+import static com.annakirillova.trainerworkloadservice.service.TrainerService.getExistingSummary;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -120,11 +121,5 @@ class TrainerServiceTest {
         assertEquals(60, existingSummary.get().getDuration());
 
         verify(trainerRepository, times(1)).save(TRAINER_2);
-    }
-
-    private static Optional<Trainer.Summary> getExistingSummary(Trainer trainer, LocalDate date) {
-        return trainer.getSummaryList().stream()
-                .filter(summary -> summary.getYear() == date.getYear() && summary.getMonth() == date.getMonthValue())
-                .findFirst();
     }
 }

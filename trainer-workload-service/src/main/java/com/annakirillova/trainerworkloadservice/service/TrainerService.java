@@ -5,7 +5,6 @@ import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ public class TrainerService {
 
     private final TrainerRepository trainerRepository;
 
-    @Transactional
     public Trainer create(String firstName, String lastName, String username, boolean isActive) {
         log.debug("Check trainer");
         Optional<Trainer> receivedTrainer = trainerRepository.findByUsername(username);
@@ -47,9 +45,7 @@ public class TrainerService {
         log.debug("Add or update training duration {} for trainer with username = {} and date = {}", duration, username, date);
         Trainer trainer = trainerRepository.getTrainerIfExists(username);
 
-        Optional<Trainer.Summary> existingSummary = trainer.getSummaryList().stream()
-                .filter(summary -> summary.getYear() == date.getYear() && summary.getMonth() == date.getMonthValue())
-                .findFirst();
+        Optional<Trainer.Summary> existingSummary = getExistingSummary(trainer, date);
 
         if (existingSummary.isPresent()) {
             Trainer.Summary summary = existingSummary.get();
@@ -68,14 +64,18 @@ public class TrainerService {
         log.debug("Delete training duration {} for trainer with username = {} and date = {}", duration, username, date);
         Trainer trainer = trainerRepository.getTrainerIfExists(username);
 
-        trainer.getSummaryList().stream()
-                .filter(summary -> summary.getYear() == date.getYear() && summary.getMonth() == date.getMonthValue())
-                .findFirst()
+        getExistingSummary(trainer, date)
                 .ifPresent(summary -> {
                     summary.setDuration(Math.max(0, summary.getDuration() - duration));
                     log.debug("Training duration for trainer with username = {} for month = {} and year = {} was updated", username, date.getMonthValue(), date.getYear());
                 });
 
         return trainerRepository.save(trainer);
+    }
+
+    static Optional<Trainer.Summary> getExistingSummary(Trainer trainer, LocalDate date) {
+        return trainer.getSummaryList().stream()
+                .filter(summary -> summary.getYear() == date.getYear() && summary.getMonth() == date.getMonthValue())
+                .findFirst();
     }
 }

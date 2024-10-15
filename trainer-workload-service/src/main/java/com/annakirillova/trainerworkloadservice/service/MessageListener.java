@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -20,7 +19,6 @@ public class MessageListener {
     private final TrainerService trainerService;
 
     @JmsListener(destination = TRAINER_WORKLOAD_QUEUE, containerFactory = "jmsFactory")
-    @Transactional
     public void receiveMessage(@Valid TrainingInfoDto trainingInfoDto) {
         log.debug("{} a new training {}", trainingInfoDto.getActionType(), trainingInfoDto);
 

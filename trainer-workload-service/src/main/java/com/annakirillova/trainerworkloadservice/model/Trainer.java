@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,12 +46,10 @@ public class Trainer {
     @NotNull
     private List<Summary> summaryList;
 
-    @Getter
-    @Setter
-    @ToString
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Data
     public static class Summary {
 
         @NotNull
