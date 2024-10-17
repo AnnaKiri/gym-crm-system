@@ -1,8 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.config.SecurityConfig;
+import com.annakirillova.crmsystem.dto.ActionType;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.exception.DataConflictException;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
@@ -23,8 +22,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
-    private final AuthService authService;
+    private final TrainerMessageSender trainerMessageSenderService;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
@@ -51,11 +49,6 @@ public class TrainingService {
         ValidationUtil.validate(training);
         Training savedTraining = trainingRepository.save(training);
 
-        String jwtToken = authService.getJwtToken();
-        if (jwtToken == null) {
-            throw DataConflictException.missingToken();
-        }
-
         TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
                 .username(trainer.getUser().getUsername())
                 .firstName(trainer.getUser().getFirstName())
@@ -63,10 +56,9 @@ public class TrainingService {
                 .isActive(trainer.getUser().isActive())
                 .date(date)
                 .duration(duration)
-                .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
+                .actionType(ActionType.ADD)
                 .build();
-        trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(SecurityConfig.BEARER_PREFIX + jwtToken, trainingInfoDto);
-
+        trainerMessageSenderService.sendMessage(trainingInfoDto);
         return savedTraining;
     }
 }

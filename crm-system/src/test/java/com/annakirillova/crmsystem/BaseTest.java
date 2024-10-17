@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,6 +33,9 @@ public abstract class BaseTest {
 
     @MockBean
     protected ValueOperations<String, Object> valueOperations;
+
+    @MockBean
+    protected JmsTemplate jmsTemplate;
 
     @PersistenceContext
     protected EntityManager entityManager;

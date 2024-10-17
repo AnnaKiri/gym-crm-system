@@ -1,8 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.config.SecurityConfig;
+import com.annakirillova.crmsystem.dto.ActionType;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.exception.DataConflictException;
 import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
@@ -36,10 +35,8 @@ public class TraineeService {
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
-    private final AuthService authService;
     private final KeycloakService keycloakService;
-
-    private final TrainerWorkloadServiceFeignClientHelper trainerWorkloadServiceFeignClientHelper;
+    private final TrainerMessageSender trainerMessageSenderService;
 
     @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {
@@ -111,12 +108,6 @@ public class TraineeService {
             throw new NotFoundException("Not found entity with " + username);
         }
 
-        String jwtToken = authService.getJwtToken();
-        if (jwtToken == null) {
-            log.error("JWT token is missing, unable to make a call to trainerWorkloadService.");
-            throw new DataConflictException("JWT token is missing");
-        }
-
         for (Training training : trainings) {
             TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
                     .username(training.getTrainer().getUser().getUsername())
@@ -125,9 +116,9 @@ public class TraineeService {
                     .isActive(training.getTrainer().getUser().isActive())
                     .date(training.getDate())
                     .duration(training.getDuration())
-                    .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
+                    .actionType(ActionType.DELETE)
                     .build();
-            trainerWorkloadServiceFeignClientHelper.updateTrainingInfo(SecurityConfig.BEARER_PREFIX + jwtToken, trainingInfoDto);
+            trainerMessageSenderService.sendMessage(trainingInfoDto);
         }
     }
 

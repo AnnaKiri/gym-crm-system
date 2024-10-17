@@ -1,0 +1,3 @@
+spring:
+  activemq:
+    password: local_password

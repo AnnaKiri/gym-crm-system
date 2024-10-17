@@ -30,6 +30,18 @@ services:
     image: docker.io/steeltoeoss/eureka-server:4.1.1
     ports:
       - "8761:8761"
+  activemq:
+    image: webcenter/activemq:5.14.3
+    container_name: activemq
+    environment:
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "61613:61613"
+    volumes:
+      - 'C:/docker/activemq/conf/activemq.xml:/opt/activemq/conf/activemq.xml'
 volumes:
   postgresql_data:
     driver: local

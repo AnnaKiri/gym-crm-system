@@ -1,0 +1,3 @@
+spring:
+  activemq:
+    password: stg_password

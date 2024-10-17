@@ -19,10 +19,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingDto {
-
-    public static final String ACTION_TYPE_ADD = "ADD";
-    public static final String ACTION_TYPE_DELETE = "DELETE";
+public class TrainingInfoDto {
 
     @NotBlank
     private String username;
@@ -42,6 +39,6 @@ public class TrainingDto {
     @NotNull
     private Integer duration;
 
-    @NotBlank
-    private String actionType;
+    @NotNull
+    private ActionType actionType;
 }

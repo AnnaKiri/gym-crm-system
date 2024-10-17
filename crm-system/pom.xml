@@ -146,6 +146,12 @@
             <artifactId>logbook-openfeign</artifactId>
             <version>${logbook.version}</version>
         </dependency>
+
+        <!--ActiveMQ-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

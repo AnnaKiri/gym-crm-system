@@ -33,4 +33,11 @@ class TrainerControllerTest extends BaseTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_DTO_MATCHER_WITH_SUMMARY.contentJson(trainerDto));
     }
+
+    @Test
+    void getNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "NoName" + "/monthly-summary")
+                .with(jwt()))
+                .andExpect(status().isNotFound());
+    }
 }
