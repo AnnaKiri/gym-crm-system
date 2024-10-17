@@ -2,9 +2,7 @@ package com.annakirillova.trainerworkloadservice.web.trainer;
 
 import com.annakirillova.trainerworkloadservice.BaseTest;
 import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
-import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -18,9 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class TrainerControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
-
-    @MockBean
-    private TrainerRepository trainerRepository;
 
     @Test
     void get() throws Exception {
