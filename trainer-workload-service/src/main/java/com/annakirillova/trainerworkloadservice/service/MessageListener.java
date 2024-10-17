@@ -1,7 +1,6 @@
 package com.annakirillova.trainerworkloadservice.service;
 
 import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
-import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
 import com.annakirillova.trainerworkloadservice.model.Trainer;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MessageListenerService {
+public class MessageListener {
 
-    public static final String TRAINER_WORKLOAD_QUEUE = "trainer-workload";
-    public static final String TRAINER_WORKLOAD_DEAD_LETTER_QUEUE = "ActiveMQ.DLQ";
+    private static final String TRAINER_WORKLOAD_QUEUE = "trainer-workload";
+    private static final String TRAINER_WORKLOAD_DEAD_LETTER_QUEUE = "trainer-workload-dlq";
 
     private final TrainerService trainerService;
     private final SummaryService summaryService;
@@ -25,8 +24,9 @@ public class MessageListenerService {
     @Transactional
     public void receiveMessage(@Valid TrainingInfoDto trainingInfoDto) {
         log.debug("{} a new training {}", trainingInfoDto.getActionType(), trainingInfoDto);
+
         switch (trainingInfoDto.getActionType()) {
-            case TrainingInfoDto.ACTION_TYPE_ADD:
+            case ADD:
                 Trainer trainer = trainerService.create(
                         trainingInfoDto.getFirstName(),
                         trainingInfoDto.getLastName(),
@@ -37,21 +37,19 @@ public class MessageListenerService {
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
                 break;
-            case TrainingInfoDto.ACTION_TYPE_DELETE:
+            case DELETE:
                 summaryService.deleteTrainingDurationFromSummaryByDateAndUsername(
                         trainingInfoDto.getUsername(),
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
                 break;
-            default:
-                log.debug("Wrong action type {}", trainingInfoDto.getActionType());
-                throw new IllegalRequestDataException("Wrong action type");
         }
     }
 
     @JmsListener(destination = TRAINER_WORKLOAD_DEAD_LETTER_QUEUE, containerFactory = "jmsFactory")
-    public void receiveDeadLetterMessage(TrainingInfoDto trainingInfoDto) {
-        log.error("Can't handle a message {}: ", trainingInfoDto);
+    public void receiveDeadLetterMessage(Object rawMessage) {
+        log.error("Received message in DLQ. Raw message: {}", rawMessage);
     }
 }
+
 

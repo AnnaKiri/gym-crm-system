@@ -1,11 +1,11 @@
 package com.annakirillova.trainerworkloadservice.service;
 
-import com.annakirillova.trainerworkloadservice.exception.IllegalRequestDataException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 
 import static com.annakirillova.trainerworkloadservice.TrainerTestData.TRAINER_1;
 import static com.annakirillova.trainerworkloadservice.TrainingTestData.TRAINING_DTO_ADD;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MessageListenerServiceTest {
+public class MessageListenerTest {
     @Mock
     private TrainerService trainerService;
 
@@ -29,13 +29,13 @@ public class MessageListenerServiceTest {
     private SummaryService summaryService;
 
     @InjectMocks
-    private MessageListenerService messageListenerService;
+    private MessageListener messageListener;
 
     @Test
     void shouldAddTrainingWhenActionIsAdd() {
         when(trainerService.create(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(TRAINER_1);
 
-        messageListenerService.receiveMessage(TRAINING_DTO_ADD);
+        messageListener.receiveMessage(TRAINING_DTO_ADD);
 
         verify(trainerService, times(1)).create(
                 TRAINING_DTO_ADD.getFirstName(),
@@ -52,7 +52,7 @@ public class MessageListenerServiceTest {
 
     @Test
     void shouldDeleteTrainingWhenActionIsDelete() {
-        messageListenerService.receiveMessage(TRAINING_DTO_DELETE);
+        messageListener.receiveMessage(TRAINING_DTO_DELETE);
 
         verify(summaryService, times(1)).deleteTrainingDurationFromSummaryByDateAndUsername(
                 TRAINING_DTO_DELETE.getUsername(),
@@ -60,12 +60,5 @@ public class MessageListenerServiceTest {
                 TRAINING_DTO_DELETE.getDuration()
         );
         verify(trainerService, never()).create(anyString(), anyString(), anyString(), anyBoolean());
-    }
-
-    @Test
-    void shouldThrowExceptionForInvalidActionType() {
-        assertThrows(IllegalRequestDataException.class, () -> messageListenerService.receiveMessage(TRAINING_DTO_INVALID_ACTION_TYPE));
-        verifyNoInteractions(trainerService);
-        verifyNoInteractions(summaryService);
     }
 }

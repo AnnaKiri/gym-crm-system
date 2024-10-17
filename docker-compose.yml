@@ -40,6 +40,8 @@ services:
       - "8161:8161"
       - "61616:61616"
       - "61613:61613"
+    volumes:
+      - 'C:/docker/activemq/conf/activemq.xml:/opt/activemq/conf/activemq.xml'
 volumes:
   postgresql_data:
     driver: local

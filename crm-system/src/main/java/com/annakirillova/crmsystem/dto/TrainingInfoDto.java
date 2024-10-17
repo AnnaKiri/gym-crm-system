@@ -15,14 +15,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString(callSuper = true)
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingInfoDto {
-
-    public static final String ACTION_TYPE_ADD = "ADD";
-    public static final String ACTION_TYPE_DELETE = "DELETE";
 
     @NotBlank
     private String username;
@@ -42,6 +39,6 @@ public class TrainingInfoDto {
     @NotNull
     private Integer duration;
 
-    @NotBlank
-    private String actionType;
+    @NotNull
+    private ActionType actionType;
 }

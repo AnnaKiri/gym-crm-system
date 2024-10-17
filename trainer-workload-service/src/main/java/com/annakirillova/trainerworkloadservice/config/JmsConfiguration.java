@@ -2,7 +2,6 @@ package com.annakirillova.trainerworkloadservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.jms.ConnectionFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,15 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@RequiredArgsConstructor
 public class JmsConfiguration {
 
     @Bean
     public JmsListenerContainerFactory<?> jmsFactory(ConnectionFactory connectionFactory,
                                                      DefaultJmsListenerContainerFactoryConfigurer configurer,
-                                                     ObjectMapper objectMapper) {
+                                                     MessageConverter messageConverter) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setMessageConverter(jacksonJmsMessageConverter(objectMapper));
+        factory.setMessageConverter(messageConverter);
         configurer.configure(factory, connectionFactory);
         return factory;
     }

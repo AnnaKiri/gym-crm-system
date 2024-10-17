@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.dto.ActionType;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
 import com.annakirillova.crmsystem.exception.NotFoundException;
@@ -25,8 +26,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.annakirillova.crmsystem.service.MessageSenderService.TRAINER_WORKLOAD_QUEUE;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class TraineeService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
-    private final MessageSenderService messageSenderService;
+    private final TrainerMessageSender trainerMessageSenderService;
 
     @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {
@@ -117,9 +116,9 @@ public class TraineeService {
                     .isActive(training.getTrainer().getUser().isActive())
                     .date(training.getDate())
                     .duration(training.getDuration())
-                    .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
+                    .actionType(ActionType.DELETE)
                     .build();
-            messageSenderService.sendMessage(TRAINER_WORKLOAD_QUEUE, trainingInfoDto);
+            trainerMessageSenderService.sendMessage(trainingInfoDto);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.annakirillova.trainerworkloadservice;
 
+import com.annakirillova.trainerworkloadservice.dto.ActionType;
 import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class TrainingTestData {
             .isActive(TRAINER_1.isActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
-            .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
+            .actionType(ActionType.ADD)
             .build();
 
     public static final TrainingInfoDto TRAINING_DTO_DELETE = TrainingInfoDto.builder()
@@ -26,7 +27,7 @@ public class TrainingTestData {
             .isActive(TRAINER_2.isActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
-            .actionType(TrainingInfoDto.ACTION_TYPE_DELETE)
+            .actionType(ActionType.DELETE)
             .build();
 
     public static final TrainingInfoDto TRAINING_DTO_INVALID_ACTION_TYPE = TrainingInfoDto.builder()
@@ -36,6 +37,5 @@ public class TrainingTestData {
             .isActive(TRAINER_1.isActive())
             .date(LocalDate.of(2024, 1, 2))
             .duration(60)
-            .actionType("INVALID_ACTION_TYPE")
             .build();
 }

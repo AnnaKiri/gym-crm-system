@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.crmsystem.dto.ActionType;
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
@@ -14,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static com.annakirillova.crmsystem.service.MessageSenderService.TRAINER_WORKLOAD_QUEUE;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final MessageSenderService messageSenderService;
+    private final TrainerMessageSender trainerMessageSenderService;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);
@@ -57,9 +56,9 @@ public class TrainingService {
                 .isActive(trainer.getUser().isActive())
                 .date(date)
                 .duration(duration)
-                .actionType(TrainingInfoDto.ACTION_TYPE_ADD)
+                .actionType(ActionType.ADD)
                 .build();
-        messageSenderService.sendMessage(TRAINER_WORKLOAD_QUEUE, trainingInfoDto);
+        trainerMessageSenderService.sendMessage(trainingInfoDto);
         return savedTraining;
     }
 }

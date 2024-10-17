@@ -27,8 +27,7 @@ public class TrainingControllerTest extends BaseTest {
 
     @Test
     void create() throws Exception {
-        doNothing().when(jmsTemplate).convertAndSend(any(String.class), any(TrainingInfoDto.class)
-        );
+        doNothing().when(jmsTemplate).convertAndSend(any(String.class), any(TrainingInfoDto.class));
 
         TrainingDto newTrainingDto = TrainingTestData.getNewTrainingDto();
         perform(MockMvcRequestBuilders.post(REST_URL)

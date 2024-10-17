@@ -49,7 +49,6 @@ import static com.annakirillova.crmsystem.UserTestData.USER_LIST;
 import static com.annakirillova.crmsystem.UserTestData.getNewUser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -74,7 +73,7 @@ public class TraineeServiceTest {
     private KeycloakService keycloakService;
 
     @Mock
-    private MessageSenderService messageSenderService;
+    private TrainerMessageSender trainerMessageSenderService;
 
     @InjectMocks
     private TraineeService traineeService;
@@ -133,11 +132,12 @@ public class TraineeServiceTest {
     void delete() {
         when(userRepository.deleteByUsername(USER_1_USERNAME)).thenReturn(1);
         when(trainingRepository.findAllWithDetails(any(Specification.class))).thenReturn(List.of(TRAINING_1));
-        doNothing().when(messageSenderService).sendMessage(anyString(), any(TrainingInfoDto.class));
+        doNothing().when(trainerMessageSenderService).sendMessage(any(TrainingInfoDto.class));
         traineeService.delete(USER_1_USERNAME);
 
         verify(userRepository, times(1)).deleteByUsername(USER_1_USERNAME);
-        verify(messageSenderService, times(1)).sendMessage(anyString(), any(TrainingInfoDto.class));
+        verify(trainerMessageSenderService, times(1)).sendMessage(any(TrainingInfoDto.class));
+        ;
 
         when(traineeRepository.findByUsername(USER_1_USERNAME)).thenThrow(new NotFoundException("Not found entity with " + USER_1_USERNAME));
         assertThrows(NotFoundException.class, () -> traineeRepository.findByUsername(USER_1_USERNAME));

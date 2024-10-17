@@ -23,7 +23,6 @@ import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.annakirillova.crmsystem.TrainingTestData.getNewTraining;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,7 +38,7 @@ class TrainingServiceTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Mock
-    private MessageSenderService messageSenderService;
+    private TrainerMessageSender trainerMessageSenderService;
 
     @InjectMocks
     private TrainingService trainingService;
@@ -65,13 +64,13 @@ class TrainingServiceTest {
         });
 
         when(trainingTypeRepository.getTrainingTypeIfExists(TRAINING_TYPE_3.getId())).thenReturn(TRAINING_TYPE_3);
-        doNothing().when(messageSenderService).sendMessage(anyString(), any(TrainingInfoDto.class));
+        doNothing().when(trainerMessageSenderService).sendMessage(any(TrainingInfoDto.class));
 
         Training newTraining = getNewTraining();
         Training savedTraining = trainingService.create(TRAINEE_3, TRAINER_3, "Yoga", TRAINING_TYPE_3.getId(), LocalDate.of(2024, 1, 5), 60);
 
         verify(trainingRepository, times(1)).save(any(Training.class));
-        verify(messageSenderService, times(1)).sendMessage(anyString(), any(TrainingInfoDto.class));
+        verify(trainerMessageSenderService, times(1)).sendMessage(any(TrainingInfoDto.class));
 
         int trainingId = savedTraining.getId();
         newTraining.setId(trainingId);
