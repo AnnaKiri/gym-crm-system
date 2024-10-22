@@ -1,7 +1,10 @@
 package com.annakirillova.trainerworkloadservice.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +31,7 @@ import java.util.List;
 @CompoundIndexes({
         @CompoundIndex(name = "name_idx", def = "{'firstName': 1, 'lastName': 1}")
 })
-public class Trainer {
+public class TrainerSummary {
 
     @Id
     @NotBlank
@@ -53,12 +56,17 @@ public class Trainer {
     public static class Summary {
 
         @NotNull
+        @Min(1900)
+        @Max(3000)
         private Integer year;
 
         @NotNull
+        @Min(1)
+        @Max(12)
         private Integer month;
 
         @NotNull
+        @Positive
         private Integer duration;
     }
 }

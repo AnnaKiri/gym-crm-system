@@ -6,26 +6,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_2;
 import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_MATCHER_WITH_SUMMARY_LIST;
+import static com.annakirillova.trainerworkloadservice.TestData.TRAINER_SUMMARY_2;
 import static com.annakirillova.trainerworkloadservice.web.trainer.TrainerController.REST_URL;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TrainerControllerTest extends BaseTest {
+class TrainerSummaryControllerTest extends BaseTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Test
     void get() throws Exception {
-        when(trainerRepository.getTrainerIfExists(TRAINER_2.getUsername())).thenReturn(TRAINER_2);
+        when(trainerRepository.getTrainerIfExists(TRAINER_SUMMARY_2.getUsername())).thenReturn(TRAINER_SUMMARY_2);
 
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINER_2.getUsername() + "/monthly-summary")
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + TRAINER_SUMMARY_2.getUsername() + "/monthly-summary")
                 .with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_MATCHER_WITH_SUMMARY_LIST.contentJson(TRAINER_2));
+                .andExpect(TRAINER_MATCHER_WITH_SUMMARY_LIST.contentJson(TRAINER_SUMMARY_2));
     }
 
     @Test

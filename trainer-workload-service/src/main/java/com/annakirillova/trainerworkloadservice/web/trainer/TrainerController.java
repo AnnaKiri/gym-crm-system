@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.web.trainer;
 
-import com.annakirillova.trainerworkloadservice.model.Trainer;
-import com.annakirillova.trainerworkloadservice.service.TrainerService;
+import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
+import com.annakirillova.trainerworkloadservice.service.TrainerSummaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,7 +23,7 @@ public class TrainerController {
 
     static final String REST_URL = "/trainers";
 
-    private final TrainerService trainerService;
+    private final TrainerSummaryService trainerSummaryService;
 
     @GetMapping("/{username}/monthly-summary")
     @Operation(summary = "Get trainer details", description = "Gets the summary of the specified trainer")
@@ -31,8 +31,8 @@ public class TrainerController {
             @ApiResponse(responseCode = "200", description = "Trainer details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public Trainer get(@PathVariable String username) {
+    public TrainerSummary get(@PathVariable String username) {
         log.debug("Get the monthly summary for the trainee with username={}", username);
-        return trainerService.get(username);
+        return trainerSummaryService.get(username);
     }
 }

@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.service;
 
 import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
-import com.annakirillova.trainerworkloadservice.model.Trainer;
+import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class MessageListener {
     private static final String TRAINER_WORKLOAD_QUEUE = "trainer-workload";
     private static final String TRAINER_WORKLOAD_DEAD_LETTER_QUEUE = "trainer-workload-dlq";
 
-    private final TrainerService trainerService;
+    private final TrainerSummaryService trainerSummaryService;
 
     @JmsListener(destination = TRAINER_WORKLOAD_QUEUE, containerFactory = "jmsFactory")
     public void receiveMessage(@Valid TrainingInfoDto trainingInfoDto) {
@@ -24,18 +24,18 @@ public class MessageListener {
 
         switch (trainingInfoDto.getActionType()) {
             case ADD:
-                Trainer trainer = trainerService.create(
+                TrainerSummary trainerSummary = trainerSummaryService.create(
                         trainingInfoDto.getFirstName(),
                         trainingInfoDto.getLastName(),
                         trainingInfoDto.getUsername(),
                         trainingInfoDto.getIsActive());
-                trainerService.addOrUpdateTrainingDuration(
-                        trainer.getUsername(),
+                trainerSummaryService.addOrUpdateTrainingDuration(
+                        trainerSummary.getUsername(),
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
                 break;
             case DELETE:
-                trainerService.deleteTrainingDurationFromSummaryByDateAndUsername(
+                trainerSummaryService.deleteTrainingDurationFromSummaryByDateAndUsername(
                         trainingInfoDto.getUsername(),
                         trainingInfoDto.getDate(),
                         trainingInfoDto.getDuration());
