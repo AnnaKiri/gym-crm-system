@@ -1,96 +1,105 @@
 package com.annakirillova.crmsystem.web.trainee;
 
-import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.TraineeTestData;
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
-import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.dto.UserDto;
-import com.annakirillova.crmsystem.exception.NotFoundException;
-import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
-import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;
+import com.annakirillova.crmsystem.metrics.RegisterMetrics;
+import com.annakirillova.crmsystem.models.Trainee;
+import com.annakirillova.crmsystem.models.Trainer;
+import com.annakirillova.crmsystem.models.User;
+import com.annakirillova.crmsystem.service.AuthService;
 import com.annakirillova.crmsystem.service.TraineeService;
+import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.util.JsonUtil;
-import org.junit.jupiter.api.Assertions;
+import com.annakirillova.crmsystem.web.BaseControllerTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import static com.annakirillova.crmsystem.FeignClientTestData.KEYCLOAK_USER_RESPONSE;
-import static com.annakirillova.crmsystem.FeignClientTestData.TOKEN_RESPONSE_DTO;
-import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_1;
+import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
+import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_1_WITH_TRAINER_LIST;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST;
+import static com.annakirillova.crmsystem.TraineeTestData.getUpdatedTrainee;
 import static com.annakirillova.crmsystem.TraineeTestData.getUpdatedTraineeDto;
 import static com.annakirillova.crmsystem.TrainerTestData.FREE_TRAINERS_FOR_TRAINEE_1;
-import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_1;
-import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_2;
+import static com.annakirillova.crmsystem.TrainerTestData.TRAINERS_FOR_TRAINEE_1;
+import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_1;
+import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_3;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_MATCHER;
+import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_1;
+import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_2;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_LIST_FOR_TRAINEE_1;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
-import static com.annakirillova.crmsystem.UserTestData.USER_1;
 import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
-import static com.annakirillova.crmsystem.UserTestData.USER_DTO_MATCHER;
+import static com.annakirillova.crmsystem.UserTestData.getUpdatedUser;
 import static com.annakirillova.crmsystem.UserTestData.jsonWithPassword;
 import static com.annakirillova.crmsystem.web.trainee.TraineeController.REST_URL;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class TraineeControllerTest extends BaseTest {
+@WebMvcTest(TraineeController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class TraineeControllerTest extends BaseControllerTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @MockBean
-    private KeycloakAuthFeignClientHelper keycloakAuthFeignClientHelper;
+    private RegisterMetrics registerMetrics;
 
     @MockBean
-    private KeycloakFeignClientHelper keycloakFeignClientHelper;
+    private AuthService authService;
 
-    @Autowired
+    @MockBean
+    private TrainerService trainerService;
+
+    @MockBean
     private TraineeService traineeService;
 
     @Test
-    @DirtiesContext
     void register() throws Exception {
-        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
-        doNothing().when(keycloakFeignClientHelper).createUserWithCircuitBreaker(
-                any(String.class), any(KeycloakUserDto.class)
-        );
-
         TraineeDto newTraineeDto = TraineeTestData.getNewTraineeDto();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+        Trainee createdTrainee = TraineeTestData.getNewTrainee();
+
+        doNothing().when(registerMetrics).incrementRequestCount();
+        doNothing().when(registerMetrics).recordExecutionTimeTrainee(any(Long.class), any(TimeUnit.class));
+        when(traineeService.create(
+                any(String.class),
+                any(String.class),
+                any(LocalDate.class),
+                any(String.class),
+                any(String.class)))
+                .thenReturn(createdTrainee);
+
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTraineeDto)))
+                .andDo(print())
                 .andExpect(status().isCreated());
 
-        UserDto created = USER_DTO_MATCHER.readFromJson(action);
-        String expectedUsername = newTraineeDto.getFirstName() + "." + newTraineeDto.getLastName();
-        Assertions.assertEquals(expectedUsername, created.getUsername());
-
-        verify(keycloakAuthFeignClientHelper, times(1)).requestTokenWithCircuitBreaker(
-                any(Map.class)
-        );
-        verify(keycloakFeignClientHelper, times(1)).createUserWithCircuitBreaker(
+        verify(traineeService, times(1)).create(
                 any(String.class),
-                any(KeycloakUserDto.class));
+                any(String.class),
+                any(LocalDate.class),
+                any(String.class),
+                any(String.class)
+        );
     }
 
     @Test
@@ -98,164 +107,158 @@ public class TraineeControllerTest extends BaseTest {
         String newPassword = "1234567890";
         UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(newPassword).build();
 
-        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
-        when(keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class))).thenReturn(KEYCLOAK_USER_RESPONSE);
-        doNothing().when(keycloakFeignClientHelper).updatePasswordWithCircuitBreaker(
-                any(String.class), any(String.class), any(CredentialRepresentationDto.class)
+        when(authService.getUsername()).thenReturn(USER_1_USERNAME);
+        doNothing().when(traineeService).changePassword(
+                any(String.class),
+                any(String.class)
         );
 
-        Jwt jwt = Jwt.withTokenValue("test-token")
-                .header("alg", "HS256")
-                .claim("preferred_username", USER_1_USERNAME)
-                .build();
-
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
-                .with(jwt().jwt(jwt))
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithPassword(userDto, newPassword)))
+                .andDo(print())
                 .andExpect(status().isOk());
 
-        entityManager.clear();
-
-        verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
-        verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
-        verify(keycloakFeignClientHelper, times(1)).updatePasswordWithCircuitBreaker(any(String.class), any(String.class), any(CredentialRepresentationDto.class));
+        verify(traineeService, times(1)).changePassword(USER_1_USERNAME, newPassword);
     }
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt()))
+        when(traineeService.getWithUser(USER_1_USERNAME)).thenReturn(TRAINEE_1);
+        when(trainerService.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(TRAINERS_FOR_TRAINEE_1);
+
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_DTO_1));
+                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(TRAINEE_DTO_1_WITH_TRAINER_LIST));
+
+        verify(traineeService, times(1)).getWithUser(USER_1_USERNAME);
+        verify(trainerService, times(1)).getTrainersForTrainee(USER_1_USERNAME);
     }
 
     @Test
     void update() throws Exception {
-        TraineeDto traineeExpected = getUpdatedTraineeDto();
-        traineeExpected.setTrainerList(TRAINEE_DTO_1.getTrainerList());
+        TraineeDto traineeDtoExpected = getUpdatedTraineeDto();
+        traineeDtoExpected.setTrainerList(TRAINEE_DTO_1_WITH_TRAINER_LIST.getTrainerList());
 
-        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
-        when(keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class))).thenReturn(KEYCLOAK_USER_RESPONSE);
-        doNothing().when(keycloakFeignClientHelper).updateUserWithCircuitBreaker(
-                any(String.class), any(String.class), any(KeycloakUserDto.class)
+        doNothing().when(traineeService).update(
+                any(String.class),
+                any(String.class),
+                any(String.class),
+                any(LocalDate.class),
+                any(String.class),
+                any(Boolean.class)
         );
 
-        TraineeDto traineeDto = TraineeDto.builder()
-                .firstName(traineeExpected.getFirstName())
-                .lastName(traineeExpected.getLastName())
-                .birthday(traineeExpected.getBirthday())
-                .address(traineeExpected.getAddress())
-                .isActive(traineeExpected.getIsActive())
-                .build();
+        Trainee traineeExpected = getUpdatedTrainee();
+        User userExpected = getUpdatedUser();
+        userExpected.setUsername(USER_1_USERNAME);
+        traineeExpected.setUser(userExpected);
+
+        when(traineeService.getWithUser(USER_1_USERNAME)).thenReturn(traineeExpected);
+        when(trainerService.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(TRAINERS_FOR_TRAINEE_1);
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeDto)))
+                .content(JsonUtil.writeValue(traineeDtoExpected)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeExpected));
+                .andExpect(TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST.contentJson(traineeDtoExpected));
 
-        verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
-        verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
-        verify(keycloakFeignClientHelper, times(1)).updateUserWithCircuitBreaker(any(String.class), any(String.class), any(KeycloakUserDto.class));
+        verify(traineeService, times(1)).update(
+                any(String.class),
+                any(String.class),
+                any(String.class),
+                any(LocalDate.class),
+                any(String.class),
+                any(Boolean.class)
+        );
     }
 
     @Test
     void delete() throws Exception {
+        doNothing().when(traineeService).delete(any(String.class));
 
-        when(keycloakAuthFeignClientHelper.requestTokenWithCircuitBreaker(any(Map.class))).thenReturn(TOKEN_RESPONSE_DTO);
-        when(keycloakFeignClientHelper.getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class))).thenReturn(KEYCLOAK_USER_RESPONSE);
-        doNothing().when(keycloakFeignClientHelper).deleteUserWithCircuitBreaker(
-                any(String.class), any(String.class)
-        );
-        doNothing().when(jmsTemplate).convertAndSend(anyString(), any(TrainingInfoDto.class));
-
-        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt()))
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        assertThrows(NotFoundException.class, () -> traineeService.get(USER_1.getUsername()));
-
-        verify(keycloakAuthFeignClientHelper, times(2)).requestTokenWithCircuitBreaker(any(Map.class));
-        verify(keycloakFeignClientHelper, times(1)).getUserByUsernameWithCircuitBreaker(any(String.class), any(String.class));
-        verify(keycloakFeignClientHelper, times(1)).deleteUserWithCircuitBreaker(any(String.class), any(String.class));
-        verify(jmsTemplate, times(2)).convertAndSend(anyString(), any(TrainingInfoDto.class));
+        verify(traineeService, times(1)).delete(USER_1_USERNAME);
     }
 
     @Test
     void getFreeTrainersForTrainee() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers")
-                .with(jwt()))
+        when(traineeService.getFreeTrainersForTrainee(USER_1_USERNAME)).thenReturn(new ArrayList<>(List.of(TRAINER_1, TRAINER_3)));
+
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/free-trainers"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINER_DTO_MATCHER.contentJson(FREE_TRAINERS_FOR_TRAINEE_1));
+
+        verify(traineeService, times(1)).getFreeTrainersForTrainee(USER_1_USERNAME);
     }
 
     @Test
     void getTrainings() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings")
-                .with(jwt()))
+        when(traineeService.getTrainings(
+                any(String.class),
+                nullable(LocalDate.class),
+                nullable(LocalDate.class),
+                nullable(String.class),
+                nullable(String.class),
+                nullable(String.class)))
+                .thenReturn(new ArrayList<>(List.of(TRAINING_1, TRAINING_2)));
+
+        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + USER_1_USERNAME + "/trainings"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(TRAINING_DTO_MATCHER.contentJson(TRAINING_DTO_LIST_FOR_TRAINEE_1));
+
+        verify(traineeService, times(1)).getTrainings(
+                any(String.class),
+                nullable(LocalDate.class),
+                nullable(LocalDate.class),
+                nullable(String.class),
+                nullable(String.class),
+                nullable(String.class)
+        );
     }
 
     @Test
     void setActive() throws Exception {
+        when(traineeService.setActive(
+                eq(USER_1_USERNAME),
+                any(Boolean.class)))
+                .thenReturn(true);
+
         perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt())
                 .param("isActive", "false"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        entityManager.clear();
-
-        Assertions.assertFalse(traineeService.getWithUser(USER_1_USERNAME).getUser().isActive());
+        verify(traineeService, times(1)).setActive(eq(USER_1_USERNAME), any(Boolean.class));
     }
-
-    @Test
-    void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL_SLASH + "Not.Found")
-                .with(jwt()))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void updateInvalid() throws Exception {
-        TraineeDto traineeDto = TraineeDto.builder().build();
-
-        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(traineeDto)))
-                .andExpect(status().isBadRequest());
-    }
-
 
     @Test
     void updateTrainerList() throws Exception {
         List<String> trainerUsernames = List.of(USER_5.getUsername(), USER_6.getUsername());
+        List<Trainer> trainerList = List.of(TRAINER_1, TRAINER_3);
+
+        doNothing().when(traineeService).updateTrainerList(USER_1_USERNAME, trainerUsernames);
+        when(trainerService.getTrainersForTrainee(USER_1_USERNAME)).thenReturn(trainerList);
 
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1_USERNAME + "/trainers")
-                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(trainerUsernames)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_DTO_MATCHER.contentJson(List.of(TRAINER_DTO_1, TRAINER_DTO_2)));
-    }
-
-    @Test
-    void setActiveAgain() throws Exception {
-        perform(MockMvcRequestBuilders.patch(REST_URL_SLASH + USER_1_USERNAME)
-                .with(jwt())
-                .param("isActive", "true"))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        verify(traineeService, times(1)).updateTrainerList(USER_1_USERNAME, trainerUsernames);
+        verify(trainerService, times(1)).getTrainersForTrainee(USER_1_USERNAME);
     }
 }

@@ -6,8 +6,10 @@ import com.annakirillova.crmsystem.models.User;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.annakirillova.crmsystem.TraineeTestData.TRAINEES_FOR_TRAINER_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_2;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_3;
@@ -31,6 +33,7 @@ public class TrainerTestData {
     public static final Trainer TRAINER_2 = new Trainer(2, TRAINING_TYPE_2, USER_6);
     public static final Trainer TRAINER_3 = new Trainer(3, TRAINING_TYPE_3, USER_7);
     public static final Trainer TRAINER_4 = new Trainer(4, TRAINING_TYPE_4, USER_8);
+    public static final List<Trainer> TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_2, TRAINER_4);
 
     public static final TrainerDto TRAINER_DTO_1 = TrainerDto.builder()
             .id(1)
@@ -41,6 +44,7 @@ public class TrainerTestData {
             .specialization(TRAINING_TYPE_1)
             .specializationId(TRAINING_TYPE_1_ID)
             .build();
+    public static final TrainerDto TRAINER_DTO_1_WITH_TRAINEE_LIST = new TrainerDto(TRAINER_DTO_1);
 
     public static final TrainerDto TRAINER_DTO_2 = TrainerDto.builder()
             .id(2)
@@ -52,6 +56,8 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID + 1)
             .build();
 
+    public static final TrainerDto TRAINER_DTO_2_WITH_TRAINEE_LIST = new TrainerDto(TRAINER_DTO_2);
+
     public static final TrainerDto TRAINER_DTO_3 = TrainerDto.builder()
             .id(3)
             .username(USER_7.getUsername())
@@ -62,6 +68,8 @@ public class TrainerTestData {
             .specializationId(TRAINING_TYPE_1_ID + 2)
             .build();
 
+    public static final TrainerDto TRAINER_DTO_3_WITH_TRAINEE_LIST = new TrainerDto(TRAINER_DTO_3);
+
     public static final TrainerDto TRAINER_DTO_4 = TrainerDto.builder()
             .id(4)
             .username(USER_8.getUsername())
@@ -71,6 +79,8 @@ public class TrainerTestData {
             .specialization(TRAINING_TYPE_4)
             .specializationId(TRAINING_TYPE_1_ID + 3)
             .build();
+
+    public static final TrainerDto TRAINER_DTO_4_WITH_TRAINEE_LIST = new TrainerDto(TRAINER_DTO_4);
 
     public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_1 = List.of(TRAINER_DTO_1, TRAINER_DTO_3);
     public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_2 = List.of(TRAINER_DTO_1, TRAINER_DTO_4);
@@ -88,10 +98,11 @@ public class TrainerTestData {
                     });
 
     static {
-        TRAINER_DTO_1.setTraineeList(List.of(TRAINEE_DTO_4));
-        TRAINER_DTO_2.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_2, TRAINEE_DTO_3));
-        TRAINER_DTO_3.setTraineeList(List.of(TRAINEE_DTO_2));
-        TRAINER_DTO_4.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_4));
+        TRAINER_1.setTraineeList(new ArrayList<>(TRAINEES_FOR_TRAINER_1));
+        TRAINER_DTO_1_WITH_TRAINEE_LIST.setTraineeList(List.of(TRAINEE_DTO_4));
+        TRAINER_DTO_2_WITH_TRAINEE_LIST.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_2, TRAINEE_DTO_3));
+        TRAINER_DTO_3_WITH_TRAINEE_LIST.setTraineeList(List.of(TRAINEE_DTO_2));
+        TRAINER_DTO_4_WITH_TRAINEE_LIST.setTraineeList(List.of(TRAINEE_DTO_1, TRAINEE_DTO_4));
     }
 
     public static Trainer getNewTrainer() {

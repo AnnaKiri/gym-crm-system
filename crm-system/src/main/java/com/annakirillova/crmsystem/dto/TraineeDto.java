@@ -44,4 +44,14 @@ public class TraineeDto extends BaseDto {
     @EqualsAndHashCode.Exclude
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<TrainerDto> trainerList;
+
+    public TraineeDto(TraineeDto other) {
+        super.id = other.id();
+        this.username = other.username;
+        this.firstName = other.firstName;
+        this.lastName = other.lastName;
+        this.birthday = other.birthday;
+        this.address = other.address;
+        this.isActive = other.isActive;
+    }
 }

@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.annakirillova.crmsystem.models.TrainingType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,4 +49,13 @@ public class TrainerDto extends BaseDto {
     @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer specializationId;
+
+    public TrainerDto(TrainerDto other) {
+        super.id = other.id();
+        this.username = other.username;
+        this.firstName = other.firstName;
+        this.lastName = other.lastName;
+        this.isActive = other.isActive;
+        this.specialization = other.specialization;
+    }
 }
