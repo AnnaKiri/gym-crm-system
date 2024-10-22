@@ -41,8 +41,7 @@ VALUES (1, 4, 'Stretching', 4, '2024-01-01', 60),
        (2, 3, 'Yoga', 3, '2024-01-05', 60),
        (3, 2, 'Strength', 1, '2024-01-05', 60),
        (4, 4, 'Stretching', 4, '2024-01-01', 60),
-       (4, 1, 'Strength', 1, '2024-01-06', 60),
-       (2, 3, 'Yoga', 3, '2024-01-05', 60);
+       (4, 1, 'Strength', 1, '2024-01-06', 60);
 
 INSERT INTO trainee2trainer (trainee_id, trainer_id)
 VALUES (1, 4),

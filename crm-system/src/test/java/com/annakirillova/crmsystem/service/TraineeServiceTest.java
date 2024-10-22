@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1_ID;
+import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_4;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_MATCHER;
 import static com.annakirillova.crmsystem.TraineeTestData.checkTraineeUserId;
 import static com.annakirillova.crmsystem.TraineeTestData.getNewTrainee;
@@ -256,4 +257,60 @@ public class TraineeServiceTest {
         when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(true);
         Assertions.assertThrows(IllegalRequestDataException.class, () -> traineeService.setActive(USER_1_USERNAME, true));
     }
+
+    @Test
+    void getTraineesForTrainer() {
+        List<Trainee> expectedTrainees = List.of(TRAINEE_4);
+        when(traineeRepository.findTraineesByTrainerUsername(TRAINER_1.getUser().getUsername())).thenReturn(expectedTrainees);
+
+        List<Trainee> actualTrainees = traineeService.getTraineesForTrainer(TRAINER_1.getUser().getUsername());
+
+        TRAINEE_MATCHER.assertMatch(actualTrainees, expectedTrainees);
+        for (int i = 0; i < expectedTrainees.size(); i++) {
+            checkTraineeUserId(expectedTrainees.get(i), actualTrainees.get(i));
+        }
+    }
+
+    @Test
+    void setActiveSuccessfully() {
+        when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(false);
+        when(userRepository.updateIsActiveByUsername(USER_1_USERNAME, true)).thenReturn(1);
+
+        boolean newStatus = traineeService.setActive(USER_1_USERNAME, true);
+
+        verify(userRepository, times(1)).updateIsActiveByUsername(USER_1_USERNAME, true);
+        Assertions.assertTrue(newStatus);
+    }
+
+    @Test
+    void setActiveAlreadyInDesiredState() {
+        when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(true);
+
+        Assertions.assertThrows(IllegalRequestDataException.class, () -> traineeService.setActive(USER_1_USERNAME, true));
+    }
+
+    @Test
+    void setActiveUserNotFound() {
+        when(userRepository.findIsActiveByUsername(USER_1_USERNAME)).thenReturn(null);
+
+        Assertions.assertThrows(NotFoundException.class, () -> traineeService.setActive(USER_1_USERNAME, true));
+    }
+
+    @Test
+    void getWithUserSuccessfully() {
+        when(traineeRepository.getWithUser(USER_1_USERNAME)).thenReturn(Optional.of(TRAINEE_1));
+
+        Trainee trainee = traineeService.getWithUser(USER_1_USERNAME);
+
+        TRAINEE_MATCHER.assertMatch(trainee, TRAINEE_1);
+        checkTraineeUserId(TRAINEE_1, trainee);
+    }
+
+    @Test
+    void getWithUserNotFound() {
+        when(traineeRepository.getWithUser(USER_1_USERNAME)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class, () -> traineeService.getWithUser(USER_1_USERNAME));
+    }
+
 }

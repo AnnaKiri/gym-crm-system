@@ -5,11 +5,13 @@ import com.annakirillova.crmsystem.models.Trainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_1;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_2;
+import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_3;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_4;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_MATCHER;
 import static com.annakirillova.crmsystem.TrainerTestData.checkTrainerSpecializationId;
@@ -17,6 +19,7 @@ import static com.annakirillova.crmsystem.TrainerTestData.checkTrainerUserId;
 import static com.annakirillova.crmsystem.UserTestData.NOT_FOUND_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_5_USERNAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TrainerRepositoryTest extends BaseRepositoryTest {
 
@@ -59,5 +62,16 @@ public class TrainerRepositoryTest extends BaseRepositoryTest {
     void getTraineeIfExistsWithWrongUsername() {
         Assertions.assertThrows(NotFoundException.class,
                 () -> trainerRepository.getTrainerIfExists(NOT_FOUND_USERNAME));
+    }
+
+    @Test
+    void findTrainersNotAssignedToTrainee() {
+        Specification<Trainer> spec = TrainerSpecifications.notAssignedToTrainee(USER_1_USERNAME);
+        List<Trainer> actual = trainerRepository.findAll(spec);
+
+        List<Trainer> expected = List.of(TRAINER_1, TRAINER_3);
+
+        TRAINER_MATCHER.assertMatch(actual, expected);
+        assertEquals(2, expected.size());
     }
 }

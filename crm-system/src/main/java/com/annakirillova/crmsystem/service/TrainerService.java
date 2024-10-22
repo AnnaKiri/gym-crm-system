@@ -98,7 +98,12 @@ public class TrainerService {
     @Transactional
     public boolean setActive(String username, boolean isActive) {
         log.debug("Change active status for trainer with username = {}", username);
-        boolean currentStatus = userRepository.findIsActiveByUsername(username);
+        Boolean currentStatus = userRepository.findIsActiveByUsername(username);
+
+        if (currentStatus == null) {
+            throw new NotFoundException("Not found entity with " + username);
+        }
+
         if (currentStatus == isActive) {
             throw new IllegalRequestDataException("User is already in the desired state");
         }

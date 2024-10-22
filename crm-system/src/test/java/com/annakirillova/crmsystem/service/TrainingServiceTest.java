@@ -1,6 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.dto.TrainingInfoDto;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_3;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_3;
@@ -22,6 +24,7 @@ import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTrainerI
 import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTypeId;
 import static com.annakirillova.crmsystem.TrainingTestData.getNewTraining;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -80,4 +83,26 @@ class TrainingServiceTest {
         checkTrainingTrainerId(newTraining, savedTraining);
         checkTrainingTypeId(newTraining, savedTraining);
     }
+
+    @Test
+    void getFullTrainingSuccess() {
+        when(trainingRepository.getFullTrainingById(TRAINING_1_ID)).thenReturn(Optional.of(TRAINING_1));
+
+        Training training = trainingService.getFull(TRAINING_1_ID);
+
+        verify(trainingRepository, times(1)).getFullTrainingById(TRAINING_1_ID);
+        TRAINING_MATCHER.assertMatch(training, TRAINING_1);
+        checkTrainingTraineeId(TRAINING_1, training);
+        checkTrainingTrainerId(TRAINING_1, training);
+        checkTrainingTypeId(TRAINING_1, training);
+    }
+
+    @Test
+    void getFullTrainingNotFound() {
+        int nonExistentId = 9999;
+        when(trainingRepository.getFullTrainingById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> trainingService.getFull(nonExistentId));
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
 import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
+import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.models.User;
@@ -20,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_3;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_1;
@@ -212,4 +214,48 @@ class TrainerServiceTest {
         when(userRepository.findIsActiveByUsername(USER_5_USERNAME)).thenReturn(true);
         Assertions.assertThrows(IllegalRequestDataException.class, () -> trainerService.setActive(USER_5_USERNAME, true));
     }
+
+    @Test
+    void getWithUserAndSpecializationSuccessfully() {
+        when(trainerRepository.getWithUserAndSpecialization(USER_5_USERNAME)).thenReturn(Optional.of(TRAINER_1));
+
+        Trainer trainer = trainerService.getWithUserAndSpecialization(USER_5_USERNAME);
+
+        TRAINER_MATCHER.assertMatch(trainer, TRAINER_1);
+        checkTrainerUserId(TRAINER_1, trainer);
+        checkTrainerSpecializationId(TRAINER_1, trainer);
+    }
+
+    @Test
+    void getWithUserAndSpecializationNotFound() {
+        when(trainerRepository.getWithUserAndSpecialization(USER_5_USERNAME)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(NotFoundException.class, () -> trainerService.getWithUserAndSpecialization(USER_5_USERNAME));
+    }
+
+    @Test
+    void setActiveSuccessfully() {
+        when(userRepository.findIsActiveByUsername(USER_5_USERNAME)).thenReturn(true);
+        when(userRepository.updateIsActiveByUsername(USER_5_USERNAME, false)).thenReturn(1);
+
+        boolean newStatus = trainerService.setActive(USER_5_USERNAME, false);
+
+        verify(userRepository, times(1)).updateIsActiveByUsername(USER_5_USERNAME, false);
+        Assertions.assertFalse(newStatus);
+    }
+
+    @Test
+    void setActiveAlreadyInDesiredState() {
+        when(userRepository.findIsActiveByUsername(USER_5_USERNAME)).thenReturn(false);
+
+        Assertions.assertThrows(IllegalRequestDataException.class, () -> trainerService.setActive(USER_5_USERNAME, false));
+    }
+
+    @Test
+    void setActiveUserNotFound() {
+        when(userRepository.findIsActiveByUsername(USER_5_USERNAME)).thenReturn(null);
+
+        Assertions.assertThrows(NotFoundException.class, () -> trainerService.setActive(USER_5_USERNAME, true));
+    }
+
 }
