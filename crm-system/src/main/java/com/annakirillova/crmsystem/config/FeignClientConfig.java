@@ -8,14 +8,18 @@ import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.zalando.logbook.Logbook;
 import org.zalando.logbook.openfeign.FeignLogbookLogger;
 
 @Configuration
 @RequiredArgsConstructor
+@Profile("!unit-tests")
+@EnableFeignClients
 public class FeignClientConfig {
     private final Logbook logbook;
 

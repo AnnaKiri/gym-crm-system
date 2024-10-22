@@ -1,6 +1,5 @@
 package com.annakirillova.crmsystem.repository;
 
-import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +17,7 @@ import static com.annakirillova.crmsystem.UserTestData.NOT_FOUND_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
 
-public class TraineeRepositoryTest extends BaseTest {
+public class TraineeRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private TraineeRepository traineeRepository;

@@ -1,6 +1,5 @@
 package com.annakirillova.crmsystem.repository;
 
-import com.annakirillova.crmsystem.BaseTest;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Training;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +13,7 @@ import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTraineeI
 import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTrainerId;
 import static com.annakirillova.crmsystem.TrainingTestData.checkTrainingTypeId;
 
-public class TrainingRepositoryTest extends BaseTest {
+public class TrainingRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private TrainingRepository trainingRepository;
