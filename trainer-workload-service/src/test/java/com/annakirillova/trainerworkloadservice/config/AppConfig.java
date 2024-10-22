@@ -1,10 +1,9 @@
 package com.annakirillova.trainerworkloadservice.config;
 
+import com.annakirillova.trainerworkloadservice.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
-import com.annakirillova.trainerworkloadservice.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ProblemDetail;
@@ -19,7 +18,6 @@ public class AppConfig {
 
     @Autowired
     void configureAndStoreObjectMapper(ObjectMapper objectMapper) {
-        objectMapper.registerModule(new Hibernate6Module());
         objectMapper.addMixIn(ProblemDetail.class, MixIn.class);
         JsonUtil.setMapper(objectMapper);
     }
