@@ -58,7 +58,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @Tag(name = "Trainee Controller", description = "Managing gym trainees")
 @SecurityRequirement(name = "Bearer Authentication")
 public class TraineeController {
-    static final String REST_URL = "/trainees";
+    public static final String REST_URL = "/trainees";
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;

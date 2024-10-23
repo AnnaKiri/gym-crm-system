@@ -19,7 +19,7 @@ import org.zalando.logbook.openfeign.FeignLogbookLogger;
 @Configuration
 @RequiredArgsConstructor
 @Profile("!unit-tests")
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.annakirillova.crmsystem.feign")
 public class FeignClientConfig {
     private final Logbook logbook;
 

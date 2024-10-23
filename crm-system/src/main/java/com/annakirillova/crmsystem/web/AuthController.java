@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(AuthController.REST_URL)
 @Tag(name = "Auth Controller", description = "Controller for login and logout")
 public class AuthController {
-    static final String REST_URL = "/auth";
+    public static final String REST_URL = "/auth";
 
     private final BruteForceProtectionService bruteForceProtectionService;
     private final TokenService tokenService;

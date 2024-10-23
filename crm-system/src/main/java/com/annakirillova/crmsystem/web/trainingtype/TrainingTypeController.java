@@ -24,7 +24,7 @@ import java.util.List;
 @SecurityRequirement(name = "Bearer Authentication")
 public class TrainingTypeController {
 
-    static final String REST_URL = "/training-types";
+    public static final String REST_URL = "/training-types";
 
     private final TrainingTypeRepository trainingTypeRepository;
 
