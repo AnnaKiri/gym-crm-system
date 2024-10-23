@@ -8,7 +8,7 @@ import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.service.TrainingService;
-import com.annakirillova.crmsystem.web.BaseControllerTest;
+import com.annakirillova.crmsystem.web.BaseControllerUnitTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TrainingController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class TrainingControllerTest extends BaseControllerTest {
+public class TrainingControllerUnitTest extends BaseControllerUnitTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @MockBean

@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @ActiveProfiles("unit-tests")
-public abstract class BaseRepositoryTest {
+public abstract class BaseRepositoryUnitTest {
 
     @PersistenceContext
     protected EntityManager entityManager;

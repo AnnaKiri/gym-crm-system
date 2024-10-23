@@ -7,7 +7,7 @@ import org.springframework.boot.actuate.health.Status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StatusHealthIndicatorTest {
+public class StatusHealthIndicatorUnitTest {
 
     private StatusHealthIndicator healthIndicator;
 

@@ -10,7 +10,7 @@ import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_1_ID;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_MATCHER;
 
-public class TrainingTypeRepositoryTest extends BaseRepositoryTest {
+public class TrainingTypeRepositoryUnitTest extends BaseRepositoryUnitTest {
 
     @Autowired
     private TrainingTypeRepository trainingTypeRepository;

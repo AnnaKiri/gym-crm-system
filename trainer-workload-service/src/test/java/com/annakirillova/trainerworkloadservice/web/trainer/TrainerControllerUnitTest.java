@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TrainerController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(AppConfig.class)
-class TrainerControllerTest {
+class TrainerControllerUnitTest {
     private static final String REST_URL_SLASH = REST_URL + '/';
 
     @Autowired

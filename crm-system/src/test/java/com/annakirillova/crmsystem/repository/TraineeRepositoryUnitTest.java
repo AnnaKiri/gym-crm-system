@@ -17,7 +17,7 @@ import static com.annakirillova.crmsystem.UserTestData.NOT_FOUND_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
 
-public class TraineeRepositoryTest extends BaseRepositoryTest {
+public class TraineeRepositoryUnitTest extends BaseRepositoryUnitTest {
 
     @Autowired
     private TraineeRepository traineeRepository;

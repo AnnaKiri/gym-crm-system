@@ -22,7 +22,7 @@ import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TrainingRepositoryTest extends BaseRepositoryTest {
+public class TrainingRepositoryUnitTest extends BaseRepositoryUnitTest {
 
     @Autowired
     private TrainingRepository trainingRepository;

@@ -21,7 +21,7 @@ import static com.annakirillova.crmsystem.UserTestData.USER_1_USERNAME;
 import static com.annakirillova.crmsystem.UserTestData.USER_5_USERNAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TrainerRepositoryTest extends BaseRepositoryTest {
+public class TrainerRepositoryUnitTest extends BaseRepositoryUnitTest {
 
     @Autowired
     private TrainerRepository trainerRepository;

@@ -15,7 +15,7 @@ import static com.annakirillova.crmsystem.UserTestData.USER_MATCHER;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserRepositoryTest extends BaseRepositoryTest {
+public class UserRepositoryUnitTest extends BaseRepositoryUnitTest {
 
     @Autowired
     private UserRepository userRepository;

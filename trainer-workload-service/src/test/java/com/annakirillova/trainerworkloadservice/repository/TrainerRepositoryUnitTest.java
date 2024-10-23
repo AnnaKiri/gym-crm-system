@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataMongoTest
 @TestPropertySource(properties = "de.flapdoodle.mongodb.embedded.version=4.4.10")
-class TrainerRepositoryTest {
+class TrainerRepositoryUnitTest {
 
     @Autowired
     private TrainerRepository trainerRepository;
