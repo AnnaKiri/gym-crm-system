@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Trainer Controller", description = "Managing gym trainers")
 public class TrainerController {
 
-    static final String REST_URL = "/trainers";
+    public static final String REST_URL = "/trainers";
 
     private final TrainerSummaryService trainerSummaryService;
 

@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: component-test
+keycloak:
+  url: http://localhost
+  realm: gym-crm-system-realm
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.10
