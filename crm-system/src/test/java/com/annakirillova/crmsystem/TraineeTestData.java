@@ -103,8 +103,8 @@ public class TraineeTestData {
 
     public static TraineeDto getNewTraineeDto() {
         return TraineeDto.builder()
-                .firstName("FirstName")
-                .lastName("LastName")
+                .firstName("TraineeFirstName")
+                .lastName("TraineeLastName")
                 .birthday(LocalDate.of(1980, 8, 15))
                 .address("Address")
                 .isActive(true)

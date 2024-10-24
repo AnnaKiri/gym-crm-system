@@ -115,8 +115,8 @@ public class TrainerTestData {
 
     public static TrainerDto getNewTrainerDto() {
         return TrainerDto.builder()
-                .firstName("FirstName")
-                .lastName("LastName")
+                .firstName("TrainerFirstname")
+                .lastName("TrainerLastName")
                 .specializationId(TRAINING_TYPE_4.getId())
                 .isActive(true)
                 .build();

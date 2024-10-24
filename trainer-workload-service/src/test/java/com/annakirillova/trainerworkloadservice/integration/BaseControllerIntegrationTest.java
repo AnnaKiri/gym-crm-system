@@ -2,6 +2,7 @@ package com.annakirillova.trainerworkloadservice.integration;
 
 import com.annakirillova.trainerworkloadservice.config.KeycloakPropertiesExtended;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,15 +22,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.activemq.ActiveMQContainer;
 import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-@Testcontainers
 public abstract class BaseControllerIntegrationTest {
     public static final String BEARER_PREFIX = "Bearer ";
 
@@ -39,20 +37,24 @@ public abstract class BaseControllerIntegrationTest {
     @Autowired
     private KeycloakPropertiesExtended keycloakProperties;
 
-    @Container
     @ServiceConnection
     private static final ActiveMQContainer ACTIVEMQ = new ActiveMQContainer("apache/activemq-classic:5.18.6");
 
-    @Container
     @ServiceConnection
     static MongoDBContainer MONGODB = new MongoDBContainer("mongo:8.0.1");
 
-    @Container
     private static final KeycloakContainer KEYCLOAK = new KeycloakContainer().withRealmImportFile("keycloak/test-realm.json");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("keycloak.url", KEYCLOAK::getAuthServerUrl);
+    }
+
+    @BeforeAll
+    static void startContainers() {
+        ACTIVEMQ.start();
+        MONGODB.start();
+        KEYCLOAK.start();
     }
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
