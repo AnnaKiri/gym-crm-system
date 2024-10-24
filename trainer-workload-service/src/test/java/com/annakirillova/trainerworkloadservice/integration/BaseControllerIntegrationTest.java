@@ -1,14 +1,7 @@
-package com.annakirillova.crmsystem.integration;
+package com.annakirillova.trainerworkloadservice.integration;
 
-import com.annakirillova.crmsystem.config.KeycloakProperties;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
-import com.annakirillova.crmsystem.models.User;
-import com.annakirillova.crmsystem.util.JsonUtil;
-import com.redis.testcontainers.RedisContainer;
+import com.annakirillova.trainerworkloadservice.config.KeycloakPropertiesExtended;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,66 +16,50 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.activemq.ActiveMQContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
-import static com.annakirillova.crmsystem.UserTestData.USERS_PASSWORDS;
+import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Transactional
 @ActiveProfiles("integration-test")
 @Testcontainers
 public abstract class BaseControllerIntegrationTest {
+    public static final String BEARER_PREFIX = "Bearer ";
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private KeycloakProperties keycloakProperties;
-
-    @PersistenceContext
-    protected EntityManager entityManager;
-
-    @Container
-    @ServiceConnection
-    private static final PostgreSQLContainer POSTGRESQL = new PostgreSQLContainer("postgres:15.8");
+    private KeycloakPropertiesExtended keycloakProperties;
 
     @Container
     @ServiceConnection
     private static final ActiveMQContainer ACTIVEMQ = new ActiveMQContainer("apache/activemq-classic:5.18.6");
 
     @Container
-    private static final KeycloakContainer KEYCLOAK = new KeycloakContainer().withRealmImportFile("keycloak/test-realm.json");
+    @ServiceConnection
+    static MongoDBContainer MONGODB = new MongoDBContainer("mongo:8.0.1");
 
     @Container
-    private static final RedisContainer REDIS = new RedisContainer(DockerImageName.parse("redis:7.4.1"));
+    private static final KeycloakContainer KEYCLOAK = new KeycloakContainer().withRealmImportFile("keycloak/test-realm.json");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("keycloak.url", KEYCLOAK::getAuthServerUrl);
-        registry.add("spring.data.redis.host", REDIS::getHost);
-        registry.add("spring.data.redis.port", REDIS::getFirstMappedPort);
-    }
-
-    @BeforeEach
-    void resetState() {
-        entityManager.clear();
     }
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return mockMvc.perform(builder);
     }
 
-    protected TokenResponseDto getTokensForUser(User user) {
-        String username = user.getUsername();
+    protected String getAccessToken(String username, String password) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -92,16 +69,12 @@ public abstract class BaseControllerIntegrationTest {
         map.add("client_id", keycloakProperties.getUser().getClientId());
         map.add("client_secret", keycloakProperties.getUser().getClientSecret());
         map.add("username", username);
-        map.add("password", USERS_PASSWORDS.get(username));
+        map.add("password", password);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm() + "/protocol/openid-connect/token",
-                request,
-                String.class
-        );
-
-        return JsonUtil.readValue(response.getBody(), TokenResponseDto.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm() + "/protocol/openid-connect/token", request, Map.class);
+        return response.getBody().get("access_token").toString();
     }
+
 }
