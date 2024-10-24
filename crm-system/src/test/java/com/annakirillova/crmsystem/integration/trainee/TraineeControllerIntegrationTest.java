@@ -10,8 +10,8 @@ import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,6 +33,7 @@ import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
 import static com.annakirillova.crmsystem.UserTestData.USER_DTO_MATCHER;
 import static com.annakirillova.crmsystem.UserTestData.jsonWithPassword;
+import static com.annakirillova.crmsystem.config.SecurityConfig.BEARER_PREFIX;
 import static com.annakirillova.crmsystem.web.trainee.TraineeController.REST_URL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -65,13 +66,8 @@ public class TraineeControllerIntegrationTest extends BaseControllerIntegrationT
         String newPassword = "1234567890";
         UserDto userDto = UserDto.builder().username(USER_1_USERNAME).password(newPassword).build();
 
-        Jwt jwt = Jwt.withTokenValue("test-token")
-                .header("alg", "HS256")
-                .claim("preferred_username", USER_1_USERNAME)
-                .build();
-
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + USER_1.getUsername() + "/password")
-                .with(jwt().jwt(jwt))
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getTokenForUser(USER_1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithPassword(userDto, newPassword)))
                 .andExpect(status().isOk());
@@ -112,16 +108,12 @@ public class TraineeControllerIntegrationTest extends BaseControllerIntegrationT
 
     @Test
     void delete() throws Exception {
-//        doNothing().when(jmsTemplate).convertAndSend(anyString(), any(TrainingInfoDto.class));
-
         perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + USER_1_USERNAME)
                 .with(jwt()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         assertThrows(NotFoundException.class, () -> traineeService.get(USER_1.getUsername()));
-
-//        verify(jmsTemplate, times(2)).convertAndSend(anyString(), any(TrainingInfoDto.class));
     }
 
     @Test

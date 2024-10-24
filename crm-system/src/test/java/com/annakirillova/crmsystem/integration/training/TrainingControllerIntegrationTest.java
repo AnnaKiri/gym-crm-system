@@ -22,16 +22,12 @@ public class TrainingControllerIntegrationTest extends BaseControllerIntegration
 
     @Test
     void create() throws Exception {
-//        doNothing().when(jmsTemplate).convertAndSend(any(String.class), any(TrainingInfoDto.class));
-
         TrainingDto newTrainingDto = TrainingTestData.getNewTrainingDto();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId())))
                 .andExpect(status().isOk());
-
-//        verify(jmsTemplate, times(1)).convertAndSend(any(String.class), any(TrainingInfoDto.class));
     }
 
     @Test

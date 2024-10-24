@@ -5,6 +5,7 @@ import com.annakirillova.crmsystem.models.User;
 import com.annakirillova.crmsystem.util.JsonUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public class UserTestData {
     public static final String USER_1_USERNAME = "Angelina.Jolie";
@@ -21,6 +22,17 @@ public class UserTestData {
     public static final User USER_8 = new User(8, "Sandra", "Bullock", "Sandra.Bullock", true);
     public static final User USER_9 = new User(9, "Matthew", "Mcconaughey", "Matthew.Mcconaughey", true);
 
+    public static final Map<String, String> USERS_PASSWORDS = Map.of(
+                                            USER_1.getUsername(), "password1",
+                                            USER_2.getUsername(), "password2",
+                                            USER_3.getUsername(), "password3",
+                                            USER_4.getUsername(), "password4",
+                                            USER_5.getUsername(), "password5",
+                                            USER_6.getUsername(), "password6",
+                                            USER_7.getUsername(), "password7",
+                                            USER_8.getUsername(), "password8",
+                                            USER_9.getUsername(), "password9"
+    );
     public static final List<User> USER_LIST = List.of(USER_1, USER_2, USER_3, USER_4, USER_5, USER_6, USER_7, USER_8);
 
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingEqualsComparator(User.class);
