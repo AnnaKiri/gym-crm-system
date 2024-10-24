@@ -1,11 +1,7 @@
 spring:
   config:
-    import: "classpath:stg/confidential-stg.yaml"
     activate:
-      on-profile: stg
-  datasource:
-    url: jdbc:postgresql://localhost:5432/gym_crm_system_stg
-    username: postgres
+      on-profile: integration-test
   data:
     redis:
       host: localhost
@@ -13,16 +9,15 @@ spring:
   activemq:
     broker-url: tcp://localhost:61616
     user: admin
+    password: admin
     queues:
       trainer-workload: trainer-workload
+  sql:
+    init:
+      schema-locations: classpath:db/initDB_postgres.sql
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    metadata-map:
-      keycloak-service: http://localhost/
-      keycloak-auth: http://localhost/
+    enabled: false
 cors:
   allowed-origins:
     - "http://localhost"
@@ -40,8 +35,10 @@ cors:
 keycloak:
   admin:
     username: gym-crm-system-admin
+    password: admin
     client-id: gym-crm-microservice-admin
+    client-secret: ZNQ5WNAnhkdNt7BsSrw99iSCuqXS2qGM
   user:
     client-id: gym-crm-microservice-client
-  url: http://localhost
+    client-secret: ta6ErUK0XKOsbUAou4D3CKFNMruUqBkG
   realm: gym-crm-system-realm
