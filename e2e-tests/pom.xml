@@ -16,12 +16,13 @@
 		<testcontainers.version>1.20.2</testcontainers.version>
 		<keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
 		<redis.testcontainer.version>2.2.2</redis.testcontainer.version>
+		<common.version>1.0.0</common.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.annakirillova</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0.0</version>
+			<version>${common.version}</version>
 		</dependency>
 
 		<dependency>
@@ -32,12 +33,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

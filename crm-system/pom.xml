@@ -20,13 +20,14 @@
         <testcontainers.version>1.20.2</testcontainers.version>
         <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
         <redis.testcontainer.version>2.2.2</redis.testcontainer.version>
+        <common.version>1.0.0</common.version>
     </properties>
     <dependencies>
 
         <dependency>
             <groupId>com.annakirillova</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.0</version>
+            <version>${common.version}</version>
         </dependency>
 
         <dependency>
@@ -81,13 +82,6 @@
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
 
-        <!--Springdoc / Swagger-->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
-
         <!--DB-->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -98,12 +92,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -200,4 +188,36 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <configuration>
+                    <repository>${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <dockerfile>${project.basedir}/Dockerfile</dockerfile>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.build.finalName}-exec.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

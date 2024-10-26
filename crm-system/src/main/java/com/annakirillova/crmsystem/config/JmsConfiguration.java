@@ -1,6 +1,5 @@
 package com.annakirillova.crmsystem.config;
 
-import com.annakirillova.common.dto.TrainingInfoDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.jms.ConnectionFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -11,9 +10,6 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class JmsConfiguration {
@@ -34,10 +30,6 @@ public class JmsConfiguration {
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         converter.setObjectMapper(objectMapper);
-
-        Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put("TrainingInfoDto", TrainingInfoDto.class);
-        converter.setTypeIdMappings(typeIdMappings);
 
         return converter;
     }
