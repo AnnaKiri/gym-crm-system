@@ -1,6 +1,7 @@
 package com.annakirillova.crmsystem;
 
-import com.annakirillova.crmsystem.dto.TrainerDto;
+import com.annakirillova.common.dto.TrainerDto;
+import com.annakirillova.common.dto.TrainingTypeDto;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.User;
 import com.annakirillova.crmsystem.util.JsonUtil;
@@ -41,7 +42,7 @@ public class TrainerTestData {
             .firstName(USER_5.getFirstName())
             .lastName(USER_5.getLastName())
             .isActive(USER_5.isActive())
-            .specialization(TRAINING_TYPE_1)
+            .specialization(TrainingTypeDto.builder().name(TRAINING_TYPE_1.getName()).build())
             .specializationId(TRAINING_TYPE_1_ID)
             .build();
     public static final TrainerDto TRAINER_DTO_1_WITH_TRAINEE_LIST = new TrainerDto(TRAINER_DTO_1);
@@ -52,7 +53,7 @@ public class TrainerTestData {
             .firstName(USER_6.getFirstName())
             .lastName(USER_6.getLastName())
             .isActive(USER_6.isActive())
-            .specialization(TRAINING_TYPE_2)
+            .specialization(TrainingTypeDto.builder().name(TRAINING_TYPE_2.getName()).build())
             .specializationId(TRAINING_TYPE_1_ID + 1)
             .build();
 
@@ -64,7 +65,7 @@ public class TrainerTestData {
             .firstName(USER_7.getFirstName())
             .lastName(USER_7.getLastName())
             .isActive(USER_7.isActive())
-            .specialization(TRAINING_TYPE_3)
+            .specialization(TrainingTypeDto.builder().name(TRAINING_TYPE_3.getName()).build())
             .specializationId(TRAINING_TYPE_1_ID + 2)
             .build();
 
@@ -76,7 +77,7 @@ public class TrainerTestData {
             .firstName(USER_8.getFirstName())
             .lastName(USER_8.getLastName())
             .isActive(USER_8.isActive())
-            .specialization(TRAINING_TYPE_4)
+            .specialization(TrainingTypeDto.builder().name(TRAINING_TYPE_4.getName()).build())
             .specializationId(TRAINING_TYPE_1_ID + 3)
             .build();
 
@@ -129,7 +130,7 @@ public class TrainerTestData {
                 .id(updatedTrainer.id())
                 .firstName(updatedUser.getFirstName())
                 .lastName(updatedUser.getLastName())
-                .specialization(updatedTrainer.getSpecialization())
+                .specialization(TrainingTypeDto.builder().name(updatedTrainer.getSpecialization().getName()).build())
                 .specializationId(updatedTrainer.getSpecialization().getId())
                 .isActive(updatedUser.isActive())
                 .username(USER_5.getUsername())

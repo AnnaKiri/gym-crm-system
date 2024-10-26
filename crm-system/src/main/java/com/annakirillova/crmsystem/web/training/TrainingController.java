@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.web.training;
 
-import com.annakirillova.crmsystem.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;

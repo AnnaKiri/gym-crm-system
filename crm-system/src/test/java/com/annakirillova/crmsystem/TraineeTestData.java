@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem;
 
-import com.annakirillova.crmsystem.dto.TraineeDto;
+import com.annakirillova.common.dto.TraineeDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.User;
 import org.junit.jupiter.api.Assertions;

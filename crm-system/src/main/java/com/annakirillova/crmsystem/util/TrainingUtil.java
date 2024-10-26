@@ -1,6 +1,7 @@
 package com.annakirillova.crmsystem.util;
 
-import com.annakirillova.crmsystem.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingTypeDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -22,7 +23,7 @@ public class TrainingUtil {
                     .id(training.getId())
                     .name(training.getName())
                     .date(training.getDate())
-                    .type(training.getType())
+                    .type(TrainingTypeDto.builder().name(training.getType().getName()).build())
                     .typeId(training.getType().getId())
                     .duration(training.getDuration())
                     .traineeUsername(trainee.getUser().getUsername())
@@ -39,7 +40,7 @@ public class TrainingUtil {
                 .id(training.getId())
                 .name(training.getName())
                 .date(training.getDate())
-                .type(training.getType())
+                .type(TrainingTypeDto.builder().name(training.getType().getName()).build())
                 .typeId(training.getType().getId())
                 .duration(training.getDuration())
                 .traineeUsername(training.getTrainee().getUser().getUsername())

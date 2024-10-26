@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.util;
 
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.TrainerDto;
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.TrainerDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.User;

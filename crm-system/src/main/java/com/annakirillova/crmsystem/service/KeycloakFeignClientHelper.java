@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
+import com.annakirillova.common.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.feign.KeycloakFeignClient;
 import com.annakirillova.crmsystem.util.FeignExceptionUtil;

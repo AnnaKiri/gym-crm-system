@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.feign;
 
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
+import com.annakirillova.common.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;

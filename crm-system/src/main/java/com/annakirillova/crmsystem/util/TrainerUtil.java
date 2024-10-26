@@ -1,7 +1,8 @@
 package com.annakirillova.crmsystem.util;
 
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.TrainerDto;
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.TrainerDto;
+import com.annakirillova.common.dto.TrainingTypeDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.User;
@@ -23,7 +24,7 @@ public class TrainerUtil {
                 .username(receivedUser.getUsername())
                 .firstName(receivedUser.getFirstName())
                 .lastName(receivedUser.getLastName())
-                .specialization(updatedTrainer.getSpecialization())
+                .specialization(TrainingTypeDto.builder().name(updatedTrainer.getSpecialization().getName()).build())
                 .specializationId(updatedTrainer.getSpecialization().getId())
                 .isActive(receivedUser.isActive())
                 .traineeList(traineeDtoList)
@@ -41,7 +42,7 @@ public class TrainerUtil {
                     .username(trainersUser.getUsername())
                     .firstName(trainersUser.getFirstName())
                     .lastName(trainersUser.getLastName())
-                    .specialization(trainer.getSpecialization())
+                    .specialization(TrainingTypeDto.builder().name(trainer.getSpecialization().getName()).build())
                     .specializationId(trainer.getSpecialization().getId())
                     .isActive(trainersUser.isActive())
                     .build();

@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem.integration.trainee;
 
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.TraineeTestData;
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.integration.BaseControllerIntegrationTest;
 import com.annakirillova.crmsystem.service.TraineeService;

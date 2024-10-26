@@ -1,6 +1,6 @@
-package com.annakirillova.crmsystem.dto;
+package com.annakirillova.common.dto;
 
-import com.annakirillova.crmsystem.models.Entity;
+import com.annakirillova.common.models.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;

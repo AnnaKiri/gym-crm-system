@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.config.KeycloakProperties;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.annakirillova.crmsystem.dto.CredentialRepresentationDto.PASSWORD_STRING;
+import static com.annakirillova.common.dto.CredentialRepresentationDto.PASSWORD_STRING;
 
 @Service
 @RequiredArgsConstructor

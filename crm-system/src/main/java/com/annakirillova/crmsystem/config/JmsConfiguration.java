@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.config;
 
+import com.annakirillova.common.dto.TrainingInfoDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.jms.ConnectionFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -35,7 +36,7 @@ public class JmsConfiguration {
         converter.setObjectMapper(objectMapper);
 
         Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put("TrainingInfoDto", com.annakirillova.crmsystem.dto.TrainingInfoDto.class);
+        typeIdMappings.put("TrainingInfoDto", TrainingInfoDto.class);
         converter.setTypeIdMappings(typeIdMappings);
 
         return converter;

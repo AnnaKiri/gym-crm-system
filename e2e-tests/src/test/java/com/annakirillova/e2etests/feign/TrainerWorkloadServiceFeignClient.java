@@ -1,6 +1,6 @@
 package com.annakirillova.e2etests.feign;
 
-import com.annakirillova.e2etests.dto.TrainerSummaryDto;
+import com.annakirillova.common.dto.TrainerSummaryDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

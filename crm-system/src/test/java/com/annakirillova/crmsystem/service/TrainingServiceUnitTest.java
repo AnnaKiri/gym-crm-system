@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.dto.TrainingInfoDto;
+import com.annakirillova.common.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;

@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.web;
 
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.service.AuthService;
 import com.annakirillova.crmsystem.service.BruteForceProtectionService;
 import com.annakirillova.crmsystem.service.TokenService;

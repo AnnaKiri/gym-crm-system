@@ -1,13 +1,14 @@
 package com.annakirillova.crmsystem.web.training;
 
+import com.annakirillova.common.dto.TrainingDto;
 import com.annakirillova.crmsystem.TrainingTestData;
-import com.annakirillova.crmsystem.dto.TrainingDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.service.TraineeService;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.service.TrainingService;
+import com.annakirillova.crmsystem.util.JsonUtil;
 import com.annakirillova.crmsystem.web.BaseControllerUnitTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +26,6 @@ import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_1;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
 import static com.annakirillova.crmsystem.TrainingTestData.getNewTraining;
-import static com.annakirillova.crmsystem.TrainingTestData.jsonWithTypeId;
 import static com.annakirillova.crmsystem.UserTestData.USER_3;
 import static com.annakirillova.crmsystem.UserTestData.USER_7;
 import static com.annakirillova.crmsystem.web.training.TrainingController.REST_URL;
@@ -69,7 +69,7 @@ public class TrainingControllerUnitTest extends BaseControllerUnitTest {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId())))
+                .content(JsonUtil.writeValue(newTrainingDto)))
                 .andExpect(status().isOk());
 
         verify(traineeService, times(1)).get(any(String.class));

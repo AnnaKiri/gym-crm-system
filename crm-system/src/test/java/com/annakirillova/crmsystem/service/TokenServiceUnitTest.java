@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.config.KeycloakProperties;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

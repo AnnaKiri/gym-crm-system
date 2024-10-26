@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.models;
 
+import com.annakirillova.common.models.Entity;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;

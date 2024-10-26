@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem.integration.trainer;
 
+import com.annakirillova.common.dto.TrainerDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.TrainerTestData;
-import com.annakirillova.crmsystem.dto.TrainerDto;
-import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.integration.BaseControllerIntegrationTest;
 import com.annakirillova.crmsystem.service.TrainerService;
 import com.annakirillova.crmsystem.util.JsonUtil;

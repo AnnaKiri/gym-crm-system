@@ -1,5 +1,6 @@
-package com.annakirillova.e2etests.dto;
+package com.annakirillova.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,18 +15,20 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class TrainingDto {
+public class TrainingDto extends BaseDto {
 
     @Size(min = 2, max = 128)
     @NotBlank
     private String name;
 
-    private TrainingType type;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private TrainingTypeDto type;
 
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @NotNull
     private Integer typeId;
 

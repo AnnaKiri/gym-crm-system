@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.util;
 
+import com.annakirillova.common.models.Entity;
 import com.annakirillova.crmsystem.exception.IllegalRequestDataException;
-import com.annakirillova.crmsystem.models.Entity;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;

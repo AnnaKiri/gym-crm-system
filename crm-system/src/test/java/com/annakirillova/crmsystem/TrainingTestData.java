@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem;
 
-import com.annakirillova.crmsystem.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingTypeDto;
 import com.annakirillova.crmsystem.models.Training;
-import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_1 = TrainingDto.builder()
             .id(1)
             .name(TRAINING_1.getName())
-            .type(TRAINING_1.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_1.getType().getName()).build())
             .typeId(TRAINING_1.getType().getId())
             .date(TRAINING_1.getDate())
             .duration(TRAINING_1.getDuration())
@@ -46,7 +46,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_2 = TrainingDto.builder()
             .id(2)
             .name(TRAINING_2.getName())
-            .type(TRAINING_2.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_2.getType().getName()).build())
             .typeId(TRAINING_2.getType().getId())
             .date(TRAINING_2.getDate())
             .duration(TRAINING_2.getDuration())
@@ -57,7 +57,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_3 = TrainingDto.builder()
             .id(3)
             .name(TRAINING_3.getName())
-            .type(TRAINING_3.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_3.getType().getName()).build())
             .typeId(TRAINING_3.getType().getId())
             .date(TRAINING_3.getDate())
             .duration(TRAINING_3.getDuration())
@@ -68,7 +68,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_4 = TrainingDto.builder()
             .id(4)
             .name(TRAINING_4.getName())
-            .type(TRAINING_4.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_4.getType().getName()).build())
             .typeId(TRAINING_4.getType().getId())
             .date(TRAINING_4.getDate())
             .duration(TRAINING_4.getDuration())
@@ -79,7 +79,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_5 = TrainingDto.builder()
             .id(5)
             .name(TRAINING_5.getName())
-            .type(TRAINING_5.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_5.getType().getName()).build())
             .typeId(TRAINING_5.getType().getId())
             .date(TRAINING_5.getDate())
             .duration(TRAINING_5.getDuration())
@@ -90,7 +90,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_6 = TrainingDto.builder()
             .id(6)
             .name(TRAINING_6.getName())
-            .type(TRAINING_6.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_6.getType().getName()).build())
             .typeId(TRAINING_6.getType().getId())
             .date(TRAINING_6.getDate())
             .duration(TRAINING_6.getDuration())
@@ -101,7 +101,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_7 = TrainingDto.builder()
             .id(7)
             .name(TRAINING_7.getName())
-            .type(TRAINING_7.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_7.getType().getName()).build())
             .typeId(TRAINING_7.getType().getId())
             .date(TRAINING_7.getDate())
             .duration(TRAINING_7.getDuration())
@@ -129,7 +129,7 @@ public class TrainingTestData {
     public static TrainingDto getNewTrainingDto() {
         return TrainingDto.builder()
                 .name("Yoga")
-                .type(TRAINING_TYPE_3)
+                .type(TrainingTypeDto.builder().name(TRAINING_TYPE_3.getName()).build())
                 .typeId(TRAINING_TYPE_3.getId())
                 .date(LocalDate.of(2024, 1, 5))
                 .duration(60)
@@ -150,7 +150,4 @@ public class TrainingTestData {
         Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
     }
 
-    public static String jsonWithTypeId(TrainingDto trainingTo, int typeId) {
-        return JsonUtil.writeAdditionProps(trainingTo, "typeId", typeId);
-    }
 }

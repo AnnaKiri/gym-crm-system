@@ -1,5 +1,6 @@
 package com.annakirillova.crmsystem.dto;
 
+import com.annakirillova.common.dto.CredentialRepresentationDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

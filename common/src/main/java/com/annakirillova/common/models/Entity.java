@@ -1,4 +1,4 @@
-package com.annakirillova.crmsystem.models;
+package com.annakirillova.common.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.Assert;

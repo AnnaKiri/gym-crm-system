@@ -1,19 +1,21 @@
-package com.annakirillova.e2etests.dto;
+package com.annakirillova.common.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class TrainingType {
+@NoArgsConstructor
+@SuperBuilder
+public class TrainingTypeDto extends BaseDto {
 
     @NotBlank
     @Size(min = 1, max = 128)

@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.integration;
 
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.config.KeycloakProperties;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.models.User;
 import com.annakirillova.crmsystem.util.JsonUtil;
 import com.redis.testcontainers.RedisContainer;

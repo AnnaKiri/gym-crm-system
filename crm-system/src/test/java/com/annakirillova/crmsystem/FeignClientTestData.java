@@ -1,10 +1,10 @@
 package com.annakirillova.crmsystem;
 
+import com.annakirillova.common.dto.CredentialRepresentationDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.config.KeycloakProperties;
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 

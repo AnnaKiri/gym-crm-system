@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.exception.AppException;
 import com.annakirillova.crmsystem.exception.AuthenticationException;
 import com.annakirillova.crmsystem.exception.FeignServiceUnavailableException;

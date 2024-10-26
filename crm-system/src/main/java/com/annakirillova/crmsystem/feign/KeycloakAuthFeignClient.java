@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.feign;
 
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

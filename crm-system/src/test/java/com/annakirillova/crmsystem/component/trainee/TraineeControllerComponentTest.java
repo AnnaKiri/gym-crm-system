@@ -1,12 +1,12 @@
 package com.annakirillova.crmsystem.component.trainee;
 
+import com.annakirillova.common.dto.CredentialRepresentationDto;
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.TrainingInfoDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.TraineeTestData;
 import com.annakirillova.crmsystem.component.BaseControllerComponentTest;
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.TrainingInfoDto;
-import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.service.KeycloakAuthFeignClientHelper;
 import com.annakirillova.crmsystem.service.KeycloakFeignClientHelper;

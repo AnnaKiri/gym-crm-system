@@ -1,6 +1,6 @@
 package com.annakirillova.trainerworkloadservice.service;
 
-import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
+import com.annakirillova.common.dto.TrainingInfoDto;
 import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

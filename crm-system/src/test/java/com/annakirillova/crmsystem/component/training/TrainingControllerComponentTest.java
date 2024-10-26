@@ -1,9 +1,10 @@
 package com.annakirillova.crmsystem.component.training;
 
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingInfoDto;
 import com.annakirillova.crmsystem.TrainingTestData;
 import com.annakirillova.crmsystem.component.BaseControllerComponentTest;
-import com.annakirillova.crmsystem.dto.TrainingDto;
-import com.annakirillova.crmsystem.dto.TrainingInfoDto;
+import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -11,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_1;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
-import static com.annakirillova.crmsystem.TrainingTestData.jsonWithTypeId;
 import static com.annakirillova.crmsystem.web.training.TrainingController.REST_URL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -33,7 +33,7 @@ public class TrainingControllerComponentTest extends BaseControllerComponentTest
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId())))
+                .content(JsonUtil.writeValue(newTrainingDto)))
                 .andExpect(status().isOk());
 
         verify(jmsTemplate, times(1)).convertAndSend(any(String.class), any(TrainingInfoDto.class));

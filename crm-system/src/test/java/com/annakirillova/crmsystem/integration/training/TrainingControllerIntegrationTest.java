@@ -1,8 +1,9 @@
 package com.annakirillova.crmsystem.integration.training;
 
+import com.annakirillova.common.dto.TrainingDto;
 import com.annakirillova.crmsystem.TrainingTestData;
-import com.annakirillova.crmsystem.dto.TrainingDto;
 import com.annakirillova.crmsystem.integration.BaseControllerIntegrationTest;
+import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_1_ID;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_1;
 import static com.annakirillova.crmsystem.TrainingTestData.TRAINING_DTO_MATCHER;
-import static com.annakirillova.crmsystem.TrainingTestData.jsonWithTypeId;
 import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_7;
 import static com.annakirillova.crmsystem.config.SecurityConfig.BEARER_PREFIX;
@@ -29,7 +29,7 @@ public class TrainingControllerIntegrationTest extends BaseControllerIntegration
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getTokensForUser(USER_7).getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWithTypeId(newTrainingDto, newTrainingDto.getTypeId())))
+                .content(JsonUtil.writeValue(newTrainingDto)))
                 .andExpect(status().isOk());
     }
 

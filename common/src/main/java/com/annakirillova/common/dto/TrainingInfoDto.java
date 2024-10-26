@@ -1,4 +1,4 @@
-package com.annakirillova.trainerworkloadservice.dto;
+package com.annakirillova.common.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

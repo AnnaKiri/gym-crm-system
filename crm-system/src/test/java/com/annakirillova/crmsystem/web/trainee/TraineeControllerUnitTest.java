@@ -1,8 +1,8 @@
 package com.annakirillova.crmsystem.web.trainee;
 
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.TraineeTestData;
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.UserDto;
 import com.annakirillova.crmsystem.metrics.RegisterMetrics;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;

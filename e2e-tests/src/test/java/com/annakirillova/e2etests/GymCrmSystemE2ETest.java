@@ -1,10 +1,10 @@
 package com.annakirillova.e2etests;
 
-import com.annakirillova.e2etests.dto.LoginRequestDto;
-import com.annakirillova.e2etests.dto.TokenResponseDto;
-import com.annakirillova.e2etests.dto.TraineeDto;
-import com.annakirillova.e2etests.dto.TrainerSummaryDto;
-import com.annakirillova.e2etests.dto.TrainingDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TokenResponseDto;
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.TrainerSummaryDto;
+import com.annakirillova.common.dto.TrainingDto;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
