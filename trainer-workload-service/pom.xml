@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.annakirillova.trainerworkloadservice</groupId>
     <artifactId>trainer-workload-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Trainer Workload Service</name>
     <description>Trainer Workload Service on Spring Boot</description>
     <properties>
@@ -22,6 +22,7 @@
         <embed.mongo.version>4.11.0</embed.mongo.version>
         <testcontainers.version>1.20.2</testcontainers.version>
         <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
+        <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -163,6 +164,19 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <configuration>
+                    <repository>${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <dockerfile>${project.basedir}/Dockerfile</dockerfile>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>
