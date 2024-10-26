@@ -1,5 +1,6 @@
 package com.annakirillova.trainerworkloadservice.service;
 
+import com.annakirillova.common.dto.TrainerSummaryDto;
 import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +49,14 @@ public class TrainerSummaryService {
         log.debug("Add or update training duration {} for trainer with username = {} and date = {}", duration, username, date);
         TrainerSummary trainerSummary = trainerRepository.getTrainerIfExists(username);
 
-        Optional<TrainerSummary.Summary> existingSummary = getExistingSummary(trainerSummary, date);
+        Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(trainerSummary, date);
 
         if (existingSummary.isPresent()) {
-            TrainerSummary.Summary summary = existingSummary.get();
+            TrainerSummaryDto.Summary summary = existingSummary.get();
             summary.setDuration(summary.getDuration() + duration);
             log.debug("Updated training duration for trainer with username = {} for month = {} and year = {}", username, date.getMonthValue(), date.getYear());
         } else {
-            TrainerSummary.Summary newSummary = new TrainerSummary.Summary(date.getYear(), date.getMonthValue(), duration);
+            TrainerSummaryDto.Summary newSummary = new TrainerSummaryDto.Summary(date.getYear(), date.getMonthValue(), duration);
             trainerSummary.getSummaryList().add(newSummary);
             log.debug("Added new training summary for trainer with username = {} for month = {} and year = {}", username, date.getMonthValue(), date.getYear());
         }
@@ -76,7 +77,7 @@ public class TrainerSummaryService {
         return trainerRepository.save(trainerSummary);
     }
 
-    static Optional<TrainerSummary.Summary> getExistingSummary(TrainerSummary trainerSummary, LocalDate date) {
+    static Optional<TrainerSummaryDto.Summary> getExistingSummary(TrainerSummary trainerSummary, LocalDate date) {
         return trainerSummary.getSummaryList().stream()
                 .filter(summary -> Objects.equals(summary.getYear(), date.getYear())
                         && Objects.equals(summary.getMonth(), date.getMonthValue()))

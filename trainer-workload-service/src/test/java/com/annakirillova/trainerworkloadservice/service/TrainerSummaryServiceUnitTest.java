@@ -1,5 +1,6 @@
 package com.annakirillova.trainerworkloadservice.service;
 
+import com.annakirillova.common.dto.TrainerSummaryDto;
 import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
@@ -81,7 +82,7 @@ class TrainerSummaryServiceUnitTest {
 
         TrainerSummary updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, addedDate, 60);
 
-        Optional<TrainerSummary.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, addedDate);
+        Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, addedDate);
 
         assertTrue(existingSummary.isPresent());
         assertEquals(60, existingSummary.get().getDuration());
@@ -98,7 +99,7 @@ class TrainerSummaryServiceUnitTest {
 
         TrainerSummary updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, updatedDate, 60);
 
-        Optional<TrainerSummary.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, updatedDate);
+        Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, updatedDate);
 
         assertTrue(existingSummary.isPresent());
         assertEquals(120, existingSummary.get().getDuration());
@@ -115,7 +116,7 @@ class TrainerSummaryServiceUnitTest {
 
         TrainerSummary updatedTrainerSummary = trainerSummaryService.deleteTrainingDurationFromSummaryByDateAndUsername(TRAINER_2_USERNAME, deletedDate, 60);
 
-        Optional<TrainerSummary.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, deletedDate);
+        Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, deletedDate);
 
         assertTrue(existingSummary.isPresent());
         assertEquals(60, existingSummary.get().getDuration());
