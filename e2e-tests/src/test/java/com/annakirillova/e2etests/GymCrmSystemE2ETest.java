@@ -50,7 +50,7 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
 
     @Test
     @Order(3)
-    void createTraining() {
+    void createTraining() throws InterruptedException {
         TrainingDto trainingDto = new TrainingDto();
         trainingDto.setName("New Training");
         trainingDto.setTypeId(1);
@@ -60,11 +60,9 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
         trainingDto.setTrainerUsername("Sandra.Bullock");
 
         crmSystemFeignClient.createTraining(BEARER_PREFIX + accessToken, trainingDto);
-    }
 
-    @Test
-    @Order(4)
-    void testGetMonthlySummary() {
+        Thread.sleep(DELAY_MS);
+
         TrainerSummaryDto.Summary summary = new TrainerSummaryDto.Summary(2024, 10, 60);
 
         List<TrainerSummaryDto.Summary> summaryList = new ArrayList<>();
@@ -83,21 +81,19 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(5)
-    void deleteTrainee() {
+    @Order(4)
+    void deleteTrainee() throws InterruptedException {
         crmSystemFeignClient.deleteTrainee(BEARER_PREFIX + accessToken, "John.Doe");
-    }
 
-    @Test
-    @Order(6)
-    void verifyTraineeDeletion() {
+        Thread.sleep(DELAY_MS);
+
         assertThrows(RuntimeException.class, () -> {
             trainerWorkloadServiceFeignClient.getMonthlySummary(BEARER_PREFIX + accessToken, "John.Doe");
         });
     }
 
     @Test
-    @Order(7)
+    @Order(5)
     void authenticateWithInvalidCredentials() {
         LoginRequestDto loginRequestDto = new LoginRequestDto("John.Doe", "wrongPassword");
 
@@ -107,7 +103,7 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(8)
+    @Order(6)
     void createTrainingForNonExistentTrainee() {
         TrainingDto trainingDto = new TrainingDto();
         trainingDto.setName("New Training");
@@ -123,7 +119,7 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(9)
+    @Order(7)
     void deleteNonExistentTrainee() {
         assertThrows(RuntimeException.class, () -> {
             crmSystemFeignClient.deleteTrainee(BEARER_PREFIX + accessToken, "NonExistentUser");

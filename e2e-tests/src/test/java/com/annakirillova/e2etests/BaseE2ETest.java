@@ -24,7 +24,7 @@ import org.testcontainers.utility.DockerImageName;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
 public abstract class BaseE2ETest {
-
+    protected static final int DELAY_MS = 1000;
     protected static final String BEARER_PREFIX = "Bearer ";
 
     @Autowired
