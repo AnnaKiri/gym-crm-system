@@ -45,3 +45,6 @@ keycloak:
     client-id: gym-crm-microservice-client
   url: http://localhost
   realm: gym-crm-system-realm
+
+server:
+  port: 80

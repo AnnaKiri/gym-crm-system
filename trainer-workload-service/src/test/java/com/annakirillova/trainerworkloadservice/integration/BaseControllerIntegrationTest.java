@@ -41,7 +41,7 @@ public abstract class BaseControllerIntegrationTest {
     private static final ActiveMQContainer ACTIVEMQ = new ActiveMQContainer("apache/activemq-classic:5.18.6");
 
     @ServiceConnection
-    static MongoDBContainer MONGODB = new MongoDBContainer("mongo:8.0.1");
+    private static final MongoDBContainer MONGODB = new MongoDBContainer("mongo:8.0.1");
 
     private static final KeycloakContainer KEYCLOAK = new KeycloakContainer().withRealmImportFile("keycloak/test-realm.json");
 

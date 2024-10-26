@@ -2,6 +2,9 @@ spring:
   config:
     activate:
       on-profile: component-test
+eureka:
+  client:
+    enabled: false
 keycloak:
   url: http://localhost
   realm: gym-crm-system-realm

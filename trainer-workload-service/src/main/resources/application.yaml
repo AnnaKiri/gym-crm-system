@@ -7,6 +7,7 @@ spring:
       - "classpath:dev/application-dev.yaml"
       - "classpath:stg/application-stg.yaml"
       - "classpath:prod/application-prod.yaml"
+      - "classpath:e2e/application-e2e.yaml"
   jpa:
     show-sql: true
     open-in-view: false
@@ -46,7 +47,6 @@ management:
       show-details: always
 
 server:
-  port: 0
   servlet:
     encoding:
       charset: UTF-8

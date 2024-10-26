@@ -26,3 +26,6 @@ cors:
 keycloak:
   url: http://localhost
   realm: gym-crm-system-realm
+
+server:
+  port: 80

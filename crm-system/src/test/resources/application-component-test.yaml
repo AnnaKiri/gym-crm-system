@@ -12,6 +12,9 @@ spring:
   activemq:
     queues:
       trainer-workload: trainer-workload
+eureka:
+  client:
+    enabled: false
 keycloak:
   url: http://localhost
   realm: gym-crm-system-realm

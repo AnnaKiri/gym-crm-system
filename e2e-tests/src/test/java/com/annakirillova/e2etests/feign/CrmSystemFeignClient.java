@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient("crm-system")
+@FeignClient(name = "crm-system", url = "http://localhost:${crm-system.port}")
 public interface CrmSystemFeignClient {
 
     @PostMapping(value = "/trainees",

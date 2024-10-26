@@ -7,6 +7,7 @@ spring:
       - "classpath:dev/application-dev.yaml"
       - "classpath:stg/application-stg.yaml"
       - "classpath:prod/application-prod.yaml"
+      - "classpath:e2e/application-e2e.yaml"
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -40,7 +41,6 @@ spring:
             readTimeout: 5000
 
 server:
-  port: 0
   servlet:
     encoding:
       charset: UTF-8

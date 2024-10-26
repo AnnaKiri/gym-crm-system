@@ -5,14 +5,8 @@ import com.annakirillova.e2etests.dto.TokenResponseDto;
 import com.annakirillova.e2etests.dto.TraineeDto;
 import com.annakirillova.e2etests.dto.TrainerSummaryDto;
 import com.annakirillova.e2etests.dto.TrainingDto;
-import com.annakirillova.e2etests.feign.CrmSystemFeignClient;
-import com.annakirillova.e2etests.feign.TrainerWorkloadServiceFeignClient;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
@@ -23,17 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GymCrmSystemE2ETest {
 
-    public static final String BEARER_PREFIX = "Bearer ";
-
-    @Autowired
-    private CrmSystemFeignClient crmSystemFeignClient;
-
-    @Autowired
-    private TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+public class GymCrmSystemE2ETest extends BaseE2ETest {
 
     private static String accessToken;
 

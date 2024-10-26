@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient("trainer-workload-service")
+@FeignClient(name = "trainer-workload-service", url = "http://localhost:${workload-report-service.port}")
 public interface TrainerWorkloadServiceFeignClient {
 
     @GetMapping(value = "/trainers/{username}/monthly-summary",
