@@ -6,15 +6,15 @@ DELETE FROM trainee2trainer;
 DELETE FROM training;
 
 INSERT INTO users (first_name, last_name, username, is_active)
-VALUES ('Angelina', 'Jolie', 'Angelina.Jolie', true),
-       ('Ryan', 'Reynolds', 'Ryan.Reynolds', true),
-       ('Tom', 'Hardy', 'Tom.Hardy', true),
-       ('Keanu', 'Reeves', 'Keanu.Reeves', true),
-       ('Tom', 'Cruise', 'Tom.Cruise', true),
-       ('Brad', 'Pitt', 'Brad.Pitt', true),
-       ('Jennifer', 'Aniston', 'Jennifer.Aniston', true),
-       ('Sandra', 'Bullock', 'Sandra.Bullock', true),
-       ('Matthew', 'Mcconaughey', 'Matthew.Mcconaughey', true);
+VALUES ('Angelina', 'Jolie', 'angelina.jolie', true),
+       ('Ryan', 'Reynolds', 'ryan.reynolds', true),
+       ('Tom', 'Hardy', 'tom.hardy', true),
+       ('Keanu', 'Reeves', 'keanu.reeves', true),
+       ('Tom', 'Cruise', 'tom.cruise', true),
+       ('Brad', 'Pitt', 'brad.pitt', true),
+       ('Jennifer', 'Aniston', 'jennifer.aniston', true),
+       ('Sandra', 'Bullock', 'sandra.bullock', true),
+       ('Matthew', 'Mcconaughey', 'matthew.mcconaughey', true);
 
 INSERT INTO training_type (name)
 VALUES ('Strength'),

@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -46,12 +47,13 @@ public class TraineeDto extends BaseDto {
     private List<TrainerDto> trainerList;
 
     public TraineeDto(TraineeDto other) {
-        super.id = other.id();
+        super.id = other.getId();
         this.username = other.username;
         this.firstName = other.firstName;
         this.lastName = other.lastName;
         this.birthday = other.birthday;
         this.address = other.address;
         this.isActive = other.isActive;
+        this.trainerList = new ArrayList<>();
     }
 }

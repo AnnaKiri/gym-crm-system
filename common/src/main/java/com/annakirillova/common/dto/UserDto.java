@@ -22,8 +22,6 @@ public class UserDto extends BaseDto {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String username;
 
-    @NotBlank
-    @Size(min = 5, max = 50)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String password;
 

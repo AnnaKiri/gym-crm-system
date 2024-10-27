@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -50,11 +51,12 @@ public class TrainerDto extends BaseDto {
     private Integer specializationId;
 
     public TrainerDto(TrainerDto other) {
-        super.id = other.id();
+        super.id = other.getId();
         this.username = other.username;
         this.firstName = other.firstName;
         this.lastName = other.lastName;
         this.isActive = other.isActive;
         this.specialization = other.specialization;
+        this.traineeList = new ArrayList<>();
     }
 }

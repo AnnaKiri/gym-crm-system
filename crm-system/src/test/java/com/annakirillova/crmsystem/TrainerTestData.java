@@ -8,7 +8,9 @@ import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEES_FOR_TRAINER_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_DTO_1;
@@ -20,6 +22,10 @@ import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_1_I
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
+import static com.annakirillova.crmsystem.UserTestData.USER_1;
+import static com.annakirillova.crmsystem.UserTestData.USER_2;
+import static com.annakirillova.crmsystem.UserTestData.USER_3;
+import static com.annakirillova.crmsystem.UserTestData.USER_4;
 import static com.annakirillova.crmsystem.UserTestData.USER_5;
 import static com.annakirillova.crmsystem.UserTestData.USER_6;
 import static com.annakirillova.crmsystem.UserTestData.USER_7;
@@ -89,11 +95,11 @@ public class TrainerTestData {
     public static final List<TrainerDto> FREE_TRAINERS_FOR_TRAINEE_4 = List.of(TRAINER_DTO_2, TRAINER_DTO_3);
 
     public static final MatcherFactory.Matcher<Trainer> TRAINER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainer.class, "user", "specialization", "traineeList");
-    public static final MatcherFactory.Matcher<TrainerDto> TRAINER_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerDto.class, "traineeList", "specializationId");
+    public static final MatcherFactory.Matcher<TrainerDto> TRAINER_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TrainerDto.class, "id", "traineeList", "specializationId");
 
     public static final MatcherFactory.Matcher<TrainerDto> TRAINER_DTO_MATCHER_WITH_TRAINEE_LIST =
             MatcherFactory.usingAssertions(TrainerDto.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("traineeList.trainerList", "specializationId").isEqualTo(e),
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("id", "traineeList.id", "traineeList.trainerList", "specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
@@ -148,4 +154,18 @@ public class TrainerTestData {
     public static String jsonWithSpecializationId(TrainerDto trainerTo, int specializationId) {
         return JsonUtil.writeAdditionProps(trainerTo, "specializationId", specializationId);
     }
+
+    public static final Map<String, TrainerDto> USERNAMES_TO_TRAINER_DTO = new HashMap<>(Map.of(
+            USER_5.getUsername(), TRAINER_DTO_1_WITH_TRAINEE_LIST,
+            USER_6.getUsername(), TRAINER_DTO_2_WITH_TRAINEE_LIST,
+            USER_7.getUsername(), TRAINER_DTO_3_WITH_TRAINEE_LIST,
+            USER_8.getUsername(), TRAINER_DTO_4_WITH_TRAINEE_LIST
+    ));
+
+    public static final Map<String, List<TrainerDto>> USERNAMES_TO_FREE_TRAINERS_LIST = Map.of(
+            USER_1.getUsername(), FREE_TRAINERS_FOR_TRAINEE_1,
+            USER_2.getUsername(), FREE_TRAINERS_FOR_TRAINEE_2,
+            USER_3.getUsername(), FREE_TRAINERS_FOR_TRAINEE_3,
+            USER_4.getUsername(), FREE_TRAINERS_FOR_TRAINEE_4
+    );
 }

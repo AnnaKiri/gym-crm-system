@@ -41,7 +41,7 @@
   "maxFailureWaitSeconds": 900,
   "minimumQuickLoginWaitSeconds": 60,
   "waitIncrementSeconds": 60,
-  "quickLoginCheckMilliSeconds": 1000,
+  "quickLoginCheckMilliSeconds": 0,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 10,
   "roles": {
@@ -479,8 +479,9 @@
         {
           "id": "1a689c11-35e4-4813-aaa8-3192e97dfb23",
           "type": "password",
-          "createdDate": 1728034264112,
-          "secretData": "{\"value\":\"3XrkvK5M5DjjPYL6+os48LY67OtYRt9UbiUjaooeEcQ=\",\"salt\":\"s7ImUOt/RGRtxh0JjpHQeg==\",\"additionalParameters\":{}}",
+          "userLabel": "My password",
+          "createdDate": 1730037175024,
+          "secretData": "{\"value\":\"HrwbAwxZtDIcqtbMEbdEk905AKEHvRENLGW5EhFhggU=\",\"salt\":\"r3KwHzXyx4XS6MfErUjymg==\",\"additionalParameters\":{}}",
           "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
         }
       ],
@@ -505,8 +506,9 @@
         {
           "id": "6a9c0c5b-ea49-4795-8b44-46a0179e0926",
           "type": "password",
-          "createdDate": 1727758291419,
-          "secretData": "{\"value\":\"Zize33orcsSK3ya5zteRkXfxncNlkORP+rXr66c0H0E=\",\"salt\":\"pj66cQkBg7FAG3POajXd8Q==\",\"additionalParameters\":{}}",
+          "userLabel": "My password",
+          "createdDate": 1730037148883,
+          "secretData": "{\"value\":\"g2myzzMLaJX6WVXs3AujGLUuUWR7ctDIT4RsjB1nv0M=\",\"salt\":\"M/KRmOZgyKBac5vGkDCBng==\",\"additionalParameters\":{}}",
           "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
         }
       ],
@@ -774,36 +776,10 @@
       "groups": []
     },
     {
-      "id": "65d26bee-81d7-4add-9059-7dc9586fc317",
-      "username": "string.string",
-      "firstName": "string",
-      "lastName": "string",
-      "emailVerified": false,
-      "createdTimestamp": 1728118232180,
-      "enabled": true,
-      "totp": false,
-      "credentials": [
-        {
-          "id": "f562845d-ec07-4ce0-89df-28deb6e2928a",
-          "type": "password",
-          "createdDate": 1728118232214,
-          "secretData": "{\"value\":\"RAKJSrMBuR728eJn9ACFvQJ586Wum/BlooL2L0RjLLc=\",\"salt\":\"inYbVmFrJLHjQ5xbb+ampQ==\",\"additionalParameters\":{}}",
-          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
-        }
-      ],
-      "disableableCredentialTypes": [],
-      "requiredActions": [],
-      "realmRoles": [
-        "default-roles-gym-crm-system-realm"
-      ],
-      "notBefore": 0,
-      "groups": []
-    },
-    {
       "id": "e4c80b6c-bc08-42f4-923b-58bd608f0ca5",
       "username": "tom.cruise",
-      "firstName": "string",
-      "lastName": "string",
+      "firstName": "Tom",
+      "lastName": "Cruise",
       "emailVerified": false,
       "createdTimestamp": 1727963588815,
       "enabled": true,
@@ -840,8 +816,8 @@
           "id": "93680fe3-8be1-4ebd-80db-186ae9c16fbf",
           "type": "password",
           "userLabel": "My password",
-          "createdDate": 1727963547373,
-          "secretData": "{\"value\":\"mpM0g3oVU4wf+WPHxzXe/WbvAH7mRtrlJoIvcrjpAQI=\",\"salt\":\"B+gBvMH+xtWonNJWY+K9YA==\",\"additionalParameters\":{}}",
+          "createdDate": 1730037067064,
+          "secretData": "{\"value\":\"R9yP0+pJ20YgnvRcv/p45h6v8JRZ+7hdCQUuTZaHqeU=\",\"salt\":\"XXywIbSX7Vbu+ckkygikJg==\",\"additionalParameters\":{}}",
           "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
         }
       ],

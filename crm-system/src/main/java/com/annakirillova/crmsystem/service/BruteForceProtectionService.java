@@ -18,6 +18,7 @@ import java.util.Optional;
 public class BruteForceProtectionService {
     public static final int MAX_ATTEMPTS = 3;
     public static final long BLOCK_DURATION_MINUTES = 5;
+    public static final String BLOCK_MESSAGE = "User is blocked due to multiple failed login attempts. Please try again later.";
 
     private final LoginAttemptRepository loginAttemptRepository;
     private final UserRepository userRepository;

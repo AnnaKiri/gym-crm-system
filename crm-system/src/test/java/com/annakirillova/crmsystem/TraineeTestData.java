@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINERS_FOR_TRAINEE_1;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_1;
@@ -80,11 +82,11 @@ public class TraineeTestData {
     public static final TraineeDto TRAINEE_DTO_4_WITH_TRAINER_LIST = new TraineeDto(TRAINEE_DTO_4);
 
     public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user", "trainerList");
-    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeDto.class, "trainerList");
+    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeDto.class, "id", "trainerList");
 
     public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST =
             MatcherFactory.usingAssertions(TraineeDto.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("id", "trainerList.id", "trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
@@ -132,5 +134,12 @@ public class TraineeTestData {
     public static void checkTraineeUserId(Trainee expected, Trainee actual) {
         Assertions.assertEquals(expected.getUser().getId(), actual.getUser().getId());
     }
+
+    public static final Map<String, TraineeDto> USERNAMES_TO_TRAINEE_DTO = new HashMap<>(Map.of(
+            USER_1.getUsername(), TRAINEE_DTO_1_WITH_TRAINER_LIST,
+            USER_2.getUsername(), TRAINEE_DTO_2_WITH_TRAINER_LIST,
+            USER_3.getUsername(), TRAINEE_DTO_3_WITH_TRAINER_LIST,
+            USER_4.getUsername(), TRAINEE_DTO_4_WITH_TRAINER_LIST
+    ));
 
 }

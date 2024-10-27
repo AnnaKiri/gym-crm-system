@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.annakirillova.crmsystem.service.BruteForceProtectionService.BLOCK_MESSAGE;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class AuthController {
         log.info("Attempt to login by user: {}", username);
 
         if (bruteForceProtectionService.isBlocked(username)) {
-            throw new BadCredentialsException("User is blocked due to multiple failed login attempts. Please try again later.");
+            throw new BadCredentialsException(BLOCK_MESSAGE);
         }
 
         try {

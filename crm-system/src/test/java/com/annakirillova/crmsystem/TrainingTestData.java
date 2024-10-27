@@ -6,7 +6,9 @@ import com.annakirillova.crmsystem.models.Training;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_2;
@@ -20,6 +22,14 @@ import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
+import static com.annakirillova.crmsystem.UserTestData.USER_1;
+import static com.annakirillova.crmsystem.UserTestData.USER_2;
+import static com.annakirillova.crmsystem.UserTestData.USER_3;
+import static com.annakirillova.crmsystem.UserTestData.USER_4;
+import static com.annakirillova.crmsystem.UserTestData.USER_5;
+import static com.annakirillova.crmsystem.UserTestData.USER_6;
+import static com.annakirillova.crmsystem.UserTestData.USER_7;
+import static com.annakirillova.crmsystem.UserTestData.USER_8;
 
 public class TrainingTestData {
     public static final int TRAINING_1_ID = 1;
@@ -150,4 +160,24 @@ public class TrainingTestData {
         Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
     }
 
+    public static final Map<String, List<TrainingDto>> USERNAMES_TO_TRAINEE_TRAININGS_LIST = Map.of(
+            USER_1.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_1,
+            USER_2.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_2,
+            USER_3.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_3,
+            USER_4.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_4,
+            USER_5.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_1,
+            USER_6.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_2,
+            USER_7.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_3,
+            USER_8.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_4
+    );
+
+    public static final Map<Integer, TrainingDto> TRAINING_ID_TO_TRAINING = new HashMap<>(Map.of(
+            TRAINING_DTO_1.getId(), TRAINING_DTO_1,
+            TRAINING_DTO_2.getId(), TRAINING_DTO_2,
+            TRAINING_DTO_3.getId(), TRAINING_DTO_3,
+            TRAINING_DTO_4.getId(), TRAINING_DTO_4,
+            TRAINING_DTO_5.getId(), TRAINING_DTO_5,
+            TRAINING_DTO_6.getId(), TRAINING_DTO_6,
+            TRAINING_DTO_7.getId(), TRAINING_DTO_7
+    ));
 }
