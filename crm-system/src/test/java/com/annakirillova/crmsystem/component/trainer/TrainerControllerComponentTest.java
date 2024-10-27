@@ -72,7 +72,7 @@ public class TrainerControllerComponentTest extends BaseControllerComponentTest 
                 .andExpect(status().isCreated());
 
         UserDto created = USER_DTO_MATCHER.readFromJson(action);
-        String expectedUsername = newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName();
+        String expectedUsername = (newTrainerDto.getFirstName() + "." + newTrainerDto.getLastName()).toLowerCase();
         Assertions.assertEquals(expectedUsername, created.getUsername());
 
         verify(keycloakAuthFeignClientHelper, times(1)).requestTokenWithCircuitBreaker(
