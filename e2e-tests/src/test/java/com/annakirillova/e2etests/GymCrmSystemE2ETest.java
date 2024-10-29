@@ -39,7 +39,7 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
     @Test
     @Order(2)
     void authenticate() {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("Angelina.Jolie", "password1");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("angelina.jolie", "password1");
 
         TokenResponseDto tokenResponse = crmSystemFeignClient.authenticate(loginRequestDto);
         assertNotNull(tokenResponse);
@@ -56,8 +56,8 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
         trainingDto.setTypeId(1);
         trainingDto.setDate(LocalDate.of(2024, 10, 5));
         trainingDto.setDuration(60);
-        trainingDto.setTraineeUsername("John.Doe");
-        trainingDto.setTrainerUsername("Sandra.Bullock");
+        trainingDto.setTraineeUsername("john.doe");
+        trainingDto.setTrainerUsername("sandra.bullock");
 
         crmSystemFeignClient.createTraining(BEARER_PREFIX + accessToken, trainingDto);
 
@@ -69,13 +69,13 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
         summaryList.add(summary);
 
         TrainerSummaryDto expectedTrainerSummaryDto = new TrainerSummaryDto();
-        expectedTrainerSummaryDto.setUsername("Sandra.Bullock");
+        expectedTrainerSummaryDto.setUsername("sandra.bullock");
         expectedTrainerSummaryDto.setFirstName("Sandra");
         expectedTrainerSummaryDto.setLastName("Bullock");
         expectedTrainerSummaryDto.setIsActive(true);
         expectedTrainerSummaryDto.setSummaryList(summaryList);
 
-        TrainerSummaryDto actualSummaryDto = trainerWorkloadServiceFeignClient.getMonthlySummary(BEARER_PREFIX + accessToken, "Sandra.Bullock");
+        TrainerSummaryDto actualSummaryDto = trainerWorkloadServiceFeignClient.getMonthlySummary(BEARER_PREFIX + accessToken, "sandra.bullock");
         assertNotNull(actualSummaryDto);
         assertEquals(expectedTrainerSummaryDto, actualSummaryDto);
     }
@@ -83,19 +83,19 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
     @Test
     @Order(4)
     void deleteTrainee() throws InterruptedException {
-        crmSystemFeignClient.deleteTrainee(BEARER_PREFIX + accessToken, "John.Doe");
+        crmSystemFeignClient.deleteTrainee(BEARER_PREFIX + accessToken, "john.doe");
 
         Thread.sleep(DELAY_MS);
 
         assertThrows(RuntimeException.class, () -> {
-            trainerWorkloadServiceFeignClient.getMonthlySummary(BEARER_PREFIX + accessToken, "John.Doe");
+            trainerWorkloadServiceFeignClient.getMonthlySummary(BEARER_PREFIX + accessToken, "john.doe");
         });
     }
 
     @Test
     @Order(5)
     void authenticateWithInvalidCredentials() {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("John.Doe", "wrongPassword");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("john.doe", "wrongPassword");
 
         assertThrows(RuntimeException.class, () -> {
             crmSystemFeignClient.authenticate(loginRequestDto);
@@ -110,7 +110,7 @@ public class GymCrmSystemE2ETest extends BaseE2ETest {
         trainingDto.setTypeId(1);
         trainingDto.setDate(LocalDate.of(2024, 10, 5));
         trainingDto.setDuration(60);
-        trainingDto.setTraineeUsername("John.Doe");
+        trainingDto.setTraineeUsername("john.doe");
         trainingDto.setTrainerUsername("Not.Valid");
 
         assertThrows(RuntimeException.class, () -> {
