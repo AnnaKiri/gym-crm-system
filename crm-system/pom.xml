@@ -16,7 +16,6 @@
         <jackson.version>2.17.2</jackson.version>
         <jedis.version>5.1.4</jedis.version>
         <resilience4j.version>2.2.0</resilience4j.version>
-        <logbook.version>3.9.0</logbook.version>
         <testcontainers.version>1.20.2</testcontainers.version>
         <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
         <redis.testcontainer.version>2.2.2</redis.testcontainer.version>
@@ -128,18 +127,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
-        <!--Logbook-->
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>logbook-spring-boot-starter</artifactId>
-            <version>${logbook.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>logbook-openfeign</artifactId>
-            <version>${logbook.version}</version>
         </dependency>
 
         <!--ActiveMQ-->

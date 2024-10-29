@@ -74,6 +74,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.zalando</groupId>
+			<artifactId>logbook-openfeign</artifactId>
+			<version>${logbook.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.redis</groupId>
 			<artifactId>testcontainers-redis</artifactId>
 			<version>${redis.testcontainer.version}</version>

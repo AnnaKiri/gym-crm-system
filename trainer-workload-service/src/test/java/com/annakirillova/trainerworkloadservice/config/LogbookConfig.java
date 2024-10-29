@@ -1,4 +1,4 @@
-package com.annakirillova.crmsystem.config;
+package com.annakirillova.trainerworkloadservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

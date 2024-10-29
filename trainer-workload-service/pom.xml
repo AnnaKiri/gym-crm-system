@@ -14,7 +14,6 @@
     <description>Trainer Workload Service on Spring Boot</description>
     <properties>
         <io.jsonwebtoken.version>0.11.5</io.jsonwebtoken.version>
-        <logbook.version>3.9.0</logbook.version>
         <embed.mongo.version>4.11.0</embed.mongo.version>
         <testcontainers.version>1.20.2</testcontainers.version>
         <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
@@ -69,13 +68,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
-        <!--Logbook-->
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>logbook-spring-boot-starter</artifactId>
-            <version>${logbook.version}</version>
         </dependency>
 
         <!--ActiveMQ-->

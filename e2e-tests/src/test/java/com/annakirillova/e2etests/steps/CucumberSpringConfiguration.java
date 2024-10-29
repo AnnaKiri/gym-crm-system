@@ -1,17 +1,12 @@
-package com.annakirillova.e2etests;
+package com.annakirillova.e2etests.steps;
 
-import com.annakirillova.e2etests.feign.CrmSystemFeignClient;
-import com.annakirillova.e2etests.feign.TrainerWorkloadServiceFeignClient;
 import com.redis.testcontainers.RedisContainer;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import io.cucumber.java.BeforeAll;
+import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.activemq.ActiveMQContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -19,19 +14,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
-
-@SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@AutoConfigureMockMvc
+@CucumberContextConfiguration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-public abstract class BaseE2ETest {
-    protected static final int DELAY_MS = 1000;
-    protected static final String BEARER_PREFIX = "Bearer ";
-
-    @Autowired
-    protected CrmSystemFeignClient crmSystemFeignClient;
-
-    @Autowired
-    protected TrainerWorkloadServiceFeignClient trainerWorkloadServiceFeignClient;
+public class CucumberSpringConfiguration {
 
     private static final Network NETWORK = Network.newNetwork();
 
@@ -73,22 +60,18 @@ public abstract class BaseE2ETest {
             .withLogConsumer(new Slf4jLogConsumer(log))
             .withNetwork(NETWORK);
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("crm-system.port", CRM_SYSTEM::getFirstMappedPort);
-        registry.add("workload-report-service.port", TRAINER_WORKLOAD_SERVICE::getFirstMappedPort);
-    }
-
     @BeforeAll
-    static void startContainers() {
+    public static void startContainers() {
         KEYCLOAK.start();
+        MONGODB.start();
         EUREKA.start();
         POSTGRESQL.start();
         ACTIVEMQ.start();
         REDIS.start();
-        MONGODB.start();
         CRM_SYSTEM.start();
         TRAINER_WORKLOAD_SERVICE.start();
-    }
 
+        System.setProperty("crm-system.port", String.valueOf(CRM_SYSTEM.getFirstMappedPort()));
+        System.setProperty("workload-report-service.port", String.valueOf(TRAINER_WORKLOAD_SERVICE.getFirstMappedPort()));
+    }
 }
