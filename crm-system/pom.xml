@@ -81,6 +81,13 @@
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
 
+        <!--Logbook-->
+        <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>logbook-openfeign</artifactId>
+            <version>${logbook.version}</version>
+        </dependency>
+
         <!--DB-->
         <dependency>
             <groupId>org.postgresql</groupId>

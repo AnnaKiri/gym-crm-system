@@ -39,10 +39,10 @@ class TrainerSummaryServiceUnitTest {
     void create() {
         when(trainerRepository.save(any(TrainerSummary.class))).thenAnswer(invocation -> invocation.<TrainerSummary>getArgument(0));
 
-        when(trainerRepository.findByUsername("Jim.Carrey")).thenReturn(Optional.empty());
+        when(trainerRepository.findByUsername("jim.carrey")).thenReturn(Optional.empty());
 
         TrainerSummary newTrainerSummary = getNewTrainer();
-        TrainerSummary savedTrainerSummary = trainerSummaryService.create("Jim", "Carrey", "Jim.Carrey", true);
+        TrainerSummary savedTrainerSummary = trainerSummaryService.create("Jim", "Carrey", "jim.carrey", true);
 
         verify(trainerRepository, times(1)).save(any(TrainerSummary.class));
 
