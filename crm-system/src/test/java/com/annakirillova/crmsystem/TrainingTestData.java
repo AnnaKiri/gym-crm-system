@@ -1,12 +1,14 @@
 package com.annakirillova.crmsystem;
 
-import com.annakirillova.crmsystem.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingTypeDto;
 import com.annakirillova.crmsystem.models.Training;
-import com.annakirillova.crmsystem.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_1;
 import static com.annakirillova.crmsystem.TraineeTestData.TRAINEE_2;
@@ -20,6 +22,14 @@ import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_1;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_2;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_3;
 import static com.annakirillova.crmsystem.TrainingTypeTestData.TRAINING_TYPE_4;
+import static com.annakirillova.crmsystem.UserTestData.USER_1;
+import static com.annakirillova.crmsystem.UserTestData.USER_2;
+import static com.annakirillova.crmsystem.UserTestData.USER_3;
+import static com.annakirillova.crmsystem.UserTestData.USER_4;
+import static com.annakirillova.crmsystem.UserTestData.USER_5;
+import static com.annakirillova.crmsystem.UserTestData.USER_6;
+import static com.annakirillova.crmsystem.UserTestData.USER_7;
+import static com.annakirillova.crmsystem.UserTestData.USER_8;
 
 public class TrainingTestData {
     public static final int TRAINING_1_ID = 1;
@@ -35,7 +45,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_1 = TrainingDto.builder()
             .id(1)
             .name(TRAINING_1.getName())
-            .type(TRAINING_1.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_1.getType().getName()).build())
             .typeId(TRAINING_1.getType().getId())
             .date(TRAINING_1.getDate())
             .duration(TRAINING_1.getDuration())
@@ -46,7 +56,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_2 = TrainingDto.builder()
             .id(2)
             .name(TRAINING_2.getName())
-            .type(TRAINING_2.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_2.getType().getName()).build())
             .typeId(TRAINING_2.getType().getId())
             .date(TRAINING_2.getDate())
             .duration(TRAINING_2.getDuration())
@@ -57,7 +67,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_3 = TrainingDto.builder()
             .id(3)
             .name(TRAINING_3.getName())
-            .type(TRAINING_3.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_3.getType().getName()).build())
             .typeId(TRAINING_3.getType().getId())
             .date(TRAINING_3.getDate())
             .duration(TRAINING_3.getDuration())
@@ -68,7 +78,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_4 = TrainingDto.builder()
             .id(4)
             .name(TRAINING_4.getName())
-            .type(TRAINING_4.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_4.getType().getName()).build())
             .typeId(TRAINING_4.getType().getId())
             .date(TRAINING_4.getDate())
             .duration(TRAINING_4.getDuration())
@@ -79,7 +89,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_5 = TrainingDto.builder()
             .id(5)
             .name(TRAINING_5.getName())
-            .type(TRAINING_5.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_5.getType().getName()).build())
             .typeId(TRAINING_5.getType().getId())
             .date(TRAINING_5.getDate())
             .duration(TRAINING_5.getDuration())
@@ -90,7 +100,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_6 = TrainingDto.builder()
             .id(6)
             .name(TRAINING_6.getName())
-            .type(TRAINING_6.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_6.getType().getName()).build())
             .typeId(TRAINING_6.getType().getId())
             .date(TRAINING_6.getDate())
             .duration(TRAINING_6.getDuration())
@@ -101,7 +111,7 @@ public class TrainingTestData {
     public static final TrainingDto TRAINING_DTO_7 = TrainingDto.builder()
             .id(7)
             .name(TRAINING_7.getName())
-            .type(TRAINING_7.getType())
+            .type(TrainingTypeDto.builder().name(TRAINING_7.getType().getName()).build())
             .typeId(TRAINING_7.getType().getId())
             .date(TRAINING_7.getDate())
             .duration(TRAINING_7.getDuration())
@@ -129,7 +139,7 @@ public class TrainingTestData {
     public static TrainingDto getNewTrainingDto() {
         return TrainingDto.builder()
                 .name("Yoga")
-                .type(TRAINING_TYPE_3)
+                .type(TrainingTypeDto.builder().name(TRAINING_TYPE_3.getName()).build())
                 .typeId(TRAINING_TYPE_3.getId())
                 .date(LocalDate.of(2024, 1, 5))
                 .duration(60)
@@ -150,7 +160,24 @@ public class TrainingTestData {
         Assertions.assertEquals(expected.getType().getId(), actual.getType().getId());
     }
 
-    public static String jsonWithTypeId(TrainingDto trainingTo, int typeId) {
-        return JsonUtil.writeAdditionProps(trainingTo, "typeId", typeId);
-    }
+    public static final Map<String, List<TrainingDto>> USERNAMES_TO_TRAINEE_TRAININGS_LIST = Map.of(
+            USER_1.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_1,
+            USER_2.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_2,
+            USER_3.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_3,
+            USER_4.getUsername(), TRAINING_DTO_LIST_FOR_TRAINEE_4,
+            USER_5.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_1,
+            USER_6.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_2,
+            USER_7.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_3,
+            USER_8.getUsername(), TRAINING_DTO_LIST_FOR_TRAINER_4
+    );
+
+    public static final Map<Integer, TrainingDto> TRAINING_ID_TO_TRAINING = new HashMap<>(Map.of(
+            TRAINING_DTO_1.getId(), TRAINING_DTO_1,
+            TRAINING_DTO_2.getId(), TRAINING_DTO_2,
+            TRAINING_DTO_3.getId(), TRAINING_DTO_3,
+            TRAINING_DTO_4.getId(), TRAINING_DTO_4,
+            TRAINING_DTO_5.getId(), TRAINING_DTO_5,
+            TRAINING_DTO_6.getId(), TRAINING_DTO_6,
+            TRAINING_DTO_7.getId(), TRAINING_DTO_7
+    ));
 }

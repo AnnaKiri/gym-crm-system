@@ -7,6 +7,7 @@ spring:
       - "classpath:dev/application-dev.yaml"
       - "classpath:stg/application-stg.yaml"
       - "classpath:prod/application-prod.yaml"
+      - "classpath:e2e/application-e2e.yaml"
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -15,6 +16,9 @@ spring:
     show-sql: true
     open-in-view: false
     defer-datasource-initialization: true
+    test:
+      hibernate:
+        ddl-auto: create-drop
     hibernate:
       ddl-auto: none
     properties:
@@ -37,7 +41,6 @@ spring:
             readTimeout: 5000
 
 server:
-  port: 0
   servlet:
     encoding:
       charset: UTF-8

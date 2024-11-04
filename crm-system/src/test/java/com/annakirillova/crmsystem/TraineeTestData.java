@@ -1,16 +1,17 @@
 package com.annakirillova.crmsystem;
 
-import com.annakirillova.crmsystem.dto.TraineeDto;
+import com.annakirillova.common.dto.TraineeDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.User;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_2;
-import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_4;
+import static com.annakirillova.crmsystem.TrainerTestData.TRAINERS_FOR_TRAINEE_1;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_1;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_2;
 import static com.annakirillova.crmsystem.TrainerTestData.TRAINER_DTO_3;
@@ -30,6 +31,7 @@ public class TraineeTestData {
     public static final Trainee TRAINEE_2 = new Trainee(2, LocalDate.of(1976, 10, 23), "some address", USER_2);
     public static final Trainee TRAINEE_3 = new Trainee(3, LocalDate.of(1976, 9, 15), "some address", USER_3);
     public static final Trainee TRAINEE_4 = new Trainee(4, LocalDate.of(1964, 9, 2), "some address", USER_4);
+    public static final List<Trainee> TRAINEES_FOR_TRAINER_1 = List.of(TRAINEE_4);
 
     public static final TraineeDto TRAINEE_DTO_1 = TraineeDto.builder()
             .id(1)
@@ -41,6 +43,8 @@ public class TraineeTestData {
             .isActive(USER_1.isActive())
             .build();
 
+    public static final TraineeDto TRAINEE_DTO_1_WITH_TRAINER_LIST = new TraineeDto(TRAINEE_DTO_1);
+
     public static final TraineeDto TRAINEE_DTO_2 = TraineeDto.builder()
             .id(2)
             .username(USER_2.getUsername())
@@ -50,6 +54,8 @@ public class TraineeTestData {
             .address(TRAINEE_2.getAddress())
             .isActive(USER_2.isActive())
             .build();
+
+    public static final TraineeDto TRAINEE_DTO_2_WITH_TRAINER_LIST = new TraineeDto(TRAINEE_DTO_2);
 
     public static final TraineeDto TRAINEE_DTO_3 = TraineeDto.builder()
             .id(3)
@@ -61,6 +67,8 @@ public class TraineeTestData {
             .isActive(USER_3.isActive())
             .build();
 
+    public static final TraineeDto TRAINEE_DTO_3_WITH_TRAINER_LIST = new TraineeDto(TRAINEE_DTO_3);
+
     public static final TraineeDto TRAINEE_DTO_4 = TraineeDto.builder()
             .id(4)
             .username(USER_4.getUsername())
@@ -71,22 +79,24 @@ public class TraineeTestData {
             .isActive(USER_4.isActive())
             .build();
 
+    public static final TraineeDto TRAINEE_DTO_4_WITH_TRAINER_LIST = new TraineeDto(TRAINEE_DTO_4);
+
     public static final MatcherFactory.Matcher<Trainee> TRAINEE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Trainee.class, "user", "trainerList");
-    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeDto.class, "trainerList");
+    public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(TraineeDto.class, "id", "trainerList");
 
     public static final MatcherFactory.Matcher<TraineeDto> TRAINEE_DTO_MATCHER_WITH_TRAINER_LIST =
             MatcherFactory.usingAssertions(TraineeDto.class,
-                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
+                    (a, e) -> assertThat(a).usingRecursiveComparison().ignoringFields("id", "trainerList.id", "trainerList.traineeList", "trainerList.specializationId").isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
 
     static {
-        TRAINEE_1.setTrainerList(new ArrayList<>(List.of(TRAINER_2, TRAINER_4)));
-        TRAINEE_DTO_1.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_4));
-        TRAINEE_DTO_2.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_3));
-        TRAINEE_DTO_3.setTrainerList(List.of(TRAINER_DTO_2));
-        TRAINEE_DTO_4.setTrainerList(List.of(TRAINER_DTO_1, TRAINER_DTO_4));
+        TRAINEE_1.setTrainerList(new ArrayList<>(TRAINERS_FOR_TRAINEE_1));
+        TRAINEE_DTO_1_WITH_TRAINER_LIST.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_4));
+        TRAINEE_DTO_2_WITH_TRAINER_LIST.setTrainerList(List.of(TRAINER_DTO_2, TRAINER_DTO_3));
+        TRAINEE_DTO_3_WITH_TRAINER_LIST.setTrainerList(List.of(TRAINER_DTO_2));
+        TRAINEE_DTO_4_WITH_TRAINER_LIST.setTrainerList(List.of(TRAINER_DTO_1, TRAINER_DTO_4));
     }
 
     public static Trainee getNewTrainee() {
@@ -95,8 +105,8 @@ public class TraineeTestData {
 
     public static TraineeDto getNewTraineeDto() {
         return TraineeDto.builder()
-                .firstName("FirstName")
-                .lastName("LastName")
+                .firstName("TraineeFirstName")
+                .lastName("TraineeLastName")
                 .birthday(LocalDate.of(1980, 8, 15))
                 .address("Address")
                 .isActive(true)
@@ -124,5 +134,12 @@ public class TraineeTestData {
     public static void checkTraineeUserId(Trainee expected, Trainee actual) {
         Assertions.assertEquals(expected.getUser().getId(), actual.getUser().getId());
     }
+
+    public static final Map<String, TraineeDto> USERNAMES_TO_TRAINEE_DTO = new HashMap<>(Map.of(
+            USER_1.getUsername(), TRAINEE_DTO_1_WITH_TRAINER_LIST,
+            USER_2.getUsername(), TRAINEE_DTO_2_WITH_TRAINER_LIST,
+            USER_3.getUsername(), TRAINEE_DTO_3_WITH_TRAINER_LIST,
+            USER_4.getUsername(), TRAINEE_DTO_4_WITH_TRAINER_LIST
+    ));
 
 }

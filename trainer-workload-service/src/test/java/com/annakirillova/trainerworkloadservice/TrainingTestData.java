@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice;
 
-import com.annakirillova.trainerworkloadservice.dto.ActionType;
-import com.annakirillova.trainerworkloadservice.dto.TrainingInfoDto;
+import com.annakirillova.common.dto.ActionType;
+import com.annakirillova.common.dto.TrainingInfoDto;
 
 import java.time.LocalDate;
 

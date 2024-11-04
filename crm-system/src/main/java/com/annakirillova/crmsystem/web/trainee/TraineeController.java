@@ -1,10 +1,10 @@
 package com.annakirillova.crmsystem.web.trainee;
 
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TraineeDto;
-import com.annakirillova.crmsystem.dto.TrainerDto;
-import com.annakirillova.crmsystem.dto.TrainingDto;
-import com.annakirillova.crmsystem.dto.UserDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TraineeDto;
+import com.annakirillova.common.dto.TrainerDto;
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.exception.AuthenticationException;
 import com.annakirillova.crmsystem.metrics.RegisterMetrics;
 import com.annakirillova.crmsystem.models.Trainee;
@@ -58,7 +58,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @Tag(name = "Trainee Controller", description = "Managing gym trainees")
 @SecurityRequirement(name = "Bearer Authentication")
 public class TraineeController {
-    static final String REST_URL = "/trainees";
+    public static final String REST_URL = "/trainees";
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;

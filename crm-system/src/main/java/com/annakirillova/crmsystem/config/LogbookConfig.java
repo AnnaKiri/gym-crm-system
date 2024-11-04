@@ -11,7 +11,7 @@ import org.zalando.logbook.BodyFilter;
 
 import java.io.IOException;
 
-import static com.annakirillova.crmsystem.dto.CredentialRepresentationDto.PASSWORD_STRING;
+import static com.annakirillova.common.dto.CredentialRepresentationDto.PASSWORD_STRING;
 import static org.zalando.logbook.BodyFilter.merge;
 import static org.zalando.logbook.core.BodyFilters.defaultValue;
 

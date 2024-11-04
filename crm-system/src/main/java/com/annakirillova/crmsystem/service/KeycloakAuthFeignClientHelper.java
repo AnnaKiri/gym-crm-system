@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.service;
 
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.feign.KeycloakAuthFeignClient;
 import com.annakirillova.crmsystem.util.FeignExceptionUtil;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;

@@ -1,9 +1,9 @@
 package com.annakirillova.crmsystem.web.trainer;
 
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TrainerDto;
-import com.annakirillova.crmsystem.dto.TrainingDto;
-import com.annakirillova.crmsystem.dto.UserDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TrainerDto;
+import com.annakirillova.common.dto.TrainingDto;
+import com.annakirillova.common.dto.UserDto;
 import com.annakirillova.crmsystem.exception.AuthenticationException;
 import com.annakirillova.crmsystem.metrics.RegisterMetrics;
 import com.annakirillova.crmsystem.models.Trainee;
@@ -55,7 +55,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @Tag(name = "Trainer Controller", description = "Managing gym trainers")
 @SecurityRequirement(name = "Bearer Authentication")
 public class TrainerController {
-    static final String REST_URL = "/trainers";
+    public static final String REST_URL = "/trainers";
 
     private final TrainerService trainerService;
     private final TraineeService traineeService;

@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.web;
 
-import com.annakirillova.crmsystem.dto.LoginRequestDto;
-import com.annakirillova.crmsystem.dto.TokenResponseDto;
+import com.annakirillova.common.dto.LoginRequestDto;
+import com.annakirillova.common.dto.TokenResponseDto;
 import com.annakirillova.crmsystem.service.AuthService;
 import com.annakirillova.crmsystem.service.BruteForceProtectionService;
 import com.annakirillova.crmsystem.service.TokenService;
@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(AuthController.REST_URL)
 @Tag(name = "Auth Controller", description = "Controller for login and logout")
 public class AuthController {
-    static final String REST_URL = "/auth";
+    public static final String REST_URL = "/auth";
+    public static final String BLOCK_MESSAGE = "User is blocked due to multiple failed login attempts. Please try again later.";
 
     private final BruteForceProtectionService bruteForceProtectionService;
     private final TokenService tokenService;
@@ -45,7 +46,7 @@ public class AuthController {
         log.info("Attempt to login by user: {}", username);
 
         if (bruteForceProtectionService.isBlocked(username)) {
-            throw new BadCredentialsException("User is blocked due to multiple failed login attempts. Please try again later.");
+            throw new BadCredentialsException(BLOCK_MESSAGE);
         }
 
         try {

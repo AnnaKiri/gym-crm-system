@@ -1,0 +1,43 @@
+spring:
+  config:
+    activate:
+      on-profile: integration-test
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    queues:
+      trainer-workload: trainer-workload
+eureka:
+  client:
+    enabled: false
+cors:
+  allowed-origins:
+    - "http://localhost"
+    - "http://localhost:5555"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
+
+keycloak:
+  admin:
+    username: gym-crm-system-admin
+    password: admin
+    client-id: gym-crm-microservice-admin
+    client-secret: ZNQ5WNAnhkdNt7BsSrw99iSCuqXS2qGM
+  user:
+    client-id: gym-crm-microservice-client
+    client-secret: ta6ErUK0XKOsbUAou4D3CKFNMruUqBkG
+  realm: gym-crm-system-realm
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.10

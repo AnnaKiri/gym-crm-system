@@ -21,8 +21,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     metadata-map:
-      keycloak-service: http://localhost:8080/
-      keycloak-auth: http://localhost:8080/
+      keycloak-service: http://localhost/
+      keycloak-auth: http://localhost/
 cors:
   allowed-origins:
     - "http://localhost"
@@ -45,3 +45,6 @@ keycloak:
     client-id: gym-crm-microservice-client
   url: http://localhost
   realm: gym-crm-system-realm
+
+server:
+  port: 80

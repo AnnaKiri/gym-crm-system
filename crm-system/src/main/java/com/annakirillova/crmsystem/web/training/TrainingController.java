@@ -1,6 +1,6 @@
 package com.annakirillova.crmsystem.web.training;
 
-import com.annakirillova.crmsystem.dto.TrainingDto;
+import com.annakirillova.common.dto.TrainingDto;
 import com.annakirillova.crmsystem.models.Trainee;
 import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
@@ -36,7 +36,7 @@ import static com.annakirillova.crmsystem.util.ValidationUtil.checkNew;
 @Tag(name = "Training Controller", description = "Managing gym trainings")
 @SecurityRequirement(name = "Bearer Authentication")
 public class TrainingController {
-    static final String REST_URL = "/trainings";
+    public static final String REST_URL = "/trainings";
 
     private final TrainingService trainingService;
     private final TraineeService traineeService;

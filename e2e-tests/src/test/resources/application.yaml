@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: e2e-tests
+crm-system:
+  port: 8080
+
+workload-report-service:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.annakirillova.e2etests: DEBUG
+    org.zalando.logbook: TRACE
+
+logbook:
+  format:
+    style: http
+  obfuscate:
+    headers:
+      - null
+    parameters:
+      - null
+    json-body-fields:
+      - null
+  filters:
+    body:
+      default-enabled: false

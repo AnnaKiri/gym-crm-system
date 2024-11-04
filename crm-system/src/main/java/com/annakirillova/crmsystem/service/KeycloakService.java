@@ -1,7 +1,7 @@
 package com.annakirillova.crmsystem.service;
 
+import com.annakirillova.common.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.config.SecurityConfig;
-import com.annakirillova.crmsystem.dto.CredentialRepresentationDto;
 import com.annakirillova.crmsystem.dto.KeycloakUserDto;
 import com.annakirillova.crmsystem.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
