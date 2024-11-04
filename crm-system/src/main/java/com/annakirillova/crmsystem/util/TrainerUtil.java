@@ -42,7 +42,9 @@ public class TrainerUtil {
                     .username(trainersUser.getUsername())
                     .firstName(trainersUser.getFirstName())
                     .lastName(trainersUser.getLastName())
-                    .specialization(TrainingTypeDto.builder().name(trainer.getSpecialization().getName()).build())
+                    .specialization(TrainingTypeDto.builder()
+                            .name(trainer.getSpecialization().getName())
+                            .build())
                     .specializationId(trainer.getSpecialization().getId())
                     .isActive(trainersUser.isActive())
                     .build();

@@ -23,7 +23,7 @@ public class UserUtil {
 
     public static String generateUsername(String firstName, String lastName, List<String> usernames) {
 
-        String username = (firstName + "." + lastName).toLowerCase();
+        String username = String.join(".", firstName, lastName).toLowerCase();
 
         if (usernames.isEmpty()) {
             return username;

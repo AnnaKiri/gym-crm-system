@@ -34,6 +34,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TokenServiceUnitTest {
 
+    private static final String INVALIDATED_STATUS = "invalidated";
+
     @Mock
     private KeycloakProperties keycloakProperties;
 
@@ -57,13 +59,13 @@ class TokenServiceUnitTest {
         String token = JWT_DUMB.getTokenValue();
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        doNothing().when(valueOperations).set(eq(token), eq("invalidated"), anyLong(), eq(TimeUnit.SECONDS));
+        doNothing().when(valueOperations).set(eq(token), eq(INVALIDATED_STATUS), anyLong(), eq(TimeUnit.SECONDS));
 
         when(jwtDecoder.decode(token)).thenReturn(JWT_DUMB);
 
         tokenService.invalidateToken(token);
 
-        verify(valueOperations, times(1)).set(eq(token), eq("invalidated"), any(Long.class), eq(TimeUnit.SECONDS));
+        verify(valueOperations, times(1)).set(eq(token), eq(INVALIDATED_STATUS), any(Long.class), eq(TimeUnit.SECONDS));
     }
 
     @Test

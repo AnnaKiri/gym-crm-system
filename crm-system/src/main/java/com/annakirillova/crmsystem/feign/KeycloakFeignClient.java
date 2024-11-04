@@ -19,13 +19,15 @@ import java.util.List;
 @FeignClient(name = "keycloak-service", url = "${keycloak.url}/admin/realms/${keycloak.realm}")
 public interface KeycloakFeignClient {
 
+    String USER_ID = "userId";
+
     @PostMapping("/users")
     ResponseEntity<Void> createUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                     @RequestBody KeycloakUserDto user);
 
     @PutMapping("/users/{userId}/reset-password")
     ResponseEntity<Void> updatePassword(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                        @PathVariable("userId") String userId,
+                                        @PathVariable(USER_ID) String userId,
                                         @RequestBody CredentialRepresentationDto credential
     );
 
@@ -35,11 +37,11 @@ public interface KeycloakFeignClient {
 
     @DeleteMapping("/users/{userId}")
     ResponseEntity<Void> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                    @PathVariable("userId") String userId);
+                                    @PathVariable(USER_ID) String userId);
 
     @PutMapping("/users/{userId}")
     ResponseEntity<Void> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                    @PathVariable("userId") String userId,
+                                    @PathVariable(USER_ID) String userId,
                                     @RequestBody KeycloakUserDto user);
 
 }
