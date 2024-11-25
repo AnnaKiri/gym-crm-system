@@ -8,6 +8,9 @@ services:
       - "5432:5432"
     volumes:
       - 'C:/docker/postgres_data:/bitnami/postgresql'
+    networks:
+      - my-network
+
   keycloak:
     image: docker.io/bitnami/keycloak:25.0.6
     ports:
@@ -22,14 +25,23 @@ services:
       - KEYCLOAK_LOG_LEVEL=DEBUG
     depends_on:
       - postgresql
+    networks:
+      - my-network
+
   redis:
     image: docker.io/redis:7.4.0
     ports:
       - "6379:6379"
+    networks:
+      - my-network
+
   eureka:
     image: docker.io/steeltoeoss/eureka-server:4.1.1
     ports:
       - "8761:8761"
+    networks:
+      - my-network
+
   activemq:
     image: webcenter/activemq:5.14.3
     environment:
@@ -41,6 +53,8 @@ services:
       - "61613:61613"
     volumes:
       - 'C:/docker/activemq/conf/activemq.xml:/opt/activemq/conf/activemq.xml'
+    networks:
+      - my-network
 
   mongodb:
     image: mongo:8.0.1
@@ -51,20 +65,62 @@ services:
       - "27017:27017"
     volumes:
       - 'C:/docker/mongo_data:/data/db'
+    networks:
+      - my-network
 
   mongo-express:
     image: mongo-express
     ports:
-      - "8081:8081"
+      - "8082:8082"
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: admin
       ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
       ME_CONFIG_MONGODB_ADMINPASSWORD: secret
       ME_CONFIG_MONGODB_URL: mongodb://mongoadmin:secret@mongodb:27017/
+    networks:
+      - my-network
+
+  crm-system:
+    image: crm-system:1.0.0
+    ports:
+      - "8080:80"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      CRM_SYSTEM_ROOT: /var
+    networks:
+      - my-network
+    depends_on:
+      - postgresql
+      - mongodb
+      - activemq
+      - eureka
+      - redis
+      - keycloak
+
+  trainer-workload-service:
+    image: trainer-workload-service:1.0.0
+    ports:
+      - "8081:80"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      TRAINER-WORKLOAD-SERVICE-ROOT: /var
+    networks:
+      - my-network
+    depends_on:
+      - postgresql
+      - mongodb
+      - activemq
+      - eureka
+      - redis
+      - keycloak
 
 volumes:
   postgresql_data:
     driver: local
   mongo_data:
     driver: local
+
+networks:
+  my-network:
+    driver: bridge
