@@ -4,8 +4,19 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://postgresql:5432/gym_crm_system
-    username: postgres
+#    url: jdbc:postgresql://postgresql:5432/gym_crm_system
+#    username: postgres
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  sql:
+    init:
+      schema-locations: classpath:db/initDBH2.sql
+      data-locations: classpath:db/populateDB.sql
+      mode: always
   data:
     redis:
       host: redis
