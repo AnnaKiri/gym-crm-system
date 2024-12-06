@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -32,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/trainees").anonymous()
                         .requestMatchers(HttpMethod.POST, "/trainers").anonymous()
                         .requestMatchers(HttpMethod.POST, "/auth/login").anonymous()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -62,7 +65,14 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("!dev")
     public JwtDecoder jwtDecoder() {
+        return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
+    }
+
+    @Bean
+    @Profile("dev")
+    public JwtDecoder jwtDecoder2() {
 //        return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
         return token -> null;
     }
