@@ -3,4 +3,4 @@ spring:
     password: dev_password
   data:
     mongodb:
-      uri: mongodb://username:password@localhost:27017/trainerworkloadservice
+      uri: mongodb://localhost:27017/embedded-db

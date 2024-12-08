@@ -8,8 +8,14 @@ spring:
     user: admin
 eureka:
   client:
+    enabled: false
     serviceUrl:
       defaultZone: http://eureka:8761/eureka/
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
 cors:
   allowed-origins:
     - "http://localhost"

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -58,7 +59,15 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("!dev")
     public JwtDecoder jwtDecoder() {
         return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
+    }
+
+    @Bean
+    @Profile("dev")
+    public JwtDecoder jwtDecoder2() {
+//        return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
+        return token -> null;
     }
 }
