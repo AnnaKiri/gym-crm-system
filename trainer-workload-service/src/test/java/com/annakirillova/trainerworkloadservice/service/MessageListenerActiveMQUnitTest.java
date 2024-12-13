@@ -17,18 +17,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MessageListenerUnitTest {
+public class MessageListenerActiveMQUnitTest {
     @Mock
     private TrainerSummaryService trainerSummaryService;
 
     @InjectMocks
-    private MessageListener messageListener;
+    private MessageListenerActiveMQ messageListenerActiveMQ;
 
     @Test
     void shouldAddTrainingWhenActionIsAdd() {
         when(trainerSummaryService.create(anyString(), anyString(), anyString(), anyBoolean())).thenReturn(TRAINER_SUMMARY_1);
 
-        messageListener.receiveMessage(TRAINING_DTO_ADD);
+        messageListenerActiveMQ.receiveMessage(TRAINING_DTO_ADD);
 
         verify(trainerSummaryService, times(1)).create(
                 TRAINING_DTO_ADD.getFirstName(),
@@ -45,7 +45,7 @@ public class MessageListenerUnitTest {
 
     @Test
     void shouldDeleteTrainingWhenActionIsDelete() {
-        messageListener.receiveMessage(TRAINING_DTO_DELETE);
+        messageListenerActiveMQ.receiveMessage(TRAINING_DTO_DELETE);
 
         verify(trainerSummaryService, times(1)).deleteTrainingDurationFromSummaryByDateAndUsername(
                 TRAINING_DTO_DELETE.getUsername(),

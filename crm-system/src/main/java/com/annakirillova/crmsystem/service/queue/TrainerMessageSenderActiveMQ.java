@@ -1,16 +1,18 @@
-package com.annakirillova.crmsystem.service;
+package com.annakirillova.crmsystem.service.queue;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TrainerMessageSender extends AbstractMessageSender {
+@Profile("!dev")
+public class TrainerMessageSenderActiveMQ extends AbstractActiveMqMessageSender {
 
     @Value("${spring.activemq.queues.trainer-workload}")
     private String trainerWorkloadQueue;
 
-    public TrainerMessageSender(JmsTemplate jmsTemplate) {
+    public TrainerMessageSenderActiveMQ(JmsTemplate jmsTemplate) {
         super(jmsTemplate);
     }
 

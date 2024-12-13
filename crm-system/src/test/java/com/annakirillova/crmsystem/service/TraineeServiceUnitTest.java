@@ -11,6 +11,7 @@ import com.annakirillova.crmsystem.repository.TraineeRepository;
 import com.annakirillova.crmsystem.repository.TrainerRepository;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.UserRepository;
+import com.annakirillova.crmsystem.service.queue.TrainerMessageSenderActiveMQ;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,7 +75,7 @@ public class TraineeServiceUnitTest {
     private KeycloakService keycloakService;
 
     @Mock
-    private TrainerMessageSender trainerMessageSenderService;
+    private TrainerMessageSenderActiveMQ trainerMessageSenderService;
 
     @InjectMocks
     private TraineeService traineeService;

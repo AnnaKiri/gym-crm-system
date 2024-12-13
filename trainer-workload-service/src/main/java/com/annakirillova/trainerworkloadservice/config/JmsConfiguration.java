@@ -13,7 +13,7 @@ import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 
 @Configuration
-@Profile("!component-test")
+@Profile("!component-test && !dev")
 public class JmsConfiguration {
 
     @Bean

@@ -34,6 +34,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <logbook.version>3.9.0</logbook.version>
+        <aws.version>3.2.1</aws.version>
     </properties>
 
     <dependencies>
@@ -88,6 +89,18 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!--AWS -->
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter</artifactId>
+            <version>${aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-sqs</artifactId>
+            <version>${aws.version}</version>
         </dependency>
     </dependencies>
 

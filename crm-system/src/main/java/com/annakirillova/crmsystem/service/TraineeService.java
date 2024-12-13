@@ -14,6 +14,7 @@ import com.annakirillova.crmsystem.repository.TrainerSpecifications;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingSpecifications;
 import com.annakirillova.crmsystem.repository.UserRepository;
+import com.annakirillova.crmsystem.service.queue.SenderQueue;
 import com.annakirillova.crmsystem.util.UserUtil;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class TraineeService {
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
-    private final TrainerMessageSender trainerMessageSenderService;
+    private final SenderQueue trainerMessageSenderService;
 
     @Transactional
     public Trainee create(String firstName, String lastName, LocalDate birthday, String address, String password) {

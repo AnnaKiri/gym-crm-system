@@ -8,6 +8,7 @@ import com.annakirillova.crmsystem.models.Trainer;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
+import com.annakirillova.crmsystem.service.queue.SenderQueue;
 import com.annakirillova.crmsystem.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainerMessageSender trainerMessageSenderService;
+    private final SenderQueue trainerMessageSenderService;
 
     public Training get(int id) {
         log.debug("Get training with trainingId = {}", id);

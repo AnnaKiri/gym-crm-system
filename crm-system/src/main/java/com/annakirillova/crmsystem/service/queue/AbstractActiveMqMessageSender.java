@@ -1,12 +1,9 @@
-package com.annakirillova.crmsystem.service;
+package com.annakirillova.crmsystem.service.queue;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jms.core.JmsTemplate;
 
 @RequiredArgsConstructor
-public abstract class AbstractMessageSender {
-
+public abstract class AbstractActiveMqMessageSender implements SenderQueue {
     protected final JmsTemplate jmsTemplate;
-
-    public abstract void sendMessage(Object message);
 }

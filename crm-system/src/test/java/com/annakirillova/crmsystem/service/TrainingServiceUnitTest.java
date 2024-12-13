@@ -5,6 +5,7 @@ import com.annakirillova.crmsystem.exception.NotFoundException;
 import com.annakirillova.crmsystem.models.Training;
 import com.annakirillova.crmsystem.repository.TrainingRepository;
 import com.annakirillova.crmsystem.repository.TrainingTypeRepository;
+import com.annakirillova.crmsystem.service.queue.TrainerMessageSenderActiveMQ;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,7 +42,7 @@ class TrainingServiceUnitTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Mock
-    private TrainerMessageSender trainerMessageSenderService;
+    private TrainerMessageSenderActiveMQ trainerMessageSenderService;
 
     @InjectMocks
     private TrainingService trainingService;
