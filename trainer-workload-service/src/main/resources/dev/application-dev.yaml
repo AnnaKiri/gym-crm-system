@@ -1,4 +1,8 @@
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+  main:
+    allow-bean-definition-overriding: true
   config:
     import: "classpath:dev/confidential-dev.yaml"
     activate:
@@ -11,11 +15,6 @@ eureka:
     enabled: false
     serviceUrl:
       defaultZone: http://eureka:8761/eureka/
-de:
-  flapdoodle:
-    mongodb:
-      embedded:
-        version: 5.0.5
 cors:
   allowed-origins:
     - "http://localhost"
