@@ -29,7 +29,7 @@ cors:
     - "Authorization"
     - "Content-Type"
 keycloak:
-  url: http://keycloak:8080
+  url: http://10.0.15.149
   realm: gym-crm-system-realm
 
 server:

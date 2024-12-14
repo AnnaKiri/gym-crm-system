@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> jwtConfigurer
@@ -59,15 +59,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("!dev")
     public JwtDecoder jwtDecoder() {
         return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
-    }
-
-    @Bean
-    @Profile("dev")
-    public JwtDecoder jwtDecoder2() {
-//        return JwtDecoders.fromIssuerLocation(keycloakProperties.getUrl() + "/realms/" + keycloakProperties.getRealm());
-        return token -> null;
     }
 }
