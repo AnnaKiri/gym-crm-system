@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.service;
 
+import com.annakirillova.common.dto.TrainerSummaryDto;
 import com.annakirillova.common.dto.TrainingInfoDto;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class MessageListenerActiveMQ {
 
         switch (trainingInfoDto.getActionType()) {
             case ADD:
-                TrainerSummary trainerSummary = trainerSummaryService.create(
+                TrainerSummaryDto trainerSummary = trainerSummaryService.create(
                         trainingInfoDto.getFirstName(),
                         trainingInfoDto.getLastName(),
                         trainingInfoDto.getUsername(),

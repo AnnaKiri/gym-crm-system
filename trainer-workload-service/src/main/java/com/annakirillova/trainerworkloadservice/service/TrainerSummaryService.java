@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.service;
 
 import com.annakirillova.common.dto.TrainerSummaryDto;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
+import com.annakirillova.trainerworkloadservice.model.TrainerSummaryMongoDb;
 import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,34 +20,34 @@ public class TrainerSummaryService {
 
     private final TrainerRepository trainerRepository;
 
-    public TrainerSummary create(String firstName, String lastName, String username, boolean isActive) {
+    public TrainerSummaryDto create(String firstName, String lastName, String username, boolean isActive) {
         log.debug("Check trainer");
-        Optional<TrainerSummary> receivedTrainer = trainerRepository.findByUsername(username);
+        Optional<TrainerSummaryDto> receivedTrainer = trainerRepository.findByUsernameSpecial(username);
 
         if (receivedTrainer.isPresent()) {
             return receivedTrainer.get();
         }
 
-        TrainerSummary trainerSummary = new TrainerSummary();
-        trainerSummary.setUsername(username);
-        trainerSummary.setFirstName(firstName);
-        trainerSummary.setLastName(lastName);
-        trainerSummary.setIsActive(isActive);
-        trainerSummary.setSummaryList(new ArrayList<>());
+        TrainerSummaryMongoDb trainerSummaryMongoDb = new TrainerSummaryMongoDb();
+        trainerSummaryMongoDb.setUsername(username);
+        trainerSummaryMongoDb.setFirstName(firstName);
+        trainerSummaryMongoDb.setLastName(lastName);
+        trainerSummaryMongoDb.setIsActive(String.valueOf(isActive));
+        trainerSummaryMongoDb.setSummaryList(new ArrayList<>());
 
         log.debug("Create new trainer");
-        return trainerRepository.save(trainerSummary);
+        return trainerRepository.save(trainerSummaryMongoDb);
     }
 
-    public TrainerSummary get(String username) {
+    public TrainerSummaryDto get(String username) {
         log.debug("Get trainer with username = {}", username);
         return trainerRepository.getTrainerIfExists(username);
     }
 
     @Transactional
-    public TrainerSummary addOrUpdateTrainingDuration(String username, LocalDate date, int duration) {
+    public TrainerSummaryDto addOrUpdateTrainingDuration(String username, LocalDate date, int duration) {
         log.debug("Add or update training duration {} for trainer with username = {} and date = {}", duration, username, date);
-        TrainerSummary trainerSummary = trainerRepository.getTrainerIfExists(username);
+        TrainerSummaryDto trainerSummary = trainerRepository.getTrainerIfExists(username);
 
         Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(trainerSummary, date);
 
@@ -64,9 +64,9 @@ public class TrainerSummaryService {
         return trainerRepository.save(trainerSummary);
     }
 
-    public TrainerSummary deleteTrainingDurationFromSummaryByDateAndUsername(String username, LocalDate date, int duration) {
+    public TrainerSummaryDto deleteTrainingDurationFromSummaryByDateAndUsername(String username, LocalDate date, int duration) {
         log.debug("Delete training duration {} for trainer with username = {} and date = {}", duration, username, date);
-        TrainerSummary trainerSummary = trainerRepository.getTrainerIfExists(username);
+        TrainerSummaryDto trainerSummary = trainerRepository.getTrainerIfExists(username);
 
         getExistingSummary(trainerSummary, date)
                 .ifPresent(summary -> {
@@ -77,7 +77,7 @@ public class TrainerSummaryService {
         return trainerRepository.save(trainerSummary);
     }
 
-    static Optional<TrainerSummaryDto.Summary> getExistingSummary(TrainerSummary trainerSummary, LocalDate date) {
+    static Optional<TrainerSummaryDto.Summary> getExistingSummary(TrainerSummaryDto trainerSummary, LocalDate date) {
         return trainerSummary.getSummaryList().stream()
                 .filter(summary -> Objects.equals(summary.getYear(), date.getYear())
                         && Objects.equals(summary.getMonth(), date.getMonthValue()))

@@ -18,6 +18,7 @@
         <testcontainers.version>1.20.2</testcontainers.version>
         <keycloak.testcontainer.version>3.4.0</keycloak.testcontainer.version>
         <common.version>1.0.0</common.version>
+        <aws.version>3.2.1</aws.version>
     </properties>
     <dependencies>
         <dependency>
@@ -115,6 +116,13 @@
             <artifactId>activemq</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-dynamodb</artifactId>
+            <version>${aws.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

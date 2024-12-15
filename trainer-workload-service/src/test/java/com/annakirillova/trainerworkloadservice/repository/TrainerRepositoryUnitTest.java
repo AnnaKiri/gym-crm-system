@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice.repository;
 
+import com.annakirillova.common.dto.TrainerSummaryDto;
 import com.annakirillova.trainerworkloadservice.exception.NotFoundException;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +22,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TrainerRepositoryUnitTest {
 
     @Autowired
-    private TrainerRepository trainerRepository;
+    private TrainerRepositoryMongoDb trainerRepositoryMongoDb;
 
     @BeforeEach
     void setUp() {
-        trainerRepository.save(TRAINER_SUMMARY_1);
-        trainerRepository.save(TRAINER_SUMMARY_2);
+        trainerRepositoryMongoDb.save((TrainerSummaryDto) TRAINER_SUMMARY_1);
+        trainerRepositoryMongoDb.save((TrainerSummaryDto) TRAINER_SUMMARY_2);
     }
 
     @Test
     void findByUsernameSuccess() {
-        Optional<TrainerSummary> foundTrainer = trainerRepository.findByUsername(TRAINER_SUMMARY_1.getUsername());
+        Optional<TrainerSummaryDto> foundTrainer = trainerRepositoryMongoDb.findByUsernameSpecial(TRAINER_SUMMARY_1.getUsername());
 
         assertTrue(foundTrainer.isPresent());
         TRAINER_MATCHER_WITH_SUMMARY_LIST.assertMatch(foundTrainer.get(), TRAINER_SUMMARY_1);
@@ -40,18 +40,18 @@ class TrainerRepositoryUnitTest {
 
     @Test
     void findByUsernameNotFound() {
-        Optional<TrainerSummary> foundTrainer = trainerRepository.findByUsername("nonexistent");
+        Optional<TrainerSummaryDto> foundTrainer = trainerRepositoryMongoDb.findByUsernameSpecial("nonexistent");
         assertFalse(foundTrainer.isPresent());
     }
 
     @Test
     void getTrainerIfExistsSuccess() {
-        TrainerSummary foundTrainer = trainerRepository.getTrainerIfExists(TRAINER_SUMMARY_1.getUsername());
+        TrainerSummaryDto foundTrainer = trainerRepositoryMongoDb.getTrainerIfExists(TRAINER_SUMMARY_1.getUsername());
         TRAINER_MATCHER_WITH_SUMMARY_LIST.assertMatch(foundTrainer, TRAINER_SUMMARY_1);
     }
 
     @Test
     void getTrainerIfExistsNotFound() {
-        assertThrows(NotFoundException.class, () -> trainerRepository.getTrainerIfExists("nonexistent"));
+        assertThrows(NotFoundException.class, () -> trainerRepositoryMongoDb.getTrainerIfExists("nonexistent"));
     }
 }

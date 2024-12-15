@@ -35,7 +35,7 @@ public class TrainerSummaryDto {
     private String lastName;
 
     @NotNull
-    private Boolean isActive;
+    private String isActive;
 
     @NotNull
     private List<Summary> summaryList;

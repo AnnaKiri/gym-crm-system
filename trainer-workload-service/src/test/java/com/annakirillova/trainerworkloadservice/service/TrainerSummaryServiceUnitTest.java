@@ -1,7 +1,6 @@
 package com.annakirillova.trainerworkloadservice.service;
 
 import com.annakirillova.common.dto.TrainerSummaryDto;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import com.annakirillova.trainerworkloadservice.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,14 +36,14 @@ class TrainerSummaryServiceUnitTest {
 
     @Test
     void create() {
-        when(trainerRepository.save(any(TrainerSummary.class))).thenAnswer(invocation -> invocation.<TrainerSummary>getArgument(0));
+        when(trainerRepository.save(any(TrainerSummaryDto.class))).thenAnswer(invocation -> invocation.<TrainerSummaryDto>getArgument(0));
 
-        when(trainerRepository.findByUsername("jim.carrey")).thenReturn(Optional.empty());
+        when(trainerRepository.findByUsernameSpecial("jim.carrey")).thenReturn(Optional.empty());
 
-        TrainerSummary newTrainerSummary = getNewTrainer();
-        TrainerSummary savedTrainerSummary = trainerSummaryService.create("Jim", "Carrey", "jim.carrey", true);
+        TrainerSummaryDto newTrainerSummary = getNewTrainer();
+        TrainerSummaryDto savedTrainerSummary = trainerSummaryService.create("Jim", "Carrey", "jim.carrey", true);
 
-        verify(trainerRepository, times(1)).save(any(TrainerSummary.class));
+        verify(trainerRepository, times(1)).save(any(TrainerSummaryDto.class));
 
         TRAINER_MATCHER_WITH_SUMMARY_LIST.assertMatch(savedTrainerSummary, newTrainerSummary);
     }
@@ -53,22 +52,22 @@ class TrainerSummaryServiceUnitTest {
     void get() {
         when(trainerRepository.getTrainerIfExists(TRAINER_1_USERNAME)).thenReturn(TRAINER_SUMMARY_1);
 
-        TrainerSummary foundTrainerSummary = trainerSummaryService.get(TRAINER_1_USERNAME);
+        TrainerSummaryDto foundTrainerSummary = trainerSummaryService.get(TRAINER_1_USERNAME);
         TRAINER_MATCHER_WITH_SUMMARY_LIST.assertMatch(foundTrainerSummary, TRAINER_SUMMARY_1);
     }
 
     @Test
     void createExistedTrainer() {
-        when(trainerRepository.findByUsername(TRAINER_1_USERNAME)).thenReturn(Optional.of(TRAINER_SUMMARY_1));
+        when(trainerRepository.findByUsernameSpecial(TRAINER_1_USERNAME)).thenReturn(Optional.of(TRAINER_SUMMARY_1));
 
-        TrainerSummary savedTrainerSummary = trainerSummaryService.create(
+        TrainerSummaryDto savedTrainerSummary = trainerSummaryService.create(
                 TRAINER_SUMMARY_1.getFirstName(),
                 TRAINER_SUMMARY_1.getLastName(),
                 TRAINER_SUMMARY_1.getUsername(),
                 true
         );
 
-        verify(trainerRepository, times(0)).save(any(TrainerSummary.class));
+        verify(trainerRepository, times(0)).save(any(TrainerSummaryDto.class));
 
         TRAINER_MATCHER_WITH_SUMMARY_LIST.assertMatch(savedTrainerSummary, TRAINER_SUMMARY_1);
     }
@@ -76,11 +75,11 @@ class TrainerSummaryServiceUnitTest {
     @Test
     void addTrainingDuration() {
         when(trainerRepository.getTrainerIfExists(TRAINER_1_USERNAME)).thenReturn(TRAINER_SUMMARY_1);
-        when(trainerRepository.save(any(TrainerSummary.class))).thenAnswer(invocation -> invocation.<TrainerSummary>getArgument(0));
+        when(trainerRepository.save(any(TrainerSummaryDto.class))).thenAnswer(invocation -> invocation.<TrainerSummaryDto>getArgument(0));
 
         LocalDate addedDate = LocalDate.of(2024, 3, 6);
 
-        TrainerSummary updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, addedDate, 60);
+        TrainerSummaryDto updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, addedDate, 60);
 
         Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, addedDate);
 
@@ -93,11 +92,11 @@ class TrainerSummaryServiceUnitTest {
     @Test
     void updateTrainingDuration() {
         when(trainerRepository.getTrainerIfExists(TRAINER_1_USERNAME)).thenReturn(TRAINER_SUMMARY_1);
-        when(trainerRepository.save(any(TrainerSummary.class))).thenAnswer(invocation -> invocation.<TrainerSummary>getArgument(0));
+        when(trainerRepository.save(any(TrainerSummaryDto.class))).thenAnswer(invocation -> invocation.<TrainerSummaryDto>getArgument(0));
 
         LocalDate updatedDate = LocalDate.of(2024, 2, 6);
 
-        TrainerSummary updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, updatedDate, 60);
+        TrainerSummaryDto updatedTrainerSummary = trainerSummaryService.addOrUpdateTrainingDuration(TRAINER_1_USERNAME, updatedDate, 60);
 
         Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, updatedDate);
 
@@ -110,11 +109,11 @@ class TrainerSummaryServiceUnitTest {
     @Test
     void deleteTrainingDurationFromSummaryByDateAndUsername() {
         when(trainerRepository.getTrainerIfExists(TRAINER_2_USERNAME)).thenReturn(TRAINER_SUMMARY_2);
-        when(trainerRepository.save(any(TrainerSummary.class))).thenAnswer(invocation -> invocation.<TrainerSummary>getArgument(0));
+        when(trainerRepository.save(any(TrainerSummaryDto.class))).thenAnswer(invocation -> invocation.<TrainerSummaryDto>getArgument(0));
 
         LocalDate deletedDate = LocalDate.of(2024, 1, 6);
 
-        TrainerSummary updatedTrainerSummary = trainerSummaryService.deleteTrainingDurationFromSummaryByDateAndUsername(TRAINER_2_USERNAME, deletedDate, 60);
+        TrainerSummaryDto updatedTrainerSummary = trainerSummaryService.deleteTrainingDurationFromSummaryByDateAndUsername(TRAINER_2_USERNAME, deletedDate, 60);
 
         Optional<TrainerSummaryDto.Summary> existingSummary = getExistingSummary(updatedTrainerSummary, deletedDate);
 

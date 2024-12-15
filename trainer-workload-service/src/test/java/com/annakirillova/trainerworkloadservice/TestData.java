@@ -1,7 +1,7 @@
 package com.annakirillova.trainerworkloadservice;
 
 import com.annakirillova.common.dto.TrainerSummaryDto;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
+import com.annakirillova.trainerworkloadservice.model.TrainerSummaryMongoDb;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +28,12 @@ public class TestData {
     public static final List<TrainerSummaryDto.Summary> SUMMARY_LIST_FOR_TRAINER_1 = List.of(SUMMARY_6, SUMMARY_7);
     public static final List<TrainerSummaryDto.Summary> SUMMARY_LIST_FOR_TRAINER_2 = List.of(SUMMARY_3, SUMMARY_4);
 
-    public static final TrainerSummary TRAINER_SUMMARY_1 = new TrainerSummary("tom.cruise", "Tom", "Cruise", true, new ArrayList<>(SUMMARY_LIST_FOR_TRAINER_1));
-    public static final TrainerSummary TRAINER_SUMMARY_2 = new TrainerSummary("brad.pitt", "Brad", "Pitt", true, SUMMARY_LIST_FOR_TRAINER_2);
-    public static final TrainerSummary TRAINER_SUMMARY_3 = new TrainerSummary("jennifer.aniston", "Jennifer", "Aniston", true, new ArrayList<>());
-    public static final TrainerSummary TRAINER_SUMMARY_4 = new TrainerSummary("sandra.bullock", "Sandra", "Bullock", true, new ArrayList<>());
+    public static final TrainerSummaryMongoDb TRAINER_SUMMARY_1 = new TrainerSummaryMongoDb("tom.cruise", "Tom", "Cruise", "true", new ArrayList<>(SUMMARY_LIST_FOR_TRAINER_1));
+    public static final TrainerSummaryMongoDb TRAINER_SUMMARY_2 = new TrainerSummaryMongoDb("brad.pitt", "Brad", "Pitt", "true", SUMMARY_LIST_FOR_TRAINER_2);
+    public static final TrainerSummaryMongoDb TRAINER_SUMMARY_3 = new TrainerSummaryMongoDb("jennifer.aniston", "Jennifer", "Aniston", "true", new ArrayList<>());
+    public static final TrainerSummaryMongoDb TRAINER_SUMMARY_4 = new TrainerSummaryMongoDb("sandra.bullock", "Sandra", "Bullock", "true", new ArrayList<>());
 
-    public static final Map<String, TrainerSummary> USERNAME_SUMMARY = new HashMap<>(Map.of(
+    public static final Map<String, TrainerSummaryMongoDb> USERNAME_SUMMARY = new HashMap<>(Map.of(
             "tom.cruise", TRAINER_SUMMARY_1,
             "brad.pitt", TRAINER_SUMMARY_2,
             "jennifer.aniston", TRAINER_SUMMARY_3,
@@ -52,14 +52,14 @@ public class TestData {
             "matthew.mcconaughey", "password9"
     ));
 
-    public static final MatcherFactory.Matcher<TrainerSummary> TRAINER_MATCHER_WITH_SUMMARY_LIST =
-            MatcherFactory.usingAssertions(TrainerSummary.class,
+    public static final MatcherFactory.Matcher<TrainerSummaryDto> TRAINER_MATCHER_WITH_SUMMARY_LIST =
+            MatcherFactory.usingAssertions(TrainerSummaryDto.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison().isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
 
-    public static TrainerSummary getNewTrainer() {
-        return new TrainerSummary("jim.carrey", "Jim", "Carrey", true, new ArrayList<>());
+    public static TrainerSummaryDto getNewTrainer() {
+        return new TrainerSummaryDto("jim.carrey", "Jim", "Carrey", "true", new ArrayList<>());
     }
 }

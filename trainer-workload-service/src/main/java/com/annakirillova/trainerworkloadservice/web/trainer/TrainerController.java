@@ -1,6 +1,7 @@
 package com.annakirillova.trainerworkloadservice.web.trainer;
 
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
+import com.annakirillova.common.dto.TrainerSummaryDto;
+import com.annakirillova.trainerworkloadservice.model.TrainerSummaryMongoDb;
 import com.annakirillova.trainerworkloadservice.service.TrainerSummaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +32,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "200", description = "Trainer details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    public TrainerSummary get(@PathVariable String username) {
+    public TrainerSummaryDto get(@PathVariable String username) {
         log.debug("Get the monthly summary for the trainee with username={}", username);
         return trainerSummaryService.get(username);
     }

@@ -5,7 +5,6 @@ import com.annakirillova.common.dto.TrainerSummaryDto;
 import com.annakirillova.common.dto.TrainingDto;
 import com.annakirillova.common.dto.TrainingInfoDto;
 import com.annakirillova.trainerworkloadservice.integration.TrainerMessageSender;
-import com.annakirillova.trainerworkloadservice.model.TrainerSummary;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -30,7 +29,7 @@ public class TrainerManagementSteps extends BaseSteps {
 
     private static final String REST_URL_SLASH = REST_URL + '/';
     private static final long DELAY_MS = 1000;
-    private static TrainerSummary trainerSummary;
+    private static TrainerSummaryDto trainerSummaryDto;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -43,9 +42,9 @@ public class TrainerManagementSteps extends BaseSteps {
 
     @Given("a trainer with username {string} and summary data is saved")
     public void a_trainer_with_username_and_summary_data_is_saved(String username) {
-        trainerSummary = USERNAME_SUMMARY.get(username);
+        trainerSummaryDto = USERNAME_SUMMARY.get(username);
         mongoTemplate.getDb().drop();
-        mongoTemplate.save(trainerSummary);
+        mongoTemplate.save(trainerSummaryDto);
     }
 
     @When("the user {string} retrieves the monthly summary for trainer {string}")
@@ -60,7 +59,7 @@ public class TrainerManagementSteps extends BaseSteps {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(TRAINER_MATCHER_WITH_SUMMARY_LIST.contentJson(trainerSummary));
+                .andExpect(TRAINER_MATCHER_WITH_SUMMARY_LIST.contentJson(trainerSummaryDto));
     }
 
     @When("the user {string} attempts to retrieve the monthly summary for nonexistent trainer {string}")
@@ -91,9 +90,9 @@ public class TrainerManagementSteps extends BaseSteps {
         ActionType actiontype = ActionType.valueOf(action);
         TrainingInfoDto trainingInfoDto = TrainingInfoDto.builder()
                 .username(trainingDto.getTrainerUsername())
-                .firstName(trainerSummary.getFirstName())
-                .lastName(trainerSummary.getLastName())
-                .isActive(trainerSummary.getIsActive())
+                .firstName(trainerSummaryDto.getFirstName())
+                .lastName(trainerSummaryDto.getLastName())
+                .isActive(Boolean.parseBoolean(trainerSummaryDto.getIsActive()))
                 .date(trainingDto.getDate())
                 .duration(trainingDto.getDuration())
                 .actionType(actiontype)
@@ -110,7 +109,7 @@ public class TrainerManagementSteps extends BaseSteps {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
-        TrainerSummary trainerSummaryUpdated = TRAINER_MATCHER_WITH_SUMMARY_LIST.readFromJson(resultActions);
+        TrainerSummaryDto trainerSummaryUpdated = TRAINER_MATCHER_WITH_SUMMARY_LIST.readFromJson(resultActions);
         int durationForDateUpdated = trainerSummaryUpdated.getSummaryList()
                 .stream()
                 .filter(el -> el.getYear() == localDate.getYear())
@@ -119,7 +118,7 @@ public class TrainerManagementSteps extends BaseSteps {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Duration for the specified date not found for updated summary"));
 
-        int durationForDateInitial = trainerSummary.getSummaryList()
+        int durationForDateInitial = trainerSummaryDto.getSummaryList()
                 .stream()
                 .filter(el -> el.getYear() == localDate.getYear())
                 .filter(el -> el.getMonth() == localDate.getMonthValue())
